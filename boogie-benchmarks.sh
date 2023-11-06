@@ -9,28 +9,33 @@
 # Supporting scripts for running Boogie benchmarks.
 
 BOOGIE_3="boogie"
-BOOGIE_OPTS=""
+BOOGIE_OPTS="/proverOpt:O:smt.case_split=3 /proverOpt:O:auto_config=false\
+ /proverOpt:O:type_check=true /proverOpt:O:smt.qi.eager_threshold=100\
+ /proverOpt:O:smt.delay_units=true /proverOpt:O:smt.arith.solver=2\
+ /proverOpt:O:smt.arith.nl=false"
 PYTHON_3="python3"
+PROVER="z3"
 TIMEOUT=3600
-TIME_FORMAT="\t%E real,\t%U user,\t%S sys"
+TIME_FORMAT="\t%e"
 
 SINGLE_LINKED_LIST_BENCH="
     impact-sets
     append 
     copy-all 
     delete-all 
-    find 
+    find
     insert-back 
-    insert-front"
+    insert-front
+    insert
+    reverse"
 
 SORTED_LIST_BENCH="
     impact-sets
-    append 
-    copy-all 
-    delete-all 
-    find 
-    insert-back 
-    insert-front"
+    delete-all
+    find
+    insert
+    merge
+    reverse"
 
 SORTED_LIST_MINMAX_BENCH="
     impact-sets
@@ -88,7 +93,7 @@ SCHEDULER_QUEUE_BENCH="
     bst-fix-depth"
 
 # to contain items of form datastructure::method
-SKIP_LIST="
+BLACKLIST="
     "
 
 list_contains() {
@@ -102,34 +107,81 @@ list_contains() {
     return 1
 }
 
-bench_boogie() {
+boogie_method() {
+    STRUCTURE=$1
+    METHOD=$2
+    RUN_ANYWAY=$3
+
+    if ! [ -f "boogie/$STRUCTURE/$STRUCTURE.bpl" ]; then
+        echo "data structure $STRUCTURE not implemented"
+        return 1
+    fi
+    if ! [ -f "boogie/$STRUCTURE/$METHOD.bpl" ]; then
+        echo "method $STRUCTURE::$METHOD not implemented"
+        return 1
+    fi
+    if list_contains "$BLACKLIST" "$STRUCTURE::$METHOD" && (! $RUN_ANYWAY); then
+        echo "method $STRUCTURE::$METHOD not run"
+        return 1
+    fi
+    
+    # Resolve
+    cat "boogie/$STRUCTURE/$STRUCTURE.bpl" "boogie/$STRUCTURE/$METHOD.bpl" >tmp_input.bpl
+    command time -o tmp_boogie_time -f "$TIME_FORMAT" $BOOGIE_3 \
+        /proverOpt:SOLVER=noop $BOOGIE_OPTS /proverLog:tmp_input.smt2 tmp_input.bpl \
+        2>&1 >tmp_log
+    if ! [ -f "tmp_input.smt2" ]; then
+        echo "method $STRUCTURE::$METHOD does not resolve"
+        cat tmp_log
+        exit 1
+    fi
+
+    # Transplant
+    if [ -f "boogie/$STRUCTURE/$STRUCTURE.tp" ]; then
+        command time -o tmp_transplant_time -f "$TIME_FORMAT" $PYTHON_3 \
+            transplant.py tmp_input.smt2 "boogie/$STRUCTURE/$STRUCTURE.tp" 2>tmp_log >tmp_transplant.smt2
+        
+        if ! command time -o tmp_transplant_time -f "$TIME_FORMAT" $PYTHON_3 \
+                transplant.py tmp_input.smt2 "boogie/$STRUCTURE/$STRUCTURE.tp" \
+                2>tmp_log >tmp_transplant.smt2; then
+            echo "method $STRUCTURE::$METHOD does not transplant"
+            cat tmp_log
+            exit 1
+        fi
+    else
+        cp tmp_input.smt2 tmp_transplant.smt2
+    fi
+
+    # Prove
+    command time -o tmp_prover_time -f "$TIME_FORMAT" $PROVER \
+        tmp_transplant.smt2 2>&1 >tmp_log
+    if grep -q ^sat$ tmp_log || grep -q ^unknown$ tmp_log; then
+        echo "method $STRUCTURE::$METHOD does not verify"
+        cat tmp_log
+        exit 1
+    fi
+
+    totaltime=$(cat tmp_boogie_time tmp_transplant_time tmp_prover_time | awk '{s+=$1} END {printf "%.2f", s}')
+
+    printf "%02dh%02dm%.2fs    " $(echo -e "$totaltime/3600\n$totaltime%3600/60\n$totaltime%60"| bc)
+    printf "($STRUCTURE::$METHOD)\n"
+
+    rm -f tmp_*
+
+    return 0
+}
+
+boogie_ds() {
     STRUCTURE=$1
     METHODS=${!2}
 
     echo ""
-    echo "Benchmarking data structure $STRUCTURE:"
+    echo "Benchmarking data structure $STRUCTURE with Boogie:"
     echo "============================================================"
 
     for method in $METHODS; do
-        if [ -f boogie/$STRUCTURE/$method.bpl ]; then
-            echo "$method not implemented"
-            continue
-        fi
-        if list_contains "$SKIP_LIST" "$STRUCTURE::$method"; then
-            echo "$method skipped intentionally"
-            continue
-        fi
-        echo "verification not implemented"
+        boogie_method $STRUCTURE $method false
     done
-}
 
-bench_boogie "single-linked-list" SINGLE_LINKED_LIST_BENCH
-bench_boogie "sorted-list" SORTED_LIST_BENCH
-bench_boogie "sorted-list-minmax" SORTED_LIST_MINMAX_BENCH
-bench_boogie "circular-list" CIRCULAR_LIST_BENCH
-bench_boogie "binary-search-tree" BINARY_SEARCH_TREE_BENCH
-bench_boogie "treap" TREAP_BENCH
-bench_boogie "avl-tree" AVL_TREE_BENCH
-bench_boogie "red-black-tree" RED_BLACK_TREE_BENCH
-bench_boogie "bst-scaffolding" BST_SCAFFOLDING_BENCH
-bench_boogie "scheduler-queue" SCHEDULER_QUEUE_BENCH
+    return 0
+}
