@@ -43,15 +43,14 @@ def isremovegetinfo(sexp):
         and len(sexp) == 1\
         and sexp[0] == Symbol("remove-get-info")
 
-def isdefinition(sexp, symbol):
+def isdefinition(sexp):
     return isinstance(sexp, list)\
         and len(sexp) >= 2\
         and sexp[0] in {Symbol("declare-fun"), 
                         Symbol("define-fun"), 
                         Symbol("declare-const"),
                         Symbol("define-const"),
-                        Symbol("declare-sort")}\
-        and sexp[1] == symbol
+                        Symbol("declare-sort")}
 
 def isgetinfo(sexp):
     return isinstance(sexp, list)\
@@ -59,38 +58,36 @@ def isgetinfo(sexp):
         and sexp[0] == Symbol("get-info")
 
 def operate(input, changes):
-    while not isatom(changes):
-        change = car(changes)
+    if isatom(changes):
+        return input
+    
+    replacements = {}
+    deletes = set()
+    removegetinfo = False
+    for change in changes:
         if isreplace(change):
-            symbol = change[1]
-            i = 0
-            while i < len(input):
-                if isdefinition(input[i], symbol):
-                    input[i:i+1] = change[2:]
-                    i += len(change[2:])
-                else:
-                    i += 1
+            replacements[change[1]] = change[2:]
         elif isdelete(change):
-            symbol = change[1]
-            i = 0
-            while i < len(input):
-                if isdefinition(input[i], symbol):
-                    input[i:i+1] = []
-                else:
-                    i += 1
+            deletes.add(change[1])
         elif isremovegetinfo(change):
-            i = 0
-            while i < len(input):
-                if isgetinfo(input[i]):
-                    input[i:i+1] = []
-                else:
-                    i += 1
+            removegetinfo = True
         else:
             print(f"Bad command in {sys.argv[2]}:", file=sys.stderr)
             print(dumps(change), file=sys.stderr)
             sys.exit(1)
-        changes = cdr(changes)
-    return input
+
+    output = []
+    for statement in input:
+        if (isgetinfo(statement)):
+            continue
+        elif (isdefinition(statement)):
+            if statement[1] in deletes:
+                continue
+            elif statement[1] in replacements:
+                output.extend(replacements[statement[1]])
+                continue
+        output.append(statement)
+    return output
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

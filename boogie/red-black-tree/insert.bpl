@@ -6,6 +6,8 @@
 //
 // Verification of Red-Black Tree Insert.
 
+//SETUP:num_paths=25; (number of paths in the program)
+
 procedure RBTInsertContract(x: Ref, k: int)
     returns (ret: Ref);
     requires Br == EmptyRefSet;
@@ -125,6 +127,7 @@ procedure RBTInsert(x: Ref, k: int)
     var leaf: Ref;
 
     if (x == null) {
+        // assert {:focus} true;
         call leaf := Create(k);
 
         call Set_black(leaf, false);
@@ -138,24 +141,17 @@ procedure RBTInsert(x: Ref, k: int)
         ret := leaf;
     } else {
         if (k < C.k[x]) {
-            if (C.l[x] != null) {
-                call IfNotBr_ThenLC(C.l[x]);
-            }
-            if (C.r[x] != null) {
-                call IfNotBr_ThenLC(C.r[x]);
-            }
+            call IfNotBr_ThenLC(C.l[x]);
+            call IfNotBr_ThenLC(C.r[x]);
 
             call p := RBTInsertContract(C.l[x], k);
 
-            if (C.l[x] != null && C.l[x] != p) {
-                call IfNotBr_ThenLC(C.l[x]);
-            }
-            if (C.r[x] != null) {
-                call IfNotBr_ThenLC(C.r[x]);
-            }
+            call IfNotBr_ThenLC(C.l[x]);
+
+            call IfNotBr_ThenLC(C.r[x]);
 
             if (C.black[p]) {
-                // assert {:split_here} true;
+                // assert {:focus} true;
                 oldl := C.l[x];
                 call Set_l(x, p);
                 call Set_p(p, x);
@@ -183,6 +179,7 @@ procedure RBTInsert(x: Ref, k: int)
                 xr := C.r[x];
 
                 if (xr != null && !C.black[xr]) {
+                    // assert {:focus} true;
                     oldl := C.l[x];
 
                     call Set_l(x, p);
@@ -219,23 +216,15 @@ procedure RBTInsert(x: Ref, k: int)
                     pl := C.l[p];
                     pr := C.r[p];
 
-                    if (pl != null) {
-                        call IfNotBr_ThenLC(pl);
-                    }
-                    if (pr != null) {
-                        call IfNotBr_ThenLC(pr);
-                    }
+                    call IfNotBr_ThenLC(pl);
+                    call IfNotBr_ThenLC(pr);
 
                     if (pr != null && !C.black[pr]) {
-                        assert {:focus} true;
+                        // assert {:focus} true;
                         prl := C.l[pr];
                         prr := C.r[pr];
-                        if (prl != null) {
-                            call IfNotBr_ThenLC(prl);
-                        }
-                        if (prr != null) {
-                            call IfNotBr_ThenLC(prr);
-                        }
+                        call IfNotBr_ThenLC(prl);
+                        call IfNotBr_ThenLC(prr);
 
                         call Set_r(p, prl);
                         if (prl != null) {
@@ -311,7 +300,7 @@ procedure RBTInsert(x: Ref, k: int)
 
                         ret := pr;
                     } else if (pl != null && !C.black[pl]) {
-                        assert {:focus} true;
+                        // assert {:focus} true;
                         call Set_r(p, x);
                         call Set_p(x, p);
                         oldl := C.l[x];
@@ -363,7 +352,7 @@ procedure RBTInsert(x: Ref, k: int)
 
                         ret := p;
                     } else {
-                        // assert {:split_here} true;
+                        // assert {:focus} true;
                         oldl := C.l[x];
                         call Set_l(x, p);
                         call Set_p(p, x);
@@ -391,23 +380,16 @@ procedure RBTInsert(x: Ref, k: int)
                 }
             }
         } else {
-            if (C.l[x] != null) {
-                call IfNotBr_ThenLC(C.l[x]);
-            }
-            if (C.r[x] != null) {
-                call IfNotBr_ThenLC(C.r[x]);
-            }
+            call IfNotBr_ThenLC(C.l[x]);
+            call IfNotBr_ThenLC(C.r[x]);
 
             call p := RBTInsertContract(C.r[x], k);
 
-            if (C.l[x] != null) {
-                call IfNotBr_ThenLC(C.l[x]);
-            }
-            if (C.r[x] != null && C.r[x] != p) {
-                call IfNotBr_ThenLC(C.r[x]);
-            }
+            call IfNotBr_ThenLC(C.l[x]);
+            call IfNotBr_ThenLC(C.r[x]);
 
             if (C.black[p]) {
+                // assert {:focus} true;
                 oldr := C.r[x];
                 call Set_r(x, p);
                 call Set_p(p, x);
@@ -435,6 +417,7 @@ procedure RBTInsert(x: Ref, k: int)
                 xl := C.l[x];
 
                 if (xl != null && !C.black[xl]) {
+                    // assert {:focus} true;
                     oldr := C.r[x];
                     call Set_r(x, p);
                     call Set_p(p, x);
@@ -469,23 +452,15 @@ procedure RBTInsert(x: Ref, k: int)
                     pl := C.l[p];
                     pr := C.r[p];
 
-                    if (pl != null) {
-                        call IfNotBr_ThenLC(pl);
-                    }
-                    if (pr != null) {
-                        call IfNotBr_ThenLC(pr);
-                    }
+                    call IfNotBr_ThenLC(pl);
+                    call IfNotBr_ThenLC(pr);
 
                     if (pl != null && !C.black[pl]) {
-                        assert {:focus} true;
+                        // assert {:focus} true;
                         pll := C.l[pl];
                         plr := C.r[pl];
-                        if (pll != null) {
-                            call IfNotBr_ThenLC(pll);
-                        }
-                        if (plr != null) {
-                            call IfNotBr_ThenLC(plr);
-                        }
+                        call IfNotBr_ThenLC(pll);
+                        call IfNotBr_ThenLC(plr);
 
                         call Set_l(p, plr);
                         if (plr != null) {
@@ -561,7 +536,7 @@ procedure RBTInsert(x: Ref, k: int)
 
                         ret := pl;
                     } else if (pr != null && !C.black[pr]) {
-                        assert {:focus} true;
+                        // assert {:focus} true;
                         call Set_l(p, x);
                         call Set_p(x, p);
                         oldr := C.r[x];
@@ -613,6 +588,7 @@ procedure RBTInsert(x: Ref, k: int)
                         
                         ret := p;
                     } else {
+                        // assert {:focus} true;
                         oldr := C.r[x];
                         call Set_r(x, p);
                         call Set_p(p, x);

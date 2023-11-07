@@ -6,6 +6,8 @@
 //
 // Impact set verification for sorted lists.
 
+//SETUP:num_paths=1; (number of paths in the program)
+
 procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     modifies C.k;
 {

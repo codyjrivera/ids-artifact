@@ -6,6 +6,8 @@
 //
 // Verification of Sorted List Insert.
 
+//SETUP:num_paths=3; (number of paths in the program)
+
 procedure SortedListInsertContract(x: Ref, k: int) returns (ret: Ref);
     requires RefSetsEqual(Br, EmptyRefSet);
     requires LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x, alloc);
@@ -78,15 +80,11 @@ procedure SortedListInsert(x: Ref, k: int) returns (ret: Ref)
 
         ret := node;
     } else {
-        if (C.next[x] != null) {
-            call IfNotBr_ThenLC(C.next[x]);
-        }
+        call IfNotBr_ThenLC(C.next[x]);
 
         call tmp := SortedListInsertContract(C.next[x], k);
 
-        if (C.next[x] != null) {
-            call IfNotBr_ThenLC(C.next[x]);
-        }
+        call IfNotBr_ThenLC(C.next[x]);
 
         oldnext := C.next[x];
         call Set_prev(tmp, x);

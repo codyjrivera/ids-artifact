@@ -6,6 +6,8 @@
 //
 // Verification of Red-Black Tree Find-Min.
 
+//SETUP:num_paths=2; (number of paths in the program)
+
 procedure RBTFindMin(x: Ref) returns (ret: int)
     requires x != null;
     requires RefSetsDisjoint(Br, C.repr[x]);

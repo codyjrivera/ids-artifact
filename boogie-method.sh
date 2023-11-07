@@ -20,5 +20,6 @@ METHOD=$2
 echo "Verifying $STRUCTURE::$METHOD with Boogie:"
 echo ""
 
+VERBOSE=true
 boogie_method $STRUCTURE $METHOD true
 exit $?

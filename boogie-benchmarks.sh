@@ -9,13 +9,17 @@
 # Supporting scripts for running Boogie benchmarks.
 
 BOOGIE_3="boogie"
-BOOGIE_OPTS="/proverOpt:O:smt.case_split=3 /proverOpt:O:auto_config=false\
+BOOGIE_OPTS="/proverOpt:O:smt.mbqi=false /proverOpt:O:model.compact=false\
+ /proverOpt:O:model.v2=true /proverOpt:O:pp.bv_literals=false\
+ /proverOpt:O:smt.case_split=3 /proverOpt:O:auto_config=false\
  /proverOpt:O:type_check=true /proverOpt:O:smt.qi.eager_threshold=100\
  /proverOpt:O:smt.delay_units=true /proverOpt:O:smt.arith.solver=2\
  /proverOpt:O:smt.arith.nl=false"
 PYTHON_3="python3"
 PROVER="z3"
 TIME_FORMAT="\t%U"
+
+VERBOSE=false
 
 SINGLE_LINKED_LIST_BENCH="
     impact-sets
@@ -123,11 +127,19 @@ boogie_method() {
         echo "method $STRUCTURE::$METHOD not run"
         return 1
     fi
-    
+
+    # Get number of paths in the program
+    if num_paths=$(grep "SETUP:num_paths" "boogie/$STRUCTURE/$METHOD.bpl");
+    then
+        num_paths=$(echo $num_paths | awk -F '=|;' '{print $2}')
+    else
+        num_paths=1
+    fi
+
     # Resolve
     cat "boogie/$STRUCTURE/$STRUCTURE.bpl" "boogie/$STRUCTURE/$METHOD.bpl" >tmp_input.bpl
     command time -o tmp_boogie_time -f "$TIME_FORMAT" $BOOGIE_3 \
-        /proverOpt:SOLVER=noop $BOOGIE_OPTS /proverLog:tmp_input.smt2 tmp_input.bpl \
+        /proverOpt:SOLVER=noop $BOOGIE_OPTS /vcsMaxSplits:$num_paths /proverLog:tmp_input.smt2 tmp_input.bpl \
         2>&1 >tmp_log
     if ! [ -f "tmp_input.smt2" ]; then
         echo "method $STRUCTURE::$METHOD does not resolve"
@@ -157,6 +169,13 @@ boogie_method() {
         return 1
     fi
 
+    # VERBOSE: Print number of asserts
+    if $VERBOSE; then
+        printf "There are "
+        printf "%d" `grep -o "(check-sat)" tmp_transplant.smt2 | wc -l`
+        printf " verification conditions in $STRUCTURE::$METHOD\n"
+    fi
+
     # Prove
     command time -o tmp_prover_time -f "$TIME_FORMAT" $PROVER \
         tmp_transplant.smt2 2>&1 >tmp_log
@@ -168,7 +187,7 @@ boogie_method() {
 
     totaltime=$(cat tmp_boogie_time tmp_transplant_time tmp_prover_time | awk '{s+=$1} END {printf "%.2f", s}')
 
-    printf "%02dh%02dm%.2fs    " $(echo -e "$totaltime/3600\n$totaltime%3600/60\n$totaltime%60"| bc)
+    printf "%02dh%02dm%05.2fs    " $(echo -e "$totaltime/3600\n$totaltime%3600/60\n$totaltime%60"| bc)
     printf "($STRUCTURE::$METHOD)\n"
 
     rm -f tmp_*
