@@ -69,7 +69,7 @@ function {:inline} LC(
     alloc: RefSet
 ) returns (bool)
 {
-    x != null ==> (
+    (x != null ==> (
         (repr[x])[x]
         && min[x] <= k[x] 
         && k[x] <= max[x]
@@ -130,7 +130,8 @@ function {:inline} LC(
                         black_height[x] == (if black[x] then black_height[r[x]] + 1 else black_height[r[x]]))
                 && black_height[l[x]] == black_height[r[x]]
                 && (black[x] || (black[l[x]] && black[r[x]])))
-    )
+        && black_height[x] >= 0
+    ))
     && InAlloc(k, l, r, p, min, max,
                keys, repr, black, black_height, x, alloc)
 }
@@ -150,7 +151,7 @@ function {:inline} LC_Trans_RedRed(
     alloc: RefSet
 ) returns (bool)
 {
-    x != null ==> (
+    (x != null ==> (
         (repr[x])[x]
         && min[x] <= k[x] 
         && k[x] <= max[x]
@@ -209,7 +210,7 @@ function {:inline} LC_Trans_RedRed(
                         black_height[x] == (if black[x] then black_height[r[x]] + 1 else black_height[r[x]]))
                 && black_height[l[x]] == black_height[r[x]])
         && black_height[x] >= 0
-    )
+    ))
     && InAlloc(k, l, r, p, min, max,
                keys, repr, black, black_height, x, alloc)
 }
@@ -229,7 +230,7 @@ function {:inline} LC_Trans_DoubleBlack(
     alloc: RefSet
 ) returns (bool)
 {
-    x != null ==> (
+    (x != null ==> (
         (repr[x])[x]
         && min[x] <= k[x] 
         && k[x] <= max[x]
@@ -293,7 +294,7 @@ function {:inline} LC_Trans_DoubleBlack(
                     || black_height[l[x]] == black_height[r[x]] + 1)
                 && (black[x] || (black[l[x]] && black[r[x]])))
         && black_height[x] >= 0
-    )
+    ))
     && InAlloc(k, l, r, p, min, max,
                keys, repr, black, black_height, x, alloc)
 }
@@ -411,6 +412,43 @@ function Frame_keys(mod_set: RefSet, old_keys: [Ref]KeySet, keys: [Ref]KeySet) r
 function Frame_repr(mod_set: RefSet, old_repr: [Ref]RefSet, repr: [Ref]RefSet) returns ([Ref]RefSet);
 function Frame_black(mod_set: RefSet, old_black: [Ref]bool, black: [Ref]bool) returns ([Ref]bool);
 function Frame_black_height(mod_set: RefSet, old_black_height: [Ref]int, black_height: [Ref]int) returns ([Ref]int);
+
+function {:inline} Frame_all(
+    k: [Ref]int, 
+    l: [Ref]Ref,
+    r: [Ref]Ref,
+    p: [Ref]Ref,
+    min: [Ref]int,
+    max: [Ref]int,
+    keys: [Ref]KeySet,
+    repr: [Ref]RefSet,
+    black: [Ref]bool,
+    black_height: [Ref]int,
+    oldk: [Ref]int, 
+    oldl: [Ref]Ref,
+    oldr: [Ref]Ref,
+    oldp: [Ref]Ref,
+    oldmin: [Ref]int,
+    oldmax: [Ref]int,
+    oldkeys: [Ref]KeySet,
+    oldrepr: [Ref]RefSet,
+    oldblack: [Ref]bool,
+    oldblack_height: [Ref]int,
+    mod_set: RefSet,
+    old_alloc: RefSet
+) returns (bool) 
+{
+    k == Frame_k(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldk, k) 
+    && l == Frame_l(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldl, l) 
+    && r == Frame_r(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldr, r) 
+    && p == Frame_p(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldp, p) 
+    && min == Frame_min(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldmin, min) 
+    && max == Frame_max(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldmax, max) 
+    && keys == Frame_keys(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldkeys, keys)
+    && repr == Frame_repr(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldrepr, repr)
+    && black == Frame_black(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldblack, black)
+    && black_height == Frame_black_height(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldblack_height, black_height)
+}
 
 // Alloc set reasoning
 function {:inline} InAlloc(
