@@ -1,4 +1,6 @@
 
+TODO: fill out this README, and bundle up the artifact and its dependencies
+cleanly.
 
 # Dependencies:
 - Boogie 3.0.5

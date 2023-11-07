@@ -4,7 +4,7 @@
 ;; 
 ;; Artifact by Cody Rivera, 2023. 
 ;;
-;; SMT2-LIB transplant file for sorted list.
+;; SMT2-LIB transplant file for Red-Black trees.
 
 ;; Set library implementation
 ; Remove old declarations of set operations.
@@ -69,13 +69,25 @@
     (define-fun Frame_k ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
         ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
 (replace
-    Frame_next
-    (define-fun Frame_next ((mod (Array T@Ref Bool)) (pre (Array T@Ref T@Ref)) (post (Array T@Ref T@Ref))) (Array T@Ref T@Ref)
+    Frame_l
+    (define-fun Frame_l ((mod (Array T@Ref Bool)) (pre (Array T@Ref T@Ref)) (post (Array T@Ref T@Ref))) (Array T@Ref T@Ref)
         ((_ map (ite (Bool T@Ref T@Ref) (T@Ref))) mod post pre)))
 (replace
-    Frame_prev
-    (define-fun Frame_prev ((mod (Array T@Ref Bool)) (pre (Array T@Ref T@Ref)) (post (Array T@Ref T@Ref))) (Array T@Ref T@Ref)
+    Frame_r
+    (define-fun Frame_r ((mod (Array T@Ref Bool)) (pre (Array T@Ref T@Ref)) (post (Array T@Ref T@Ref))) (Array T@Ref T@Ref)
         ((_ map (ite (Bool T@Ref T@Ref) (T@Ref))) mod post pre)))
+(replace
+    Frame_p
+    (define-fun Frame_p ((mod (Array T@Ref Bool)) (pre (Array T@Ref T@Ref)) (post (Array T@Ref T@Ref))) (Array T@Ref T@Ref)
+        ((_ map (ite (Bool T@Ref T@Ref) (T@Ref))) mod post pre)))
+(replace
+    Frame_min
+    (define-fun Frame_min ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
+        ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
+(replace
+    Frame_max
+    (define-fun Frame_max ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
+        ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
 (replace
     Frame_keys
     (define-fun Frame_keys ((mod (Array T@Ref Bool)) (pre (Array T@Ref (Array Int Bool))) (post (Array T@Ref (Array Int Bool)))) (Array T@Ref (Array Int Bool))
@@ -85,13 +97,13 @@
     (define-fun Frame_repr ((mod (Array T@Ref Bool)) (pre (Array T@Ref (Array T@Ref Bool))) (post (Array T@Ref (Array T@Ref Bool)))) (Array T@Ref (Array T@Ref Bool))
         ((_ map (ite (Bool (Array T@Ref Bool) (Array T@Ref Bool)) (Array T@Ref Bool))) mod post pre)))
 (replace
-    Frame_sorted
-    (define-fun Frame_sorted ((mod (Array T@Ref Bool)) (pre (Array T@Ref Bool)) (post (Array T@Ref Bool))) (Array T@Ref Bool)
+    Frame_black
+    (define-fun Frame_black ((mod (Array T@Ref Bool)) (pre (Array T@Ref Bool)) (post (Array T@Ref Bool))) (Array T@Ref Bool)
         ((_ map (ite (Bool Bool Bool) (Bool))) mod post pre)))
 (replace
-    Frame_rev_sorted
-    (define-fun Frame_rev_sorted ((mod (Array T@Ref Bool)) (pre (Array T@Ref Bool)) (post (Array T@Ref Bool))) (Array T@Ref Bool)
-        ((_ map (ite (Bool Bool Bool) (Bool))) mod post pre)))
+    Frame_black_height
+    (define-fun Frame_black_height ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
+        ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
 
 ;; Removal of (get-info) commands from SMT2 input.
 (remove-get-info)

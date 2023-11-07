@@ -12,6 +12,7 @@ source ./boogie-benchmarks.sh
 
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 DATASTRUCTURE METHOD"
+    exit 1
 fi
 
 STRUCTURE=$1

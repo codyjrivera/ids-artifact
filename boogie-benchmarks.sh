@@ -15,8 +15,7 @@ BOOGIE_OPTS="/proverOpt:O:smt.case_split=3 /proverOpt:O:auto_config=false\
  /proverOpt:O:smt.arith.nl=false"
 PYTHON_3="python3"
 PROVER="z3"
-TIMEOUT=3600
-TIME_FORMAT="\t%e"
+TIME_FORMAT="\t%U"
 
 SINGLE_LINKED_LIST_BENCH="
     impact-sets
@@ -133,7 +132,7 @@ boogie_method() {
     if ! [ -f "tmp_input.smt2" ]; then
         echo "method $STRUCTURE::$METHOD does not resolve"
         cat tmp_log
-        exit 1
+        return 1
     fi
 
     # Transplant
@@ -146,10 +145,16 @@ boogie_method() {
                 2>tmp_log >tmp_transplant.smt2; then
             echo "method $STRUCTURE::$METHOD does not transplant"
             cat tmp_log
-            exit 1
+            return 1
         fi
     else
         cp tmp_input.smt2 tmp_transplant.smt2
+    fi
+
+    # Check for foralls
+    if grep -q forall tmp_transplant.smt2; then
+        echo "method $STRUCTURE::$METHOD contains a forall in its SMT script"
+        return 1
     fi
 
     # Prove
@@ -158,7 +163,7 @@ boogie_method() {
     if grep -q ^sat$ tmp_log || grep -q ^unknown$ tmp_log; then
         echo "method $STRUCTURE::$METHOD does not verify"
         cat tmp_log
-        exit 1
+        return 1
     fi
 
     totaltime=$(cat tmp_boogie_time tmp_transplant_time tmp_prover_time | awk '{s+=$1} END {printf "%.2f", s}')
