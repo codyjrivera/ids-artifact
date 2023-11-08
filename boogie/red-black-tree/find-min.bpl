@@ -14,27 +14,33 @@ procedure RBTFindMin(x: Ref) returns (ret: int)
     requires LC(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys,
                 C.repr, C.black, C.black_height, 
-                x, alloc);
+                x);
     ensures (C.keys[x])[ret];
     ensures ret == C.min[x];
 {
     var cur: Ref;
+    var cur_l: Ref;
+
+    call InAllocParam(x);
 
     cur := x;
+    call cur_l := Get_l(cur);
 
-    while (C.l[cur] != null)
+    while (cur_l != null)
+        invariant cur_l == C.l[cur];
         invariant cur != null;
         invariant LC(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys,
                 C.repr, C.black, C.black_height, 
-                cur, alloc);
+                cur);
         invariant KeySetSubset(C.keys[cur], C.keys[x]);
         invariant RefSetSubset(C.repr[cur], C.repr[x]);
         invariant C.min[cur] == C.min[x];
     {
-        call IfNotBr_ThenLC(C.l[cur]);
-        cur := C.l[cur];
+        call IfNotBr_ThenLC(cur_l);
+        cur := cur_l;
+        call cur_l := Get_l(cur);
     }
 
-    ret := C.k[cur];
+    call ret := Get_k(cur);
 }

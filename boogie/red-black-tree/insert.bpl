@@ -6,7 +6,7 @@
 //
 // Verification of Red-Black Tree Insert.
 
-//SETUP:num_paths=25; (number of paths in the program)
+//SETUP:num_paths=15; (number of paths in the program)
 
 procedure RBTInsertContract(x: Ref, k: int)
     returns (ret: Ref);
@@ -14,7 +14,7 @@ procedure RBTInsertContract(x: Ref, k: int)
     requires x != null ==> LC(C.k, C.l, C.r, C.p, 
                               C.min, C.max, C.keys,
                               C.repr, C.black, C.black_height, 
-                              x, alloc);
+                              x);
     requires x != null ==> !(C.keys[x])[k];
     modifies C.k, C.l, C.r, C.p, 
         C.min, C.max, C.keys,
@@ -24,11 +24,11 @@ procedure RBTInsertContract(x: Ref, k: int)
     ensures (LC(C.k, C.l, C.r, C.p, 
                C.min, C.max, C.keys,
                C.repr, C.black, C.black_height, 
-               ret, alloc) ||
+               ret) ||
              LC_Trans_RedRed(C.k, C.l, C.r, C.p, 
                C.min, C.max, C.keys,
                C.repr, C.black, C.black_height, 
-               ret, alloc));
+               ret));
     ensures C.p[ret] == null;
     ensures x != null && x != ret ==> C.p[x] != old(C.p)[x];
     ensures (x == null ==>
@@ -66,7 +66,7 @@ procedure RBTInsert(x: Ref, k: int)
     requires x != null ==> LC(C.k, C.l, C.r, C.p, 
                               C.min, C.max, C.keys,
                               C.repr, C.black, C.black_height, 
-                              x, alloc);
+                              x);
     requires x != null ==> !(C.keys[x])[k];
     modifies C.k, C.l, C.r, C.p, 
         C.min, C.max, C.keys,
@@ -76,11 +76,11 @@ procedure RBTInsert(x: Ref, k: int)
     ensures (LC(C.k, C.l, C.r, C.p, 
                C.min, C.max, C.keys,
                C.repr, C.black, C.black_height, 
-               ret, alloc) ||
+               ret) ||
              LC_Trans_RedRed(C.k, C.l, C.r, C.p, 
                C.min, C.max, C.keys,
                C.repr, C.black, C.black_height, 
-               ret, alloc));
+               ret));
     ensures C.p[ret] == null;
     ensures x != null && x != ret ==> C.p[x] != old(C.p)[x];
     ensures (x == null ==>
@@ -126,48 +126,117 @@ procedure RBTInsert(x: Ref, k: int)
     var oldr: Ref;
     var leaf: Ref;
 
+    // Intermediate Expresssions
+    var x_k: int;
+    var x_l: Ref;
+    var x_r: Ref;
+    var x_black: bool;
+    var x_black_height: int;
+    var p_black: bool;
+    var p_black_height: int;
+    var x_l_min: int;
+    var x_l_keys: KeySet;
+    var x_l_repr: RefSet;
+    var x_r_max: int;
+    var x_r_keys: KeySet;
+    var x_r_repr: RefSet;
+    var xr_black: bool;
+    var xr_black_height: int;
+    var p_l: Ref;
+    var p_r: Ref;
+    var p_k: int;
+    var p_l_min: int;
+    var p_l_keys: KeySet;
+    var p_l_repr: RefSet;
+    var p_r_max: int;
+    var p_r_keys: KeySet;
+    var p_r_repr: RefSet;
+    var pl_black: bool;
+    var pr_black: bool;
+    var pr_l: Ref;
+    var pr_r: Ref;
+    var pr_k: int;
+    var pr_l_min: int;
+    var pr_l_keys: KeySet;
+    var pr_l_repr: RefSet;
+    var pr_r_max: int;
+    var pr_r_keys: KeySet;
+    var pr_r_repr: RefSet;
+    var pr_black_height: int;
+    var xl_black: bool;
+    var xl_black_height: int;
+    var pl_l: Ref;
+    var pl_r: Ref;
+    var pl_k: int;
+    var pl_l_min: int;
+    var pl_l_keys: KeySet;
+    var pl_l_repr: RefSet;
+    var pl_r_max: int;
+    var pl_r_keys: KeySet;
+    var pl_r_repr: RefSet;
+    var pl_black_height: int;
+
+    call InAllocParam(x);
     if (x == null) {
-        // assert {:focus} true;
         call leaf := Create(k);
 
         call Set_black(leaf, false);
         call Set_min(leaf, k);
         call Set_max(leaf, k);
-        call Set_keys(leaf, EmptyKeySet[C.k[leaf] := true]);
+        call Set_keys(leaf, EmptyKeySet[k := true]);
         call Set_repr(leaf, EmptyRefSet[leaf := true]);
         call Set_black_height(leaf, 0);
         
         call AssertLCAndRemove(leaf);
         ret := leaf;
     } else {
-        if (k < C.k[x]) {
-            call IfNotBr_ThenLC(C.l[x]);
-            call IfNotBr_ThenLC(C.r[x]);
+        call x_k := Get_k(x);
+        if (k < x_k) {
+            call x_l := Get_l(x);
+            call x_r := Get_r(x);
 
-            call p := RBTInsertContract(C.l[x], k);
+            call IfNotBr_ThenLC(x_l);
+            call IfNotBr_ThenLC(x_r);
 
-            call IfNotBr_ThenLC(C.l[x]);
+            call p := RBTInsertContract(x_l, k);
 
-            call IfNotBr_ThenLC(C.r[x]);
+            call x_l := Get_l(x);
+            call x_r := Get_r(x);            
+            call IfNotBr_ThenLC(x_l);
+            call IfNotBr_ThenLC(x_r);
 
-            if (C.black[p]) {
-                // assert {:focus} true;
-                oldl := C.l[x];
+            call p_black := Get_black(p);
+            if (p_black) {
+                call x_l := Get_l(x);
+                oldl := x_l;
                 call Set_l(x, p);
                 call Set_p(p, x);
 
-                call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                call x_l := Get_l(x);
+                call x_r := Get_r(x);
+                call x_k := Get_k(x);
+                if (x_l != null) {
+                    call x_l_min := Get_min(x_l);
+                    call x_l_keys := Get_keys(x_l);
+                    call x_l_repr := Get_repr(x_l);
+                }
+                if (x_r != null) {
+                    call x_r_max := Get_max(x_r);
+                    call x_r_keys := Get_keys(x_r);
+                    call x_r_repr := Get_repr(x_r);
+                }
+                call Set_min(x, if x_l == null then x_k else x_l_min);
+                call Set_max(x, if x_r == null then x_k else x_r_max);
                 call Set_keys(x, 
                     KeySetUnionF(
-                        (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                        if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                        (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                        if x_r == null then EmptyKeySet else x_r_keys
                     )
                 );
                 call Set_repr(x, 
                     RefSetUnionF(
-                        (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                        if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                        (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                        if x_r == null then EmptyRefSet else x_r_repr
                     )
                 );
                 call Set_p(x, null);
@@ -176,36 +245,55 @@ procedure RBTInsert(x: Ref, k: int)
                 call AssertLCAndRemove(oldl);
                 ret := x;
             } else {
-                xr := C.r[x];
+                call x_r := Get_r(x);
+                xr := x_r;
 
-                if (xr != null && !C.black[xr]) {
-                    // assert {:focus} true;
-                    oldl := C.l[x];
+                if (x_r != null) {
+                    call xr_black := Get_black(xr);
+                }
+                if (xr != null && !xr_black) {
+                    call x_l := Get_l(x);
+                    oldl := x_l;
 
                     call Set_l(x, p);
                     call Set_p(p, x);
 
-                    call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                    call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                    call x_l := Get_l(x);
+                    call x_r := Get_r(x);
+                    call x_k := Get_k(x);
+                    if (x_l != null) {
+                        call x_l_min := Get_min(x_l);
+                        call x_l_keys := Get_keys(x_l);
+                        call x_l_repr := Get_repr(x_l);
+                    }
+                    if (x_r != null) {
+                        call x_r_max := Get_max(x_r);
+                        call x_r_keys := Get_keys(x_r);
+                        call x_r_repr := Get_repr(x_r);
+                    }
+                    call Set_min(x, if x_l == null then x_k else x_l_min);
+                    call Set_max(x, if x_r == null then x_k else x_r_max);
                     call Set_keys(x, 
                         KeySetUnionF(
-                            (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                            if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                            (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                            if x_r == null then EmptyKeySet else x_r_keys
                         )
                     );
                     call Set_repr(x, 
                         RefSetUnionF(
-                            (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                            if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                            (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                            if x_r == null then EmptyRefSet else x_r_repr
                         )
                     );
                     call Set_p(x, null);
 
                     call Set_black(x, false);
                     call Set_black(p, true);
-                    call Set_black_height(p, C.black_height[p] + 1);
+                    call p_black_height := Get_black_height(p);
+                    call Set_black_height(p, p_black_height + 1);
                     call Set_black(xr, true);
-                    call Set_black_height(xr, C.black_height[xr] + 1);
+                    call xr_black_height := Get_black_height(xr);
+                    call Set_black_height(xr, xr_black_height + 1);
 
                     call AssertLCAndRemove(p);
                     call AssertLCAndRemove(xr);
@@ -213,16 +301,26 @@ procedure RBTInsert(x: Ref, k: int)
 
                     ret := x;
                 } else {
-                    pl := C.l[p];
-                    pr := C.r[p];
+                    call p_l := Get_l(p);
+                    call p_r := Get_r(p);
+
+                    pl := p_l;
+                    pr := p_r;
 
                     call IfNotBr_ThenLC(pl);
                     call IfNotBr_ThenLC(pr);
 
-                    if (pr != null && !C.black[pr]) {
-                        // assert {:focus} true;
-                        prl := C.l[pr];
-                        prr := C.r[pr];
+                    if (pr != null) {
+                        call pr_black := Get_black(pr);
+                    }
+                    if (pl != null) {
+                        call pl_black := Get_black(pl);
+                    }
+                    if (pr != null && !pr_black) {
+                        call pr_l := Get_l(pr);
+                        call pr_r := Get_r(pr);
+                        prl := pr_l;
+                        prr := pr_r;
                         call IfNotBr_ThenLC(prl);
                         call IfNotBr_ThenLC(prr);
 
@@ -230,7 +328,8 @@ procedure RBTInsert(x: Ref, k: int)
                         if (prl != null) {
                             call Set_p(prl, p);
                         }
-                        oldl := C.l[x];
+                        call x_l := Get_l(x);
+                        oldl := x_l;
                         call Set_l(x, prr);
                         if (prr != null) {
                             call Set_p(prr, x);
@@ -241,56 +340,98 @@ procedure RBTInsert(x: Ref, k: int)
                         call Set_p(x, pr);
                         call Set_p(pr, null);
 
-                        call Set_min(p, if C.l[p] == null then C.k[p] else C.min[C.l[p]]);
-                        call Set_max(p, if C.r[p] == null then C.k[p] else C.max[C.r[p]]);
+                        call p_l := Get_l(p);
+                        call p_r := Get_r(p);
+                        call p_k := Get_k(p);
+                        if (p_l != null) {
+                            call p_l_min := Get_min(p_l);
+                            call p_l_keys := Get_keys(p_l);
+                            call p_l_repr := Get_repr(p_l);
+                        }
+                        if (p_r != null) {
+                            call p_r_max := Get_max(p_r);
+                            call p_r_keys := Get_keys(p_r);
+                            call p_r_repr := Get_repr(p_r);
+                        }
+                        call Set_min(p, if p_l == null then p_k else p_l_min);
+                        call Set_max(p, if p_r == null then p_k else p_r_max);
                         call Set_keys(p, 
                             KeySetUnionF(
-                                (if C.l[p] == null then EmptyKeySet else C.keys[C.l[p]])[C.k[p] := true],
-                                if C.r[p] == null then EmptyKeySet else C.keys[C.r[p]]
+                                (if p_l == null then EmptyKeySet else p_l_keys)[p_k := true],
+                                if p_r == null then EmptyKeySet else p_r_keys
                             )
                         );
                         call Set_repr(p, 
                             RefSetUnionF(
-                                (if C.l[p] == null then EmptyRefSet else C.repr[C.l[p]])[p := true],
-                                if C.r[p] == null then EmptyRefSet else C.repr[C.r[p]]
+                                (if p_l == null then EmptyRefSet else p_l_repr)[p := true],
+                                if p_r == null then EmptyRefSet else p_r_repr
                             )
                         );
 
-                        call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                        call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                        call x_l := Get_l(x);
+                        call x_r := Get_r(x);
+                        call x_k := Get_k(x);
+                        if (x_l != null) {
+                            call x_l_min := Get_min(x_l);
+                            call x_l_keys := Get_keys(x_l);
+                            call x_l_repr := Get_repr(x_l);
+                        }
+                        if (x_r != null) {
+                            call x_r_max := Get_max(x_r);
+                            call x_r_keys := Get_keys(x_r);
+                            call x_r_repr := Get_repr(x_r);
+                        }
+                        call Set_min(x, if x_l == null then x_k else x_l_min);
+                        call Set_max(x, if x_r == null then x_k else x_r_max);
                         call Set_keys(x, 
                             KeySetUnionF(
-                                (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                                if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                                if x_r == null then EmptyKeySet else x_r_keys
                             )
                         );
                         call Set_repr(x, 
                             RefSetUnionF(
-                                (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                                if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                                if x_r == null then EmptyRefSet else x_r_repr
                             )
                         );
-                        if (C.black[x]) {
-                            call Set_black_height(x, C.black_height[x] - 1);
+                        call x_black := Get_black(x);
+                        call x_black_height := Get_black_height(x);
+                        if (x_black) {
+                            call Set_black_height(x, x_black_height - 1);
                         }
                         call Set_black(x, false);
 
-                        call Set_min(pr, if C.l[pr] == null then C.k[pr] else C.min[C.l[pr]]);
-                        call Set_max(pr, if C.r[pr] == null then C.k[pr] else C.max[C.r[pr]]);
+                        call pr_l := Get_l(pr);
+                        call pr_r := Get_r(pr);
+                        call pr_k := Get_k(pr);
+                        if (pr_l != null) {
+                            call pr_l_min := Get_min(pr_l);
+                            call pr_l_keys := Get_keys(pr_l);
+                            call pr_l_repr := Get_repr(pr_l);
+                        }
+                        if (pr_r != null) {
+                            call pr_r_max := Get_max(pr_r);
+                            call pr_r_keys := Get_keys(pr_r);
+                            call pr_r_repr := Get_repr(pr_r);
+                        }
+                        call Set_min(pr, if pr_l == null then pr_k else pr_l_min);
+                        call Set_max(pr, if pr_r == null then pr_k else pr_r_max);
                         call Set_keys(pr, 
                             KeySetUnionF(
-                                (if C.l[pr] == null then EmptyKeySet else C.keys[C.l[pr]])[C.k[pr] := true],
-                                if C.r[pr] == null then EmptyKeySet else C.keys[C.r[pr]]
+                                (if pr_l == null then EmptyKeySet else pr_l_keys)[pr_k := true],
+                                if pr_r == null then EmptyKeySet else pr_r_keys
                             )
                         );
                         call Set_repr(pr, 
                             RefSetUnionF(
-                                (if C.l[pr] == null then EmptyRefSet else C.repr[C.l[pr]])[pr := true],
-                                if C.r[pr] == null then EmptyRefSet else C.repr[C.r[pr]]
+                                (if pr_l == null then EmptyRefSet else pr_l_repr)[pr := true],
+                                if pr_r == null then EmptyRefSet else pr_r_repr
                             )
                         ); 
                         call Set_black(pr, true);
-                        call Set_black_height(pr, C.black_height[pr] + 1);
+                        call pr_black_height := Get_black_height(pr);
+                        call Set_black_height(pr, pr_black_height + 1);
 
                         call AssertLCAndRemove(prl);
                         call AssertLCAndRemove(prr);
@@ -299,52 +440,82 @@ procedure RBTInsert(x: Ref, k: int)
                         call AssertLCAndRemove(oldl);
 
                         ret := pr;
-                    } else if (pl != null && !C.black[pl]) {
-                        // assert {:focus} true;
+                    } else if (pl != null && !pl_black) {
                         call Set_r(p, x);
                         call Set_p(x, p);
-                        oldl := C.l[x];
+                        call x_l := Get_l(x);
+                        oldl := x_l;
                         call Set_l(x, pr);
                         if (pr != null) {
                             call Set_p(pr, x);
                         }
                         call Set_p(p, null);
 
-                        call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                        call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                        call x_l := Get_l(x);
+                        call x_r := Get_r(x);
+                        call x_k := Get_k(x);
+                        if (x_l != null) {
+                            call x_l_min := Get_min(x_l);
+                            call x_l_keys := Get_keys(x_l);
+                            call x_l_repr := Get_repr(x_l);
+                        }
+                        if (x_r != null) {
+                            call x_r_max := Get_max(x_r);
+                            call x_r_keys := Get_keys(x_r);
+                            call x_r_repr := Get_repr(x_r);
+                        }
+                        call Set_min(x, if x_l == null then x_k else x_l_min);
+                        call Set_max(x, if x_r == null then x_k else x_r_max);
                         call Set_keys(x, 
                             KeySetUnionF(
-                                (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                                if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                                if x_r == null then EmptyKeySet else x_r_keys
                             )
                         );
                         call Set_repr(x, 
                             RefSetUnionF(
-                                (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                                if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                                if x_r == null then EmptyRefSet else x_r_repr
                             )
                         );
-                        if (C.black[x]) {
-                            call Set_black_height(x, C.black_height[x] - 1);
+
+                        call x_black := Get_black(x);
+                        call x_black_height := Get_black_height(x);
+                        if (x_black) {
+                            call Set_black_height(x, x_black_height - 1);
                         }
                         call Set_black(x, false);
 
-                        call Set_min(p, if C.l[p] == null then C.k[p] else C.min[C.l[p]]);
-                        call Set_max(p, if C.r[p] == null then C.k[p] else C.max[C.r[p]]);
+                        call p_l := Get_l(p);
+                        call p_r := Get_r(p);
+                        call p_k := Get_k(p);
+                        if (p_l != null) {
+                            call p_l_min := Get_min(p_l);
+                            call p_l_keys := Get_keys(p_l);
+                            call p_l_repr := Get_repr(p_l);
+                        }
+                        if (p_r != null) {
+                            call p_r_max := Get_max(p_r);
+                            call p_r_keys := Get_keys(p_r);
+                            call p_r_repr := Get_repr(p_r);
+                        }
+                        call Set_min(p, if p_l == null then p_k else p_l_min);
+                        call Set_max(p, if p_r == null then p_k else p_r_max);
                         call Set_keys(p, 
                             KeySetUnionF(
-                                (if C.l[p] == null then EmptyKeySet else C.keys[C.l[p]])[C.k[p] := true],
-                                if C.r[p] == null then EmptyKeySet else C.keys[C.r[p]]
+                                (if p_l == null then EmptyKeySet else p_l_keys)[p_k := true],
+                                if p_r == null then EmptyKeySet else p_r_keys
                             )
                         );
                         call Set_repr(p, 
                             RefSetUnionF(
-                                (if C.l[p] == null then EmptyRefSet else C.repr[C.l[p]])[p := true],
-                                if C.r[p] == null then EmptyRefSet else C.repr[C.r[p]]
+                                (if p_l == null then EmptyRefSet else p_l_repr)[p := true],
+                                if p_r == null then EmptyRefSet else p_r_repr
                             )
                         );
                         call Set_black(p, true);
-                        call Set_black_height(p, C.black_height[p] + 1);
+                        call p_black_height := Get_black_height(p);
+                        call Set_black_height(p, p_black_height + 1);
 
                         call AssertLCAndRemove(pr);
                         call AssertLCAndRemove(x);
@@ -352,23 +523,36 @@ procedure RBTInsert(x: Ref, k: int)
 
                         ret := p;
                     } else {
-                        // assert {:focus} true;
-                        oldl := C.l[x];
+                        call x_l := Get_l(x);
+                        oldl := x_l;
                         call Set_l(x, p);
                         call Set_p(p, x);
 
-                        call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                        call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                        call x_l := Get_l(x);
+                        call x_r := Get_r(x);
+                        call x_k := Get_k(x);
+                        if (x_l != null) {
+                            call x_l_min := Get_min(x_l);
+                            call x_l_keys := Get_keys(x_l);
+                            call x_l_repr := Get_repr(x_l);
+                        }
+                        if (x_r != null) {
+                            call x_r_max := Get_max(x_r);
+                            call x_r_keys := Get_keys(x_r);
+                            call x_r_repr := Get_repr(x_r);
+                        }
+                        call Set_min(x, if x_l == null then x_k else x_l_min);
+                        call Set_max(x, if x_r == null then x_k else x_r_max);
                         call Set_keys(x, 
                             KeySetUnionF(
-                                (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                                if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                                if x_r == null then EmptyKeySet else x_r_keys
                             )
                         );
                         call Set_repr(x, 
                             RefSetUnionF(
-                                (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                                if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                                if x_r == null then EmptyRefSet else x_r_repr
                             )
                         );
                         call Set_p(x, null);
@@ -380,32 +564,51 @@ procedure RBTInsert(x: Ref, k: int)
                 }
             }
         } else {
-            call IfNotBr_ThenLC(C.l[x]);
-            call IfNotBr_ThenLC(C.r[x]);
+            call x_l := Get_l(x);
+            call x_r := Get_r(x);
 
-            call p := RBTInsertContract(C.r[x], k);
+            call IfNotBr_ThenLC(x_l);
+            call IfNotBr_ThenLC(x_r);
 
-            call IfNotBr_ThenLC(C.l[x]);
-            call IfNotBr_ThenLC(C.r[x]);
+            call p := RBTInsertContract(x_r, k);
 
-            if (C.black[p]) {
-                // assert {:focus} true;
-                oldr := C.r[x];
+            call x_l := Get_l(x);
+            call x_r := Get_r(x);            
+            call IfNotBr_ThenLC(x_l);
+            call IfNotBr_ThenLC(x_r);
+
+            call p_black := Get_black(p);
+            if (p_black) {
+                call x_r := Get_r(x);
+                oldr := x_r;
                 call Set_r(x, p);
                 call Set_p(p, x);
 
-                call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                call x_l := Get_l(x);
+                call x_r := Get_r(x);
+                call x_k := Get_k(x);
+                if (x_l != null) {
+                    call x_l_min := Get_min(x_l);
+                    call x_l_keys := Get_keys(x_l);
+                    call x_l_repr := Get_repr(x_l);
+                }
+                if (x_r != null) {
+                    call x_r_max := Get_max(x_r);
+                    call x_r_keys := Get_keys(x_r);
+                    call x_r_repr := Get_repr(x_r);
+                }
+                call Set_min(x, if x_l == null then x_k else x_l_min);
+                call Set_max(x, if x_r == null then x_k else x_r_max);
                 call Set_keys(x, 
                     KeySetUnionF(
-                        (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                        if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                        (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                        if x_r == null then EmptyKeySet else x_r_keys
                     )
                 );
                 call Set_repr(x, 
                     RefSetUnionF(
-                        (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                        if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                        (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                        if x_r == null then EmptyRefSet else x_r_repr
                     )
                 );
                 call Set_p(x, null);
@@ -414,51 +617,82 @@ procedure RBTInsert(x: Ref, k: int)
                 call AssertLCAndRemove(oldr);
                 ret := x;
             } else {
-                xl := C.l[x];
+                call x_l := Get_l(x);
+                xl := x_l;
 
-                if (xl != null && !C.black[xl]) {
-                    // assert {:focus} true;
-                    oldr := C.r[x];
+                if (xl != null) {
+                    call xl_black := Get_black(xl);
+                }
+                if (xl != null && !xl_black) {
+                    call x_r := Get_r(x);
+                    oldr := x_r;
+
                     call Set_r(x, p);
                     call Set_p(p, x);
 
-                    call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                    call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                    call x_l := Get_l(x);
+                    call x_r := Get_r(x);
+                    call x_k := Get_k(x);
+                    if (x_l != null) {
+                        call x_l_min := Get_min(x_l);
+                        call x_l_keys := Get_keys(x_l);
+                        call x_l_repr := Get_repr(x_l);
+                    }
+                    if (x_r != null) {
+                        call x_r_max := Get_max(x_r);
+                        call x_r_keys := Get_keys(x_r);
+                        call x_r_repr := Get_repr(x_r);
+                    }
+                    call Set_min(x, if x_l == null then x_k else x_l_min);
+                    call Set_max(x, if x_r == null then x_k else x_r_max);
                     call Set_keys(x, 
                         KeySetUnionF(
-                            (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                            if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                            (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                            if x_r == null then EmptyKeySet else x_r_keys
                         )
                     );
                     call Set_repr(x, 
                         RefSetUnionF(
-                            (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                            if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                            (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                            if x_r == null then EmptyRefSet else x_r_repr
                         )
                     );
                     call Set_p(x, null);
 
                     call Set_black(x, false);
                     call Set_black(p, true);
-                    call Set_black_height(p, C.black_height[p] + 1);
+                    call p_black_height := Get_black_height(p);
+                    call Set_black_height(p, p_black_height + 1);
                     call Set_black(xl, true);
-                    call Set_black_height(xl, C.black_height[xl] + 1);
+                    call xl_black_height := Get_black_height(xl);
+                    call Set_black_height(xl, xl_black_height + 1);
 
                     call AssertLCAndRemove(p);
                     call AssertLCAndRemove(xl);
                     call AssertLCAndRemove(oldr);
+
                     ret := x;
                 } else {
-                    pl := C.l[p];
-                    pr := C.r[p];
+                    call p_l := Get_l(p);
+                    call p_r := Get_r(p);
+
+                    pl := p_l;
+                    pr := p_r;
 
                     call IfNotBr_ThenLC(pl);
                     call IfNotBr_ThenLC(pr);
 
-                    if (pl != null && !C.black[pl]) {
-                        // assert {:focus} true;
-                        pll := C.l[pl];
-                        plr := C.r[pl];
+                    if (pr != null) {
+                        call pr_black := Get_black(pr);
+                    }
+                    if (pl != null) {
+                        call pl_black := Get_black(pl);
+                    }
+                    if (pl != null && !pl_black) {
+                        call pl_l := Get_l(pl);
+                        call pl_r := Get_r(pl);
+                        pll := pl_l;
+                        plr := pl_r;
                         call IfNotBr_ThenLC(pll);
                         call IfNotBr_ThenLC(plr);
 
@@ -466,7 +700,8 @@ procedure RBTInsert(x: Ref, k: int)
                         if (plr != null) {
                             call Set_p(plr, p);
                         }
-                        oldr := C.r[x];
+                        call x_r := Get_r(x);
+                        oldr := x_r;
                         call Set_r(x, pll);
                         if (pll != null) {
                             call Set_p(pll, x);
@@ -477,56 +712,98 @@ procedure RBTInsert(x: Ref, k: int)
                         call Set_p(x, pl);
                         call Set_p(pl, null);
 
-                        call Set_min(p, if C.l[p] == null then C.k[p] else C.min[C.l[p]]);
-                        call Set_max(p, if C.r[p] == null then C.k[p] else C.max[C.r[p]]);
+                        call p_l := Get_l(p);
+                        call p_r := Get_r(p);
+                        call p_k := Get_k(p);
+                        if (p_l != null) {
+                            call p_l_min := Get_min(p_l);
+                            call p_l_keys := Get_keys(p_l);
+                            call p_l_repr := Get_repr(p_l);
+                        }
+                        if (p_r != null) {
+                            call p_r_max := Get_max(p_r);
+                            call p_r_keys := Get_keys(p_r);
+                            call p_r_repr := Get_repr(p_r);
+                        }
+                        call Set_min(p, if p_l == null then p_k else p_l_min);
+                        call Set_max(p, if p_r == null then p_k else p_r_max);
                         call Set_keys(p, 
                             KeySetUnionF(
-                                (if C.l[p] == null then EmptyKeySet else C.keys[C.l[p]])[C.k[p] := true],
-                                if C.r[p] == null then EmptyKeySet else C.keys[C.r[p]]
+                                (if p_l == null then EmptyKeySet else p_l_keys)[p_k := true],
+                                if p_r == null then EmptyKeySet else p_r_keys
                             )
                         );
                         call Set_repr(p, 
                             RefSetUnionF(
-                                (if C.l[p] == null then EmptyRefSet else C.repr[C.l[p]])[p := true],
-                                if C.r[p] == null then EmptyRefSet else C.repr[C.r[p]]
+                                (if p_l == null then EmptyRefSet else p_l_repr)[p := true],
+                                if p_r == null then EmptyRefSet else p_r_repr
                             )
                         );
 
-                        call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                        call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                        call x_l := Get_l(x);
+                        call x_r := Get_r(x);
+                        call x_k := Get_k(x);
+                        if (x_l != null) {
+                            call x_l_min := Get_min(x_l);
+                            call x_l_keys := Get_keys(x_l);
+                            call x_l_repr := Get_repr(x_l);
+                        }
+                        if (x_r != null) {
+                            call x_r_max := Get_max(x_r);
+                            call x_r_keys := Get_keys(x_r);
+                            call x_r_repr := Get_repr(x_r);
+                        }
+                        call Set_min(x, if x_l == null then x_k else x_l_min);
+                        call Set_max(x, if x_r == null then x_k else x_r_max);
                         call Set_keys(x, 
                             KeySetUnionF(
-                                (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                                if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                                if x_r == null then EmptyKeySet else x_r_keys
                             )
                         );
                         call Set_repr(x, 
                             RefSetUnionF(
-                                (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                                if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                                if x_r == null then EmptyRefSet else x_r_repr
                             )
                         );
-                        if (C.black[x]) {
-                            call Set_black_height(x, C.black_height[x] - 1);
+                        call x_black := Get_black(x);
+                        call x_black_height := Get_black_height(x);
+                        if (x_black) {
+                            call Set_black_height(x, x_black_height - 1);
                         }
                         call Set_black(x, false);
 
-                        call Set_min(pl, if C.l[pl] == null then C.k[pl] else C.min[C.l[pl]]);
-                        call Set_max(pl, if C.r[pl] == null then C.k[pl] else C.max[C.r[pl]]);
+                        call pl_l := Get_l(pl);
+                        call pl_r := Get_r(pl);
+                        call pl_k := Get_k(pl);
+                        if (pl_l != null) {
+                            call pl_l_min := Get_min(pl_l);
+                            call pl_l_keys := Get_keys(pl_l);
+                            call pl_l_repr := Get_repr(pl_l);
+                        }
+                        if (pl_r != null) {
+                            call pl_r_max := Get_max(pl_r);
+                            call pl_r_keys := Get_keys(pl_r);
+                            call pl_r_repr := Get_repr(pl_r);
+                        }
+                        call Set_min(pl, if pl_l == null then pl_k else pl_l_min);
+                        call Set_max(pl, if pl_r == null then pl_k else pl_r_max);
                         call Set_keys(pl, 
                             KeySetUnionF(
-                                (if C.l[pl] == null then EmptyKeySet else C.keys[C.l[pl]])[C.k[pl] := true],
-                                if C.r[pl] == null then EmptyKeySet else C.keys[C.r[pl]]
+                                (if pl_l == null then EmptyKeySet else pl_l_keys)[pl_k := true],
+                                if pl_r == null then EmptyKeySet else pl_r_keys
                             )
                         );
                         call Set_repr(pl, 
                             RefSetUnionF(
-                                (if C.l[pl] == null then EmptyRefSet else C.repr[C.l[pl]])[pl := true],
-                                if C.r[pl] == null then EmptyRefSet else C.repr[C.r[pl]]
+                                (if pl_l == null then EmptyRefSet else pl_l_repr)[pl := true],
+                                if pl_r == null then EmptyRefSet else pl_r_repr
                             )
                         ); 
                         call Set_black(pl, true);
-                        call Set_black_height(pl, C.black_height[pl] + 1);
+                        call pl_black_height := Get_black_height(pl);
+                        call Set_black_height(pl, pl_black_height + 1);
 
                         call AssertLCAndRemove(pll);
                         call AssertLCAndRemove(plr);
@@ -535,76 +812,119 @@ procedure RBTInsert(x: Ref, k: int)
                         call AssertLCAndRemove(oldr);
 
                         ret := pl;
-                    } else if (pr != null && !C.black[pr]) {
-                        // assert {:focus} true;
+                    } else if (pr != null && !pr_black) {
                         call Set_l(p, x);
                         call Set_p(x, p);
-                        oldr := C.r[x];
+                        call x_r := Get_r(x);
+                        oldr := x_r;
                         call Set_r(x, pl);
                         if (pl != null) {
                             call Set_p(pl, x);
                         }
                         call Set_p(p, null);
 
-                        call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                        call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+                        call x_l := Get_l(x);
+                        call x_r := Get_r(x);
+                        call x_k := Get_k(x);
+                        if (x_l != null) {
+                            call x_l_min := Get_min(x_l);
+                            call x_l_keys := Get_keys(x_l);
+                            call x_l_repr := Get_repr(x_l);
+                        }
+                        if (x_r != null) {
+                            call x_r_max := Get_max(x_r);
+                            call x_r_keys := Get_keys(x_r);
+                            call x_r_repr := Get_repr(x_r);
+                        }
+                        call Set_min(x, if x_l == null then x_k else x_l_min);
+                        call Set_max(x, if x_r == null then x_k else x_r_max);
                         call Set_keys(x, 
                             KeySetUnionF(
-                                (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                                if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                                if x_r == null then EmptyKeySet else x_r_keys
                             )
                         );
                         call Set_repr(x, 
                             RefSetUnionF(
-                                (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                                if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                                if x_r == null then EmptyRefSet else x_r_repr
                             )
                         );
-                        if (C.black[x]) {
-                            call Set_black_height(x, C.black_height[x] - 1);
+
+                        call x_black := Get_black(x);
+                        call x_black_height := Get_black_height(x);
+                        if (x_black) {
+                            call Set_black_height(x, x_black_height - 1);
                         }
                         call Set_black(x, false);
 
-                        call Set_min(p, if C.l[p] == null then C.k[p] else C.min[C.l[p]]);
-                        call Set_max(p, if C.r[p] == null then C.k[p] else C.max[C.r[p]]);
+                        call p_l := Get_l(p);
+                        call p_r := Get_r(p);
+                        call p_k := Get_k(p);
+                        if (p_l != null) {
+                            call p_l_min := Get_min(p_l);
+                            call p_l_keys := Get_keys(p_l);
+                            call p_l_repr := Get_repr(p_l);
+                        }
+                        if (p_r != null) {
+                            call p_r_max := Get_max(p_r);
+                            call p_r_keys := Get_keys(p_r);
+                            call p_r_repr := Get_repr(p_r);
+                        }
+                        call Set_min(p, if p_l == null then p_k else p_l_min);
+                        call Set_max(p, if p_r == null then p_k else p_r_max);
                         call Set_keys(p, 
                             KeySetUnionF(
-                                (if C.l[p] == null then EmptyKeySet else C.keys[C.l[p]])[C.k[p] := true],
-                                if C.r[p] == null then EmptyKeySet else C.keys[C.r[p]]
+                                (if p_l == null then EmptyKeySet else p_l_keys)[p_k := true],
+                                if p_r == null then EmptyKeySet else p_r_keys
                             )
                         );
                         call Set_repr(p, 
                             RefSetUnionF(
-                                (if C.l[p] == null then EmptyRefSet else C.repr[C.l[p]])[p := true],
-                                if C.r[p] == null then EmptyRefSet else C.repr[C.r[p]]
+                                (if p_l == null then EmptyRefSet else p_l_repr)[p := true],
+                                if p_r == null then EmptyRefSet else p_r_repr
                             )
                         );
                         call Set_black(p, true);
-                        call Set_black_height(p, C.black_height[p] + 1);
+                        call p_black_height := Get_black_height(p);
+                        call Set_black_height(p, p_black_height + 1);
 
                         call AssertLCAndRemove(pl);
                         call AssertLCAndRemove(x);
                         call AssertLCAndRemove(oldr);
-                        
+
                         ret := p;
                     } else {
-                        // assert {:focus} true;
-                        oldr := C.r[x];
+                        call x_r := Get_r(x);
+                        oldr := x_r;
                         call Set_r(x, p);
                         call Set_p(p, x);
-                        
-                        call Set_min(x, if C.l[x] == null then C.k[x] else C.min[C.l[x]]);
-                        call Set_max(x, if C.r[x] == null then C.k[x] else C.max[C.r[x]]);
+
+                        call x_l := Get_l(x);
+                        call x_r := Get_r(x);
+                        call x_k := Get_k(x);
+                        if (x_l != null) {
+                            call x_l_min := Get_min(x_l);
+                            call x_l_keys := Get_keys(x_l);
+                            call x_l_repr := Get_repr(x_l);
+                        }
+                        if (x_r != null) {
+                            call x_r_max := Get_max(x_r);
+                            call x_r_keys := Get_keys(x_r);
+                            call x_r_repr := Get_repr(x_r);
+                        }
+                        call Set_min(x, if x_l == null then x_k else x_l_min);
+                        call Set_max(x, if x_r == null then x_k else x_r_max);
                         call Set_keys(x, 
                             KeySetUnionF(
-                                (if C.l[x] == null then EmptyKeySet else C.keys[C.l[x]])[C.k[x] := true],
-                                if C.r[x] == null then EmptyKeySet else C.keys[C.r[x]]
+                                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                                if x_r == null then EmptyKeySet else x_r_keys
                             )
                         );
                         call Set_repr(x, 
                             RefSetUnionF(
-                                (if C.l[x] == null then EmptyRefSet else C.repr[C.l[x]])[x := true],
-                                if C.r[x] == null then EmptyRefSet else C.repr[C.r[x]]
+                                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                                if x_r == null then EmptyRefSet else x_r_repr
                             )
                         );
                         call Set_p(x, null);

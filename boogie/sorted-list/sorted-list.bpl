@@ -59,8 +59,7 @@ function {:inline} LC(
     repr: [Ref]RefSet,
     sorted: [Ref]bool,
     rev_sorted: [Ref]bool,
-    x: Ref,
-    alloc: RefSet
+    x: Ref
 ) returns (bool)
 {
     x != null ==> (
@@ -82,8 +81,39 @@ function {:inline} LC(
                 && rev_sorted[x] == rev_sorted[next[x]])
         && !(sorted[x] && rev_sorted[x])
     )
-    && InAlloc(k, next, prev, keys, repr, sorted, rev_sorted, x, alloc)
 }
+
+// Accessor Macros.
+procedure Get_k(x: Ref) returns (k: int);
+    requires x != null;
+    ensures k == C.k[x];
+
+procedure Get_next(x: Ref) returns (next: Ref);
+    requires x != null;
+    ensures next == C.next[x];
+    ensures InAlloc(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, next, alloc);
+    
+procedure Get_prev(x: Ref) returns (prev: Ref);
+    requires x != null;
+    ensures prev == C.prev[x];
+    ensures InAlloc(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, prev, alloc);
+
+procedure Get_keys(x: Ref) returns (keys: KeySet);
+    requires x != null;
+    ensures keys == C.keys[x];
+
+procedure Get_repr(x: Ref) returns (repr: RefSet);
+    requires x != null;
+    ensures repr == C.repr[x];
+    ensures RefSetSubset(repr, alloc);
+
+procedure Get_sorted(x: Ref) returns (sorted: bool);
+    requires x != null;
+    ensures sorted == C.sorted[x];
+
+procedure Get_rev_sorted(x: Ref) returns (rev_sorted: bool);
+    requires x != null;
+    ensures rev_sorted == C.rev_sorted[x];
 
 // Manipulation Macros
 procedure Create(k: int) returns (node: Ref);
@@ -147,13 +177,13 @@ procedure Set_rev_sorted(x: Ref, rev_sorted: bool);
 
 // Broken Set Manipulation
 procedure IfNotBr_ThenLC(x: Ref);
-    ensures x != null && !Br[x] ==> LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x, alloc);
+    ensures x != null && !Br[x] ==> LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x);
 
 procedure AssertLCAndRemove(x: Ref);
     modifies Br;
-    ensures (x != null && LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x, alloc)) 
+    ensures (x != null && LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x)) 
                 ==> Br == old(Br)[x := false];
-    ensures (x == null || !LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x, alloc))
+    ensures (x == null || !LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x))
                 ==> Br == old(Br);
 
 // Framing
@@ -213,6 +243,9 @@ function {:inline} InAlloc(
     && RefSetSubset(repr[x], alloc)
   )
 }
+
+procedure InAllocParam(x: Ref);
+    ensures x != null ==> InAlloc(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x, alloc);
 
 function {:inline} Fresh(expr: RefSet, newalloc: RefSet, oldalloc: RefSet) returns (bool)
 {

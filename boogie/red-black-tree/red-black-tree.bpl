@@ -65,8 +65,7 @@ function {:inline} LC(
     repr: [Ref]RefSet,
     black: [Ref]bool,
     black_height: [Ref]int,
-    x: Ref,
-    alloc: RefSet
+    x: Ref
 ) returns (bool)
 {
     (x != null ==> (
@@ -132,8 +131,6 @@ function {:inline} LC(
                 && (black[x] || (black[l[x]] && black[r[x]])))
         && black_height[x] >= 0
     ))
-    && InAlloc(k, l, r, p, min, max,
-               keys, repr, black, black_height, x, alloc)
 }
 
 function {:inline} LC_Trans_RedRed(
@@ -147,8 +144,7 @@ function {:inline} LC_Trans_RedRed(
     repr: [Ref]RefSet,
     black: [Ref]bool,
     black_height: [Ref]int,
-    x: Ref,
-    alloc: RefSet
+    x: Ref
 ) returns (bool)
 {
     (x != null ==> (
@@ -211,8 +207,6 @@ function {:inline} LC_Trans_RedRed(
                 && black_height[l[x]] == black_height[r[x]])
         && black_height[x] >= 0
     ))
-    && InAlloc(k, l, r, p, min, max,
-               keys, repr, black, black_height, x, alloc)
 }
 
 function {:inline} LC_Trans_DoubleBlack(
@@ -226,8 +220,7 @@ function {:inline} LC_Trans_DoubleBlack(
     repr: [Ref]RefSet,
     black: [Ref]bool,
     black_height: [Ref]int,
-    x: Ref,
-    alloc: RefSet
+    x: Ref
 ) returns (bool)
 {
     (x != null ==> (
@@ -295,9 +288,61 @@ function {:inline} LC_Trans_DoubleBlack(
                 && (black[x] || (black[l[x]] && black[r[x]])))
         && black_height[x] >= 0
     ))
-    && InAlloc(k, l, r, p, min, max,
-               keys, repr, black, black_height, x, alloc)
 }
+
+// Accessor Macros.
+procedure Get_k(x: Ref) returns (k: int);
+    requires x != null;
+    ensures k == C.k[x];
+
+procedure Get_l(x: Ref) returns (l: Ref);
+    requires x != null;
+    ensures l == C.l[x];
+    ensures InAlloc(C.k, C.l, C.r, C.p, 
+                C.min, C.max, C.keys,
+                C.repr, C.black, C.black_height, 
+                l, alloc);
+
+procedure Get_r(x: Ref) returns (r: Ref);
+    requires x != null;
+    ensures r == C.r[x];
+    ensures InAlloc(C.k, C.l, C.r, C.p, 
+                C.min, C.max, C.keys,
+                C.repr, C.black, C.black_height, 
+                r, alloc);
+
+procedure Get_p(x: Ref) returns (p: Ref);
+    requires x != null;
+    ensures p == C.p[x];
+    ensures InAlloc(C.k, C.l, C.r, C.p, 
+                C.min, C.max, C.keys,
+                C.repr, C.black, C.black_height, 
+                p, alloc);
+
+procedure Get_min(x: Ref) returns (min: int);
+    requires x != null;
+    ensures min == C.min[x];
+
+procedure Get_max(x: Ref) returns (max: int);
+    requires x != null;
+    ensures max == C.max[x];
+
+procedure Get_keys(x: Ref) returns (keys: KeySet);
+    requires x != null;
+    ensures keys == C.keys[x];
+
+procedure Get_repr(x: Ref) returns (repr: RefSet);
+    requires x != null;
+    ensures repr == C.repr[x];
+    ensures RefSetSubset(repr, alloc);
+
+procedure Get_black(x: Ref) returns (black: bool);
+    requires x != null;
+    ensures black == C.black[x];
+
+procedure Get_black_height(x: Ref) returns (black_height: int);
+    requires x != null;
+    ensures black_height == C.black_height[x];
 
 // Manipulation macros
 procedure Create(k: int) returns (node: Ref);
@@ -386,19 +431,19 @@ procedure IfNotBr_ThenLC(x: Ref);
     ensures x != null && !Br[x] ==> LC(C.k, C.l, C.r, C.p, 
                                         C.min, C.max, C.keys,
                                         C.repr, C.black, C.black_height, 
-                                        x, alloc);
+                                        x);
 
 procedure AssertLCAndRemove(x: Ref);
     modifies Br;
     ensures (x != null && LC(C.k, C.l, C.r, C.p, 
                             C.min, C.max, C.keys,
                             C.repr, C.black, C.black_height, 
-                            x, alloc)) 
+                            x)) 
                 ==> Br == old(Br)[x := false];
     ensures (x == null || !LC(C.k, C.l, C.r, C.p, 
                             C.min, C.max, C.keys,
                             C.repr, C.black, C.black_height, 
-                            x, alloc))
+                            x))
                 ==> Br == old(Br);
 
 // Framing
@@ -474,6 +519,12 @@ function {:inline} InAlloc(
         && RefSetSubset(repr[x], alloc)
     )
 }
+
+procedure InAllocParam(x: Ref);
+    ensures x != null ==> InAlloc(C.k, C.l, C.r, C.p, 
+                                C.min, C.max, C.keys,
+                                C.repr, C.black, C.black_height, 
+                                x, alloc);
 
 function {:inline} Fresh(expr: RefSet, newalloc: RefSet, oldalloc: RefSet) returns (bool)
 {
