@@ -202,6 +202,7 @@ function {:inline} LC_BST(
                 && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
                 && p[bst_root[x]] == null)
         && bst_depth[x] >= 0
+        && (p[x] != null ==> bst_depth[p[x]] >= 0)
         && bst_root[x] != null
     )
 }
@@ -383,6 +384,7 @@ function {:inline} LC_BST_Trans_NoDepth(
                 && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
                 && p[bst_root[x]] == null)
         && bst_depth[x] >= 0
+        && (p[x] != null ==> bst_depth[p[x]] >= 0)
         && bst_root[x] != null
     )
 }
@@ -529,6 +531,7 @@ function {:inline} LC_BST_Trans_PlusNode(
                 && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
                 && p[bst_root[x]] == null)
             && bst_depth[x] >= 0
+            && (p[x] != null ==> bst_depth[p[x]] >= 0)
             && bst_root[x] != null
         )
 }
