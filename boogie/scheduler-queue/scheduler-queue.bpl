@@ -148,61 +148,61 @@ function {:inline} LC_BST(
             && (r[x] != null ==>
                     p[r[x]] == x
                     && RefSetsEqual(bst_repr[x], (bst_repr[r[x]])[x := true])
-                    && !bst_repr[r[x]]
-                    && KeySetsEqual(bst_keys[x], bst_keys[r[x]]))
-        (x != bst_root[x] ==>
-            (bst_repr[x])[x]
-            && min[x] <= k[x]
-            && k[x] <= max[x]
-            && p[x] != null
-            && !(bst_repr[x])[p[x]]
-            && (l[p[x]] == x || r[p[x]] == x)
-            && !(bst_repr[x])[bst_root[x]]
-            && bst_depth[x] == bst_depth[p[x]] + 1
-            && (l[x] != null ==> 
-                    (bst_repr[x])[l[x]]
-                    && !(bst_repr[l[x]])[x]
-                    && p[l[x]] == x
-                    && max[l[x]] < k[x])
-            && (r[x] != null ==> 
-                    (bst_repr[x])[r[x]]
                     && !(bst_repr[r[x]])[x]
-                    && p[r[x]] == x
-                    && min[r[x]] > k[x])
-            && (l[x] == null && r[x] == null ==>
-                    RefSetsEqual(bst_repr[x], EmptyRefSet[x := true])
-                    && KeySetsEqual(bst_keys[x], EmptyKeySet[k[x] := true])
-                    && min[x] == k[x] 
-                    && k[x] == max[x]
-                    )
-            && (l[x] != null && r[x] == null ==>
-                    RefSetsEqual(bst_repr[x], (bst_repr[l[x]])[x := true])
-                    && KeySetsEqual(bst_keys[x], (bst_keys[l[x]])[k[x] := true])
-                    && !(bst_keys[l[x]])[k[x]]
-                    && min[x] == min[l[x]] && max[x] == k[x]
-                    )
-            && (l[x] == null && r[x] != null ==>
-                    RefSetsEqual(bst_repr[x], (bst_repr[r[x]])[x := true])
-                    && KeySetsEqual(bst_keys[x], (bst_keys[r[x]])[k[x] := true])
-                    && !(bst_keys[r[x]])[k[x]]
-                    && min[x] == k[x] && max[x] == max[r[x]]
-                    )
-            && (l[x] != null && r[x] != null ==>
-                    RefSetsEqual(bst_repr[x], RefSetUnionF((bst_repr[l[x]])[x := true], bst_repr[r[x]]))
-                    && RefSetsDisjoint(bst_repr[l[x]], bst_repr[r[x]])
-                    && KeySetsEqual(bst_keys[x], KeySetUnionF((bst_keys[l[x]])[k[x] := true], bst_keys[r[x]]))
-                    && KeySetsDisjoint(bst_keys[l[x]], bst_keys[r[x]])
-                    && !(bst_keys[l[x]])[k[x]] && !(bst_keys[r[x]])[k[x]]
-                    && min[x] == min[l[x]] && max[x] == max[r[x]]
-                    )
-            && bst_root[x] == bst_root[p[x]]
-            && (bst_repr[bst_root[x]])[x]
-            && (bst_repr[bst_root[x]])[p[x]]
-            && (l[x] != null ==> (bst_repr[bst_root[x]])[l[x]])
-            && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
-            && p[bst_root[x]] == null)
-        )
+                    && KeySetsEqual(bst_keys[x], bst_keys[r[x]])))
+        && (x != bst_root[x] ==>
+                (bst_repr[x])[x]
+                && min[x] <= k[x]
+                && k[x] <= max[x]
+                && p[x] != null
+                && !(bst_repr[x])[p[x]]
+                && (l[p[x]] == x || r[p[x]] == x)
+                && !(bst_repr[x])[bst_root[x]]
+                && bst_depth[x] == bst_depth[p[x]] + 1
+                && (l[x] != null ==> 
+                        (bst_repr[x])[l[x]]
+                        && !(bst_repr[l[x]])[x]
+                        && p[l[x]] == x
+                        && max[l[x]] < k[x])
+                && (r[x] != null ==> 
+                        (bst_repr[x])[r[x]]
+                        && !(bst_repr[r[x]])[x]
+                        && p[r[x]] == x
+                        && min[r[x]] > k[x])
+                && (l[x] == null && r[x] == null ==>
+                        RefSetsEqual(bst_repr[x], EmptyRefSet[x := true])
+                        && KeySetsEqual(bst_keys[x], EmptyKeySet[k[x] := true])
+                        && min[x] == k[x] 
+                        && k[x] == max[x]
+                        )
+                && (l[x] != null && r[x] == null ==>
+                        RefSetsEqual(bst_repr[x], (bst_repr[l[x]])[x := true])
+                        && KeySetsEqual(bst_keys[x], (bst_keys[l[x]])[k[x] := true])
+                        && !(bst_keys[l[x]])[k[x]]
+                        && min[x] == min[l[x]] && max[x] == k[x]
+                        )
+                && (l[x] == null && r[x] != null ==>
+                        RefSetsEqual(bst_repr[x], (bst_repr[r[x]])[x := true])
+                        && KeySetsEqual(bst_keys[x], (bst_keys[r[x]])[k[x] := true])
+                        && !(bst_keys[r[x]])[k[x]]
+                        && min[x] == k[x] && max[x] == max[r[x]]
+                        )
+                && (l[x] != null && r[x] != null ==>
+                        RefSetsEqual(bst_repr[x], RefSetUnionF((bst_repr[l[x]])[x := true], bst_repr[r[x]]))
+                        && RefSetsDisjoint(bst_repr[l[x]], bst_repr[r[x]])
+                        && KeySetsEqual(bst_keys[x], KeySetUnionF((bst_keys[l[x]])[k[x] := true], bst_keys[r[x]]))
+                        && KeySetsDisjoint(bst_keys[l[x]], bst_keys[r[x]])
+                        && !(bst_keys[l[x]])[k[x]] && !(bst_keys[r[x]])[k[x]]
+                        && min[x] == min[l[x]] && max[x] == max[r[x]]
+                        )
+                && bst_root[x] == bst_root[p[x]]
+                && (bst_repr[bst_root[x]])[x]
+                && (bst_repr[bst_root[x]])[p[x]]
+                && (l[x] != null ==> (bst_repr[bst_root[x]])[l[x]])
+                && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
+                && p[bst_root[x]] == null)
         && bst_depth[x] >= 0
+        && bst_root[x] != null
     )
 }
 
@@ -240,6 +240,7 @@ function {:inline} LC_List(
                 && !(list_keys[next[x]])[k[x]]
                 && prev[next[x]] == x
                 && bst_root[x] == bst_root[next[x]])
+        && bst_root[x] != null
     )
 }
 
@@ -328,61 +329,61 @@ function {:inline} LC_BST_Trans_NoDepth(
             && (r[x] != null ==>
                     p[r[x]] == x
                     && RefSetsEqual(bst_repr[x], (bst_repr[r[x]])[x := true])
-                    && !bst_repr[r[x]]
-                    && KeySetsEqual(bst_keys[x], bst_keys[r[x]]))
-        (x != bst_root[x] ==>
-            (bst_repr[x])[x]
-            && min[x] <= k[x]
-            && k[x] <= max[x]
-            && p[x] != null
-            && !(bst_repr[x])[p[x]]
-            && (l[p[x]] == x || r[p[x]] == x)
-            && !(bst_repr[x])[bst_root[x]]
-            //&& bst_depth[x] == bst_depth[p[x]] + 1
-            && (l[x] != null ==> 
-                    (bst_repr[x])[l[x]]
-                    && !(bst_repr[l[x]])[x]
-                    && p[l[x]] == x
-                    && max[l[x]] < k[x])
-            && (r[x] != null ==> 
-                    (bst_repr[x])[r[x]]
                     && !(bst_repr[r[x]])[x]
-                    && p[r[x]] == x
-                    && min[r[x]] > k[x])
-            && (l[x] == null && r[x] == null ==>
-                    RefSetsEqual(bst_repr[x], EmptyRefSet[x := true])
-                    && KeySetsEqual(bst_keys[x], EmptyKeySet[k[x] := true])
-                    && min[x] == k[x] 
-                    && k[x] == max[x]
-                    )
-            && (l[x] != null && r[x] == null ==>
-                    RefSetsEqual(bst_repr[x], (bst_repr[l[x]])[x := true])
-                    && KeySetsEqual(bst_keys[x], (bst_keys[l[x]])[k[x] := true])
-                    && !(bst_keys[l[x]])[k[x]]
-                    && min[x] == min[l[x]] && max[x] == k[x]
-                    )
-            && (l[x] == null && r[x] != null ==>
-                    RefSetsEqual(bst_repr[x], (bst_repr[r[x]])[x := true])
-                    && KeySetsEqual(bst_keys[x], (bst_keys[r[x]])[k[x] := true])
-                    && !(bst_keys[r[x]])[k[x]]
-                    && min[x] == k[x] && max[x] == max[r[x]]
-                    )
-            && (l[x] != null && r[x] != null ==>
-                    RefSetsEqual(bst_repr[x], RefSetUnionF((bst_repr[l[x]])[x := true], bst_repr[r[x]]))
-                    && RefSetsDisjoint(bst_repr[l[x]], bst_repr[r[x]])
-                    && KeySetsEqual(bst_keys[x], KeySetUnionF((bst_keys[l[x]])[k[x] := true], bst_keys[r[x]]))
-                    && KeySetsDisjoint(bst_keys[l[x]], bst_keys[r[x]])
-                    && !(bst_keys[l[x]])[k[x]] && !(bst_keys[r[x]])[k[x]]
-                    && min[x] == min[l[x]] && max[x] == max[r[x]]
-                    )
-            && bst_root[x] == bst_root[p[x]]
-            && (bst_repr[bst_root[x]])[x]
-            && (bst_repr[bst_root[x]])[p[x]]
-            && (l[x] != null ==> (bst_repr[bst_root[x]])[l[x]])
-            && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
-            && p[bst_root[x]] == null)
-        )
+                    && KeySetsEqual(bst_keys[x], bst_keys[r[x]])))
+        && (x != bst_root[x] ==>
+                (bst_repr[x])[x]
+                && min[x] <= k[x]
+                && k[x] <= max[x]
+                && p[x] != null
+                && !(bst_repr[x])[p[x]]
+                && (l[p[x]] == x || r[p[x]] == x)
+                && !(bst_repr[x])[bst_root[x]]
+                //&& bst_depth[x] == bst_depth[p[x]] + 1
+                && (l[x] != null ==> 
+                        (bst_repr[x])[l[x]]
+                        && !(bst_repr[l[x]])[x]
+                        && p[l[x]] == x
+                        && max[l[x]] < k[x])
+                && (r[x] != null ==> 
+                        (bst_repr[x])[r[x]]
+                        && !(bst_repr[r[x]])[x]
+                        && p[r[x]] == x
+                        && min[r[x]] > k[x])
+                && (l[x] == null && r[x] == null ==>
+                        RefSetsEqual(bst_repr[x], EmptyRefSet[x := true])
+                        && KeySetsEqual(bst_keys[x], EmptyKeySet[k[x] := true])
+                        && min[x] == k[x] 
+                        && k[x] == max[x]
+                        )
+                && (l[x] != null && r[x] == null ==>
+                        RefSetsEqual(bst_repr[x], (bst_repr[l[x]])[x := true])
+                        && KeySetsEqual(bst_keys[x], (bst_keys[l[x]])[k[x] := true])
+                        && !(bst_keys[l[x]])[k[x]]
+                        && min[x] == min[l[x]] && max[x] == k[x]
+                        )
+                && (l[x] == null && r[x] != null ==>
+                        RefSetsEqual(bst_repr[x], (bst_repr[r[x]])[x := true])
+                        && KeySetsEqual(bst_keys[x], (bst_keys[r[x]])[k[x] := true])
+                        && !(bst_keys[r[x]])[k[x]]
+                        && min[x] == k[x] && max[x] == max[r[x]]
+                        )
+                && (l[x] != null && r[x] != null ==>
+                        RefSetsEqual(bst_repr[x], RefSetUnionF((bst_repr[l[x]])[x := true], bst_repr[r[x]]))
+                        && RefSetsDisjoint(bst_repr[l[x]], bst_repr[r[x]])
+                        && KeySetsEqual(bst_keys[x], KeySetUnionF((bst_keys[l[x]])[k[x] := true], bst_keys[r[x]]))
+                        && KeySetsDisjoint(bst_keys[l[x]], bst_keys[r[x]])
+                        && !(bst_keys[l[x]])[k[x]] && !(bst_keys[r[x]])[k[x]]
+                        && min[x] == min[l[x]] && max[x] == max[r[x]]
+                        )
+                && bst_root[x] == bst_root[p[x]]
+                && (bst_repr[bst_root[x]])[x]
+                && (bst_repr[bst_root[x]])[p[x]]
+                && (l[x] != null ==> (bst_repr[bst_root[x]])[l[x]])
+                && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
+                && p[bst_root[x]] == null)
         && bst_depth[x] >= 0
+        && bst_root[x] != null
     )
 }
 
@@ -474,62 +475,62 @@ function {:inline} LC_BST_Trans_PlusNode(
             && (r[x] != null ==>
                     p[r[x]] == x
                     && RefSetsEqual(bst_repr[x], ((bst_repr[r[x]])[x := true])[node := true])
-                    && !bst_repr[r[x]]
-                    && KeySetsEqual(bst_keys[x], (bst_keys[r[x]])[k[node] := true]))
-        (x != bst_root[x] ==>
-            (bst_repr[x])[x]
-            && min[x] <= k[x]
-            && k[x] <= max[x]
-            && p[x] != null
-            && !(bst_repr[x])[p[x]]
-            && (l[p[x]] == x || r[p[x]] == x)
-            && !(bst_repr[x])[bst_root[x]]
-            && bst_depth[x] == bst_depth[p[x]] + 1
-            && (l[x] != null ==> 
-                    (bst_repr[x])[l[x]]
-                    && !(bst_repr[l[x]])[x]
-                    && p[l[x]] == x
-                    && max[l[x]] < k[x])
-            && (r[x] != null ==> 
-                    (bst_repr[x])[r[x]]
                     && !(bst_repr[r[x]])[x]
-                    && p[r[x]] == x
-                    && min[r[x]] > k[x])
-            && (l[x] == null && r[x] == null ==>
-                    RefSetsEqual(bst_repr[x], (EmptyRefSet[x := true])[node := true])
-                    && KeySetsEqual(bst_keys[x], (EmptyKeySet[k[x] := true])[k[node] := true])
-                    //&& min[x] == k[x] 
-                    //&& k[x] == max[x]
-                    )
-            && (l[x] != null && r[x] == null ==>
-                    RefSetsEqual(bst_repr[x], ((bst_repr[l[x]])[x := true])[node := true])
-                    && KeySetsEqual(bst_keys[x], ((bst_keys[l[x]])[k[x] := true])[k[node] := true])
-                    && !(bst_keys[l[x]])[k[x]]
-                    //&& min[x] == min[l[x]] && max[x] == k[x]
-                    )
-            && (l[x] == null && r[x] != null ==>
-                    RefSetsEqual(bst_repr[x], ((bst_repr[r[x]])[x := true])[node := true])
-                    && KeySetsEqual(bst_keys[x], ((bst_keys[r[x]])[k[x] := true])[k[node] := true])
-                    && !(bst_keys[r[x]])[k[x]]
-                    //&& min[x] == k[x] && max[x] == max[r[x]]
-                    )
-            && (l[x] != null && r[x] != null ==>
-                    RefSetsEqual(bst_repr[x], (RefSetUnionF((bst_repr[l[x]])[x := true], bst_repr[r[x]]))[node := true])
-                    && RefSetsDisjoint(bst_repr[l[x]], bst_repr[r[x]])
-                    && KeySetsEqual(bst_keys[x], (KeySetUnionF((bst_keys[l[x]])[k[x] := true], bst_keys[r[x]]))[k[node] := true])
-                    && KeySetsDisjoint(bst_keys[l[x]], bst_keys[r[x]])
-                    && !(bst_keys[l[x]])[k[x]] && !(bst_keys[r[x]])[k[x]]
-                    //&& min[x] == min[l[x]] && max[x] == max[r[x]]
-                    )
-            && bst_root[x] == bst_root[p[x]]
-            && (bst_repr[bst_root[x]])[x]
-            && (bst_repr[bst_root[x]])[p[x]]
-            && (l[x] != null ==> (bst_repr[bst_root[x]])[l[x]])
-            && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
-            && p[bst_root[x]] == null)
+                    && KeySetsEqual(bst_keys[x], (bst_keys[r[x]])[k[node] := true])))
+        && (x != bst_root[x] ==>
+                (bst_repr[x])[x]
+                && min[x] <= k[x]
+                && k[x] <= max[x]
+                && p[x] != null
+                && !(bst_repr[x])[p[x]]
+                && (l[p[x]] == x || r[p[x]] == x)
+                && !(bst_repr[x])[bst_root[x]]
+                && bst_depth[x] == bst_depth[p[x]] + 1
+                && (l[x] != null ==> 
+                        (bst_repr[x])[l[x]]
+                        && !(bst_repr[l[x]])[x]
+                        && p[l[x]] == x
+                        && max[l[x]] < k[x])
+                && (r[x] != null ==> 
+                        (bst_repr[x])[r[x]]
+                        && !(bst_repr[r[x]])[x]
+                        && p[r[x]] == x
+                        && min[r[x]] > k[x])
+                && (l[x] == null && r[x] == null ==>
+                        RefSetsEqual(bst_repr[x], (EmptyRefSet[x := true])[node := true])
+                        && KeySetsEqual(bst_keys[x], (EmptyKeySet[k[x] := true])[k[node] := true])
+                        //&& min[x] == k[x] 
+                        //&& k[x] == max[x]
+                        )
+                && (l[x] != null && r[x] == null ==>
+                        RefSetsEqual(bst_repr[x], ((bst_repr[l[x]])[x := true])[node := true])
+                        && KeySetsEqual(bst_keys[x], ((bst_keys[l[x]])[k[x] := true])[k[node] := true])
+                        && !(bst_keys[l[x]])[k[x]]
+                        //&& min[x] == min[l[x]] && max[x] == k[x]
+                        )
+                && (l[x] == null && r[x] != null ==>
+                        RefSetsEqual(bst_repr[x], ((bst_repr[r[x]])[x := true])[node := true])
+                        && KeySetsEqual(bst_keys[x], ((bst_keys[r[x]])[k[x] := true])[k[node] := true])
+                        && !(bst_keys[r[x]])[k[x]]
+                        //&& min[x] == k[x] && max[x] == max[r[x]]
+                        )
+                && (l[x] != null && r[x] != null ==>
+                        RefSetsEqual(bst_repr[x], (RefSetUnionF((bst_repr[l[x]])[x := true], bst_repr[r[x]]))[node := true])
+                        && RefSetsDisjoint(bst_repr[l[x]], bst_repr[r[x]])
+                        && KeySetsEqual(bst_keys[x], (KeySetUnionF((bst_keys[l[x]])[k[x] := true], bst_keys[r[x]]))[k[node] := true])
+                        && KeySetsDisjoint(bst_keys[l[x]], bst_keys[r[x]])
+                        && !(bst_keys[l[x]])[k[x]] && !(bst_keys[r[x]])[k[x]]
+                        //&& min[x] == min[l[x]] && max[x] == max[r[x]]
+                        )
+                && bst_root[x] == bst_root[p[x]]
+                && (bst_repr[bst_root[x]])[x]
+                && (bst_repr[bst_root[x]])[p[x]]
+                && (l[x] != null ==> (bst_repr[bst_root[x]])[l[x]])
+                && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
+                && p[bst_root[x]] == null)
+            && bst_depth[x] >= 0
+            && bst_root[x] != null
         )
-        && bst_depth[x] >= 0
-    )
 }
 
 // Queue validity.
@@ -647,7 +648,7 @@ procedure Get_list_repr(x: Ref) returns (list_repr: RefSet);
 
 // Manipulation macros
 procedure Create(k: int) returns (node: Ref);
-    modifies Br, alloc, C.k, C.l, C.r, C.p, C.next, C.prev, C.bst_root;
+    modifies Br_bst, Br_list, alloc, C.k, C.l, C.r, C.p, C.next, C.prev, C.bst_root;
     ensures node != null;
     ensures !old(alloc)[node];
     ensures alloc == old(alloc)[node := true];
@@ -752,7 +753,7 @@ procedure Set_bst_root(x: Ref, bst_root: Ref);
     ensures C.prev[x] == null ==> Br_list == old(Br_list)[x := true];
 
 procedure DeleteFromRootRepr(x: Ref, node: Ref);
-    requires x != null
+    requires x != null;
     modifies Br_bst, C.bst_repr;
     ensures C.bst_repr == old(C.bst_repr)[x := (old(C.bst_repr)[x])[node := false]];
     ensures Br_bst == old(Br_bst)[x := true];
@@ -800,9 +801,9 @@ procedure IfNotBrList_ThenListLC(x: Ref);
 
 procedure AssertLCAndRemove(x: Ref);
     modifies Br_list, Br_bst;
-    ensures (x != null && LC_(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures (x != null && LC(C.k, C.l, C.r, C.p, C.min, C.max,
                                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
-                                C.next, C.prev, C.list_keys, C.list_repr, x)); 
+                                C.next, C.prev, C.list_keys, C.list_repr, x)) 
                 ==> (Br_list == old(Br_list)[x := false]
                     && Br_bst == old(Br_bst)[x := false]);
     ensures (x == null || !LC(C.k, C.l, C.r, C.p, C.min, C.max,
@@ -842,6 +843,20 @@ function {:inline} Frame_all(
     prev: [Ref]Ref,
     list_keys: [Ref]KeySet,
     list_repr: [Ref]RefSet,
+    oldk: [Ref]int, 
+    oldl: [Ref]Ref,
+    oldr: [Ref]Ref,
+    oldp: [Ref]Ref,
+    oldmin: [Ref]int,
+    oldmax: [Ref]int,
+    oldbst_keys: [Ref]KeySet,
+    oldbst_repr: [Ref]RefSet,
+    oldbst_depth: [Ref]int,
+    oldbst_root: [Ref]Ref,
+    oldnext: [Ref]Ref,
+    oldprev: [Ref]Ref,
+    oldlist_keys: [Ref]KeySet,
+    oldlist_repr: [Ref]RefSet,
     mod_set: RefSet,
     old_alloc: RefSet
 ) returns (bool) 
@@ -852,10 +867,14 @@ function {:inline} Frame_all(
     && p == Frame_p(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldp, p) 
     && min == Frame_min(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldmin, min) 
     && max == Frame_max(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldmax, max) 
-    && keys == Frame_keys(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldkeys, keys)
-    && repr == Frame_repr(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldrepr, repr)
-    && black == Frame_black(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldblack, black)
-    && black_height == Frame_black_height(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldblack_height, black_height)
+    && bst_keys == Frame_bst_keys(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_keys, bst_keys)
+    && bst_repr == Frame_bst_repr(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_repr, bst_repr)
+    && bst_depth == Frame_bst_depth(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_depth, bst_depth)
+    && bst_root == Frame_bst_root(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_root, bst_root)
+    && next == Frame_next(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldnext, next)
+    && prev == Frame_prev(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldprev, prev)
+    && list_keys == Frame_list_keys(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldlist_keys, list_keys)
+    && list_repr == Frame_list_repr(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldlist_repr, list_repr)
 }
 
 // Alloc set reasoning
@@ -866,10 +885,14 @@ function {:inline} InAlloc(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
-    keys: [Ref]KeySet,
-    repr: [Ref]RefSet,
-    black: [Ref]bool,
-    black_height: [Ref]int,
+    bst_keys: [Ref]KeySet,
+    bst_repr: [Ref]RefSet,
+    bst_depth: [Ref]int,
+    bst_root: [Ref]Ref,
+    next: [Ref]Ref,
+    prev: [Ref]Ref,
+    list_keys: [Ref]KeySet,
+    list_repr: [Ref]RefSet,
     x: Ref,
     alloc: RefSet
 ) returns (bool)
@@ -879,14 +902,18 @@ function {:inline} InAlloc(
         && (l[x] != null ==> alloc[l[x]])
         && (r[x] != null ==> alloc[r[x]])
         && (p[x] != null ==> alloc[p[x]])
-        && RefSetSubset(repr[x], alloc)
+        && RefSetSubset(bst_repr[x], alloc)
+        && (bst_root[x] != null ==> alloc[bst_root[x]])
+        && (next[x] != null ==> alloc[next[x]])
+        && (prev[x] != null ==> alloc[prev[x]])
+        && RefSetSubset(list_repr[x], alloc)
     )
 }
 
 procedure InAllocParam(x: Ref);
-    ensures x != null ==> InAlloc(C.k, C.l, C.r, C.p, 
-                                C.min, C.max, C.keys,
-                                C.repr, C.black, C.black_height, 
+    ensures x != null ==> InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+                                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                                C.next, C.prev, C.list_keys, C.list_repr, 
                                 x, alloc);
 
 function {:inline} Fresh(expr: RefSet, newalloc: RefSet, oldalloc: RefSet) returns (bool)
@@ -896,23 +923,159 @@ function {:inline} Fresh(expr: RefSet, newalloc: RefSet, oldalloc: RefSet) retur
 }
 
 // Auxiliary functions
-function {:inline} Isolated(
+function {:inline} BST_Isolated(
     k: [Ref]int, 
     l: [Ref]Ref,
     r: [Ref]Ref,
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
-    keys: [Ref]KeySet,
-    repr: [Ref]RefSet,
-    black: [Ref]bool,
-    black_height: [Ref]int,
+    bst_keys: [Ref]KeySet,
+    bst_repr: [Ref]RefSet,
+    bst_depth: [Ref]int,
+    bst_root: [Ref]Ref,
+    next: [Ref]Ref,
+    prev: [Ref]Ref,
+    list_keys: [Ref]KeySet,
+    list_repr: [Ref]RefSet,
     x: Ref
 ) returns (bool)
 {
   x != null ==> (
-    l[x] == null
-    && r[x] == null
-    && p[x] == null
+    p[x] == null && l[x] == null && r[x] == null
+  )
+}
+
+function {:inline} BST_FieldsUnchanged(
+    k: [Ref]int, 
+    l: [Ref]Ref,
+    r: [Ref]Ref,
+    p: [Ref]Ref,
+    min: [Ref]int,
+    max: [Ref]int,
+    bst_keys: [Ref]KeySet,
+    bst_repr: [Ref]RefSet,
+    bst_depth: [Ref]int,
+    bst_root: [Ref]Ref,
+    next: [Ref]Ref,
+    prev: [Ref]Ref,
+    list_keys: [Ref]KeySet,
+    list_repr: [Ref]RefSet,
+    oldk: [Ref]int, 
+    oldl: [Ref]Ref,
+    oldr: [Ref]Ref,
+    oldp: [Ref]Ref,
+    oldmin: [Ref]int,
+    oldmax: [Ref]int,
+    oldbst_keys: [Ref]KeySet,
+    oldbst_repr: [Ref]RefSet,
+    oldbst_depth: [Ref]int,
+    oldbst_root: [Ref]Ref,
+    oldnext: [Ref]Ref,
+    oldprev: [Ref]Ref,
+    oldlist_keys: [Ref]KeySet,
+    oldlist_repr: [Ref]RefSet,
+    x: Ref
+) returns (bool)
+{
+  x != null ==> (
+    l[x] == oldl[x]
+    && r[x] == oldr[x]
+    && p[x] == oldp[x]
+    && min[x] == oldmin[x]
+    && max[x] == oldmax[x]
+    && bst_keys[x] == oldbst_keys[x]
+    && bst_repr[x] == oldbst_repr[x]
+    && bst_depth[x] == oldbst_depth[x]
+    && bst_root[x] == oldbst_root[x]
+  )
+}
+
+function {:inline} List_FieldsUnchanged(
+    k: [Ref]int, 
+    l: [Ref]Ref,
+    r: [Ref]Ref,
+    p: [Ref]Ref,
+    min: [Ref]int,
+    max: [Ref]int,
+    bst_keys: [Ref]KeySet,
+    bst_repr: [Ref]RefSet,
+    bst_depth: [Ref]int,
+    bst_root: [Ref]Ref,
+    next: [Ref]Ref,
+    prev: [Ref]Ref,
+    list_keys: [Ref]KeySet,
+    list_repr: [Ref]RefSet,
+    oldk: [Ref]int, 
+    oldl: [Ref]Ref,
+    oldr: [Ref]Ref,
+    oldp: [Ref]Ref,
+    oldmin: [Ref]int,
+    oldmax: [Ref]int,
+    oldbst_keys: [Ref]KeySet,
+    oldbst_repr: [Ref]RefSet,
+    oldbst_depth: [Ref]int,
+    oldbst_root: [Ref]Ref,
+    oldnext: [Ref]Ref,
+    oldprev: [Ref]Ref,
+    oldlist_keys: [Ref]KeySet,
+    oldlist_repr: [Ref]RefSet,
+    x: Ref
+) returns (bool)
+{
+  x != null ==> (
+    next[x] == oldnext[x]
+    && prev[x] == oldprev[x]
+    && list_keys[x] == oldlist_keys[x]
+    && list_repr[x] == oldlist_repr[x]
+  )
+}
+
+function {:inline} FieldsUnchangedMinus_bst_depth(
+    k: [Ref]int, 
+    l: [Ref]Ref,
+    r: [Ref]Ref,
+    p: [Ref]Ref,
+    min: [Ref]int,
+    max: [Ref]int,
+    bst_keys: [Ref]KeySet,
+    bst_repr: [Ref]RefSet,
+    bst_depth: [Ref]int,
+    bst_root: [Ref]Ref,
+    next: [Ref]Ref,
+    prev: [Ref]Ref,
+    list_keys: [Ref]KeySet,
+    list_repr: [Ref]RefSet,
+    oldk: [Ref]int, 
+    oldl: [Ref]Ref,
+    oldr: [Ref]Ref,
+    oldp: [Ref]Ref,
+    oldmin: [Ref]int,
+    oldmax: [Ref]int,
+    oldbst_keys: [Ref]KeySet,
+    oldbst_repr: [Ref]RefSet,
+    oldbst_depth: [Ref]int,
+    oldbst_root: [Ref]Ref,
+    oldnext: [Ref]Ref,
+    oldprev: [Ref]Ref,
+    oldlist_keys: [Ref]KeySet,
+    oldlist_repr: [Ref]RefSet,
+    x: Ref
+) returns (bool)
+{
+  x != null ==> (
+    l[x] == oldl[x]
+    && r[x] == oldr[x]
+    && p[x] == oldp[x]
+    && min[x] == oldmin[x]
+    && max[x] == oldmax[x]
+    && bst_keys[x] == oldbst_keys[x]
+    && bst_repr[x] == oldbst_repr[x]
+    //&& bst_depth[x] == oldbst_depth[x]
+    && bst_root[x] == oldbst_root[x]
+    && next[x] == oldnext[x]
+    && prev[x] == oldprev[x]
+    && list_keys[x] == oldlist_keys[x]
+    && list_repr[x] == oldlist_repr[x]
   )
 }
