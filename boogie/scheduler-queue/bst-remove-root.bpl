@@ -34,7 +34,7 @@ procedure BSTFixDepthContract(q1s: Ref, q1t: Ref, x: Ref);
         RefSetIntersectF(old(C.bst_repr)[x], old(C.bst_repr)[old(C.bst_root)[x]]), old(alloc)
     );
 
-procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref, k: int)
+procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     returns (ret: Ref, root: Ref);
     requires x != null;
     requires RefSetsDisjoint(
@@ -106,7 +106,7 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref, k: int)
         old(alloc)
     );
 
-procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref, k: int)
+procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     returns (ret: Ref, root: Ref)
     requires x != null;
     requires RefSetsDisjoint(
@@ -182,6 +182,10 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref, k: int)
     var p: Ref;
     var r: Ref;
     var l: Ref;
+    var rl: Ref;
+    var fix_p_l: bool;
+    var fix_p_r: bool;
+    var tmp: Ref;
 
     // Subexpressions
     var x_l: Ref;
@@ -190,6 +194,19 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref, k: int)
     var p_l: Ref;
     var x_r_l: Ref;
     var x_r_r: Ref;
+    var r_l: Ref;
+    var x_l_bst_keys: KeySet;
+    var x_l_bst_repr: RefSet;
+    var x_r_max: int;
+    var x_r_bst_keys: KeySet;
+    var x_r_bst_repr: RefSet;
+    var r_r: Ref;
+    var r_k: int;
+    var x_p: Ref;
+    var r_r_bst_keys: KeySet;
+    var r_r_bst_repr: RefSet;
+    var p_r: Ref;
+    var r_l_min: int;
 
     call InAllocParam(q1s);
     call InAllocParam(q1t);
@@ -280,6 +297,83 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref, k: int)
         
         call x_r_l := Get_l(x_r);
         call x_r_r := Get_r(x_r);
+
+        if (x_r_l != null) {
+            call IfNotBr_ThenLC(x_r_l);
+        }
+        if (x_r_r != null) {
+            call IfNotBr_ThenLC(x_r_r);
+        }
+        
+        call x_r := Get_r(x);
+        r := x_r;
+        call r_l := Get_l(r);
+        rl := r_l;
+
+        call Set_r(x, rl);
+        if (rl != null) {
+            call Set_p(rl, x);
+            call BSTFixDepthContract(q1s, q1t, rl);
+        }
+
+        call x_l := Get_l(x);
+        call x_r := Get_r(x);
+        call x_k := Get_k(x);
+        if (x_l != null) {
+            call x_l_bst_keys := Get_bst_keys(x_l);
+            call x_l_bst_repr := Get_bst_repr(x_l);
+        }
+        if (x_r != null) {
+            call x_r_max := Get_max(x_r);
+            call x_r_bst_keys := Get_bst_keys(x_r);
+            call x_r_bst_repr := Get_bst_repr(x_r);
+        }
+        call Set_max(x, if x_r == null then x_k else x_r_max);
+        call Set_bst_keys(x, KeySetUnionF(x_l_bst_keys, if x_r == null then EmptyKeySet else x_r_bst_keys)[x_k := true]);
+        call Set_bst_repr(x, RefSetUnionF(x_l_bst_repr, if x_r == null then EmptyRefSet else x_r_bst_repr)[x := true]);
+
+        call r_r := Get_r(r);
+        call r_k := Get_k(r);
+        call x_p := Get_p(x);
+        if (r_r != null) {
+            call r_r_bst_keys := Get_bst_keys(r_r);
+            call r_r_bst_repr := Get_bst_repr(r_r);
+        }
+        call Set_l(r, null);
+        call Set_p(r, x_p);
+        call Set_min(r, r_k);
+        call Set_bst_keys(r, (if r_r == null then EmptyKeySet else r_r_bst_keys)[r_k := true]);
+        call Set_bst_repr(r, (if r_r == null then EmptyRefSet else r_r_bst_repr)[r := true]);
+
+        call AssertLCAndRemove(x);
+        call AssertLCAndRemove(rl);
+
+        call p_l := Get_l(p);
+        call p_r := Get_r(p);
+
+        // Awkward change to non-ghost code.
+        fix_p_l := p_l == x;
+        fix_p_r := p_r == x;
+
+        call tmp, root := BSTRemoveRootInsideContract(q1s, q1t, x);
+
+        call Set_l(r, tmp);
+        if (tmp != null) {
+            call Set_p(tmp, r);
+        }
+        call Set_p(r, p);
+        if (fix_p_l) {
+            call Set_l(p, r);
+        }
+        if (fix_p_r) {
+            call Set_r(p, r);
+        }
+        call r_l := Get_l(r);
+        call r_k := Get_k(r);
+        if (r_l != null) {
+            call r_l_min := Get_min(r_l);
+        }
+        call Set_min(r, if r_l != null then r_k else r_l_min);
 
         assume false;
     }
