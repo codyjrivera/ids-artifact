@@ -6,8 +6,6 @@
 //
 // Impact set verification for Red-Black trees.
 
-//SETUP:num_paths=1; (number of paths in the program)
-
 procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     modifies C.k;
 {
@@ -15,7 +13,7 @@ procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -23,7 +21,7 @@ procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_l(x: Ref, arb: Ref, l: Ref)
@@ -33,7 +31,7 @@ procedure Check_Set_l(x: Ref, arb: Ref, l: Ref)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.l[x];
@@ -41,7 +39,7 @@ procedure Check_Set_l(x: Ref, arb: Ref, l: Ref)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_r(x: Ref, arb: Ref, r: Ref)
@@ -51,7 +49,7 @@ procedure Check_Set_r(x: Ref, arb: Ref, r: Ref)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.r[x];
@@ -59,7 +57,7 @@ procedure Check_Set_r(x: Ref, arb: Ref, r: Ref)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_p(x: Ref, arb: Ref, p: Ref)
@@ -69,7 +67,7 @@ procedure Check_Set_p(x: Ref, arb: Ref, p: Ref)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -77,7 +75,7 @@ procedure Check_Set_p(x: Ref, arb: Ref, p: Ref)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_min(x: Ref, arb: Ref, min: int)
@@ -87,7 +85,7 @@ procedure Check_Set_min(x: Ref, arb: Ref, min: int)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -95,7 +93,7 @@ procedure Check_Set_min(x: Ref, arb: Ref, min: int)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_max(x: Ref, arb: Ref, max: int)
@@ -105,7 +103,7 @@ procedure Check_Set_max(x: Ref, arb: Ref, max: int)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -113,7 +111,7 @@ procedure Check_Set_max(x: Ref, arb: Ref, max: int)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_keys(x: Ref, arb: Ref, keys: KeySet)
@@ -123,7 +121,7 @@ procedure Check_Set_keys(x: Ref, arb: Ref, keys: KeySet)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -131,7 +129,7 @@ procedure Check_Set_keys(x: Ref, arb: Ref, keys: KeySet)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_repr(x: Ref, arb: Ref, repr: RefSet)
@@ -141,7 +139,7 @@ procedure Check_Set_repr(x: Ref, arb: Ref, repr: RefSet)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -149,7 +147,7 @@ procedure Check_Set_repr(x: Ref, arb: Ref, repr: RefSet)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_black(x: Ref, arb: Ref, black: bool)
@@ -159,7 +157,7 @@ procedure Check_Set_black(x: Ref, arb: Ref, black: bool)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -167,7 +165,7 @@ procedure Check_Set_black(x: Ref, arb: Ref, black: bool)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }
 
 procedure Check_Set_black_height(x: Ref, arb: Ref, black_height: int)
@@ -177,7 +175,7 @@ procedure Check_Set_black_height(x: Ref, arb: Ref, black_height: int)
     assume LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
     assume arb != null;
     assume arb != x;
     assume arb != C.p[x];
@@ -185,5 +183,5 @@ procedure Check_Set_black_height(x: Ref, arb: Ref, black_height: int)
     assert LC(C.k, C.l, C.r, C.p, 
               C.min, C.max, C.keys,
               C.repr, C.black, C.black_height, 
-              arb, alloc);
+              arb);
 }

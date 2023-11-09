@@ -18,6 +18,7 @@ BOOGIE_OPTS="/proverOpt:O:smt.mbqi=false /proverOpt:O:model.compact=false\
 PYTHON_3="python3"
 PROVER="z3"
 TIME_FORMAT="\t%U"
+MAX_SPLITS=16
 
 VERBOSE=false
 
@@ -128,18 +129,18 @@ boogie_method() {
         return 1
     fi
 
-    # Get number of paths in the program
-    if num_paths=$(grep "SETUP:num_paths" "boogie/$STRUCTURE/$METHOD.bpl");
+    # Get max number of splits in the program, if this exists.
+    if max_splits=$(grep "SETUP:max-splits" "boogie/$STRUCTURE/$METHOD.bpl");
     then
-        num_paths=$(echo $num_paths | awk -F '=|;' '{print $2}')
+        max_splits=$(echo $max_splits | awk -F '=|;' '{print $2}')
     else
-        num_paths=1
+        max_splits=$MAX_SPLITS
     fi
 
     # Resolve
     cat "boogie/$STRUCTURE/$STRUCTURE.bpl" "boogie/$STRUCTURE/$METHOD.bpl" >tmp_input.bpl
     command time -o tmp_boogie_time -f "$TIME_FORMAT" $BOOGIE_3 \
-        /proverOpt:SOLVER=noop $BOOGIE_OPTS /vcsMaxSplits:$num_paths /proverLog:tmp_input.smt2 tmp_input.bpl \
+        /proverOpt:SOLVER=noop $BOOGIE_OPTS /vcsMaxSplits:$max_splits /proverLog:tmp_input.smt2 tmp_input.bpl \
         2>&1 >tmp_log
     if ! [ -f "tmp_input.smt2" ]; then
         echo "method $STRUCTURE::$METHOD does not resolve"

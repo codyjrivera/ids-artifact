@@ -21,7 +21,7 @@
 # where needed.
 
 import sys
-from sexpdata import parse, dumps, car, cdr, Symbol
+from sexpdata import parse, dumps, Symbol
 
 def isatom(sexp):
     return not isinstance(sexp, list) or len(sexp) == 0
@@ -78,7 +78,7 @@ def operate(input, changes):
 
     output = []
     for statement in input:
-        if (isgetinfo(statement)):
+        if (isgetinfo(statement) and removegetinfo):
             continue
         elif (isdefinition(statement)):
             if statement[1] in deletes:

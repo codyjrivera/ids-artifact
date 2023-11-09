@@ -6,8 +6,6 @@
 //
 // Verification of Sorted List Insert.
 
-//SETUP:num_paths=5; (number of paths in the program)
-
 procedure SortedListInsertContract(x: Ref, k: int) returns (ret: Ref);
     requires RefSetsEqual(Br, EmptyRefSet);
     requires LC(C.k, C.next, C.prev, C.keys, C.repr, C.sorted, C.rev_sorted, x);

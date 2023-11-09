@@ -6,8 +6,6 @@
 //
 // Verification of Red-Black Tree Insert.
 
-//SETUP:num_paths=15; (number of paths in the program)
-
 procedure RBTInsertContract(x: Ref, k: int)
     returns (ret: Ref);
     requires Br == EmptyRefSet;
