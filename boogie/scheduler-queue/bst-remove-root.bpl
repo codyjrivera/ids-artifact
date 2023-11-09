@@ -55,7 +55,8 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     ensures root != null;
     ensures ret == null || ret == old(C.l)[x] || ret == old(C.r)[x];
     ensures (RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]) ==> ret == null);
-    ensures (!RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]) // TODO:?
+    ensures ((RefSetSubset(EmptyRefSet[x := true], old(C.bst_repr)[x]) 
+             && !RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]))
                 ==> ret != null);
     ensures (ret != null ==>
                 LC(C.k, C.l, C.r, C.p, C.min, C.max,
@@ -127,20 +128,21 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     ensures root != null;
     ensures ret == null || ret == old(C.l)[x] || ret == old(C.r)[x];
     ensures (RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]) ==> ret == null);
-    ensures (!RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]) // TODO:?
+    ensures ((RefSetSubset(EmptyRefSet[x := true], old(C.bst_repr)[x]) 
+             && !RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]))
                 ==> ret != null);
-    // ensures (ret != null ==>
-    //             LC(C.k, C.l, C.r, C.p, C.min, C.max,
-    //                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
-    //                 C.next, C.prev, C.list_keys, C.list_repr, ret)
-    //             && KeySetsEqual(C.bst_keys[ret], (old(C.bst_keys)[x])[C.k[x] := false])
-    //             && C.min[ret] >= old(C.min)[x]
-    //             && C.max[ret] <= old(C.max)[x]
-    //             && RefSetsEqual(C.bst_repr[ret], (old(C.bst_repr)[x])[x := false])
-    //             && C.bst_root[ret] == old(C.bst_root)[x]
-    //             && C.p[ret] == old(C.p)[x]
-    //             // && listfieldsunchanged(ret)
-    //             );
+    ensures (ret != null ==>
+                LC(C.k, C.l, C.r, C.p, C.min, C.max,
+                    C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                    C.next, C.prev, C.list_keys, C.list_repr, ret)
+                && KeySetsEqual(C.bst_keys[ret], (old(C.bst_keys)[x])[C.k[x] := false])
+                && C.min[ret] >= old(C.min)[x]
+                && C.max[ret] <= old(C.max)[x]
+                && RefSetsEqual(C.bst_repr[ret], (old(C.bst_repr)[x])[x := false])
+                && C.bst_root[ret] == old(C.bst_root)[x]
+                && C.p[ret] == old(C.p)[x]
+                // && listfieldsunchanged(ret)
+                );
     ensures old(C.l)[old(C.p)[x]] == x ==> C.l[old(C.p)[x]] == ret;
     ensures old(C.l)[old(C.p)[x]] != x ==> C.l[old(C.p)[x]] == old(C.l)[old(C.p)[x]];
     ensures old(C.r)[old(C.p)[x]] == x ==> C.r[old(C.p)[x]] == ret;
@@ -155,28 +157,28 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     ensures old(C.bst_root)[old(C.p)[x]] == C.bst_root[old(C.p)[x]];
     // ensures listfieldsunchanged(old(x.p));
     ensures root == x && C.k[root] == old(C.k)[x];
-    // ensures LC(C.k, C.l, C.r, C.p, C.min, C.max,
-    //             C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
-    //             C.next, C.prev, C.list_keys, C.list_repr, root);
-    // ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max,
-    //             C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
-    //             C.next, C.prev, C.list_keys, C.list_repr, root);
-    // // ensures listfieldsunchanged(root);
-    // ensures q1s != null ==> C.bst_root[q1s] == old(C.bst_root)[q1s];
-    // ensures old(C.p)[x] == null ==> RefSetsEqual(Br_bst, old(Br_bst));
-    // ensures old(C.p)[x] != null ==> RefSetsEqual(Br_bst, old(Br_bst)[old(C.p)[x] := true]);
-    // ensures RefSetsEqual(Br_list, EmptyRefSet);
-    // // Framing conditions
-    // ensures Frame_all(
-    //     C.k, C.l, C.r, C.p, C.min, C.max,
-    //     C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
-    //     C.next, C.prev, C.list_keys, C.list_repr,
-    //     old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max),
-    //     old(C.bst_keys), old(C.bst_repr), old(C.bst_depth), old(C.bst_root),
-    //     old(C.next), old(C.prev), old(C.list_keys), old(C.list_repr),
-    //     RefSetIntersectF(old(C.bst_repr)[x], old(C.bst_repr)[old(C.bst_root)[x]])[old(C.p)[x] := true],
-    //     old(alloc)
-    // );
+    ensures LC(C.k, C.l, C.r, C.p, C.min, C.max,
+                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                C.next, C.prev, C.list_keys, C.list_repr, root);
+    ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max,
+                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                C.next, C.prev, C.list_keys, C.list_repr, root);
+    // ensures listfieldsunchanged(root);
+    ensures q1s != null ==> C.bst_root[q1s] == old(C.bst_root)[q1s];
+    ensures old(C.p)[x] == null ==> RefSetsEqual(Br_bst, old(Br_bst));
+    ensures old(C.p)[x] != null ==> RefSetsEqual(Br_bst, old(Br_bst)[old(C.p)[x] := true]);
+    ensures RefSetsEqual(Br_list, EmptyRefSet);
+    // Framing conditions
+    ensures Frame_all(
+        C.k, C.l, C.r, C.p, C.min, C.max,
+        C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+        C.next, C.prev, C.list_keys, C.list_repr,
+        old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max),
+        old(C.bst_keys), old(C.bst_repr), old(C.bst_depth), old(C.bst_root),
+        old(C.next), old(C.prev), old(C.list_keys), old(C.list_repr),
+        RefSetIntersectF(old(C.bst_repr)[x], old(C.bst_repr)[old(C.bst_root)[x]])[old(C.p)[x] := true],
+        old(alloc)
+    );
 {
     // Local variables
     var p: Ref;
@@ -387,7 +389,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
         }
         call r_p := Get_p(r);
         call r_p_bst_depth := Get_bst_depth(r_p);
-        call Set_min(r, if r_l != null then r_k else r_l_min);
+        call Set_min(r, if r_l == null then r_k else r_l_min);
         call Set_bst_keys(
             r,
             KeySetUnionF(
@@ -422,7 +424,6 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
         call AssertLCAndRemove(r);
 
         ret := r;
-        //assume false;
     }
 
 }
