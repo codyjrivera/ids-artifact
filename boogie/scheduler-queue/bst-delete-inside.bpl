@@ -108,99 +108,6 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
         old(alloc)
     );
 
-function {:inline} LC_BST_Trans_PlusNode_Debug(
-    k: [Ref]int, 
-    l: [Ref]Ref,
-    r: [Ref]Ref,
-    p: [Ref]Ref,
-    min: [Ref]int,
-    max: [Ref]int,
-    bst_size: [Ref]int,
-    bst_keys: [Ref]KeySet,
-    bst_repr: [Ref]RefSet,
-    bst_depth: [Ref]int,
-    bst_root: [Ref]Ref,
-    next: [Ref]Ref,
-    prev: [Ref]Ref,
-    list_keys: [Ref]KeySet,
-    list_repr: [Ref]RefSet,
-    x: Ref,
-    node: Ref
-) returns (bool)
-{
-    (x != null && node != null) ==> (
-        (x == bst_root[x] ==> 
-            (bst_repr[x])[x]
-            && p[x] == null
-            && bst_depth[x] == 0
-            && l[x] == null
-            && (r[x] == null ==>
-                    RefSetsEqual(bst_repr[x], (EmptyRefSet[x := true])[node := true])
-                    && KeySetsEqual(bst_keys[x], EmptyKeySet[k[node] := true]))
-            && (r[x] != null ==>
-                    p[r[x]] == x
-                    && RefSetsEqual(bst_repr[x], ((bst_repr[r[x]])[x := true])[node := true])
-                    && !(bst_repr[r[x]])[x]
-                    && KeySetsEqual(bst_keys[x], (bst_keys[r[x]])[k[node] := true])))
-        && (x != bst_root[x] ==>
-                (bst_repr[x])[x]
-                && min[x] <= k[x]
-                && k[x] <= max[x]
-                && p[x] != null
-                && !(bst_repr[x])[p[x]]
-                && (l[p[x]] == x || r[p[x]] == x)
-                && !(bst_repr[x])[bst_root[x]]
-                && bst_depth[x] == bst_depth[p[x]] + 1
-                && (l[x] != null ==> 
-                        (bst_repr[x])[l[x]]
-                        && !(bst_repr[l[x]])[x]
-                        && p[l[x]] == x
-                        && max[l[x]] < k[x])
-                && (r[x] != null ==> 
-                        (bst_repr[x])[r[x]]
-                        && !(bst_repr[r[x]])[x]
-                        && p[r[x]] == x
-                        && min[r[x]] > k[x])
-                && (l[x] == null && r[x] == null ==>
-                        RefSetsEqual(bst_repr[x], (EmptyRefSet[x := true])[node := true])
-                        && KeySetsEqual(bst_keys[x], (EmptyKeySet[k[x] := true])[k[node] := true])
-                        //&& min[x] == k[x] 
-                        //&& k[x] == max[x]
-                        )
-                && (l[x] != null && r[x] == null ==>
-                        RefSetsEqual(bst_repr[x], ((bst_repr[l[x]])[x := true])[node := true])
-                        && KeySetsEqual(bst_keys[x], ((bst_keys[l[x]])[k[x] := true])[k[node] := true])
-                        && !(bst_keys[l[x]])[k[x]]
-                        //&& min[x] == min[l[x]] && max[x] == k[x]
-                        )
-                && (l[x] == null && r[x] != null ==>
-                        RefSetsEqual(bst_repr[x], ((bst_repr[r[x]])[x := true])[node := true])
-                        && KeySetsEqual(bst_keys[x], ((bst_keys[r[x]])[k[x] := true])[k[node] := true])
-                        && !(bst_keys[r[x]])[k[x]]
-                        //&& min[x] == k[x] && max[x] == max[r[x]]
-                        )
-                && (l[x] != null && r[x] != null ==>
-                        RefSetsEqual(bst_repr[x], (RefSetUnionF((bst_repr[l[x]])[x := true], bst_repr[r[x]]))[node := true])
-                        && RefSetsDisjoint(bst_repr[l[x]], bst_repr[r[x]])
-                        && KeySetsEqual(bst_keys[x], (KeySetUnionF((bst_keys[l[x]])[k[x] := true], bst_keys[r[x]]))[k[node] := true])
-                        && KeySetsDisjoint(bst_keys[l[x]], bst_keys[r[x]])
-                        && !(bst_keys[l[x]])[k[x]] && !(bst_keys[r[x]])[k[x]]
-                        //&& min[x] == min[l[x]] && max[x] == max[r[x]]
-                        )
-                && bst_root[x] == bst_root[p[x]]
-                && (bst_repr[bst_root[x]])[x]
-                && (bst_repr[bst_root[x]])[p[x]]
-                && (l[x] != null ==> (bst_repr[bst_root[x]])[l[x]])
-                && (r[x] != null ==> (bst_repr[bst_root[x]])[r[x]])
-                && p[bst_root[x]] == null)
-            && bst_depth[x] >= 0
-            && (p[x] != null ==> bst_depth[p[x]] >= 0)
-            && bst_root[x] != null
-            //&& bst_size[x] == GetBSTSize(bst_size, l[x]) + 2 + GetBSTSize(bst_size, r[x])
-            && bst_size[x] >= 1
-        )
-}
-
 procedure BSTDeleteInside(q1s: Ref, q1t: Ref, root: Ref, x: Ref)
     returns (ret: Ref, node: Ref)
     requires root != null && x != null;
@@ -251,7 +158,7 @@ procedure BSTDeleteInside(q1s: Ref, q1t: Ref, root: Ref, x: Ref)
                 C.next, C.prev, C.list_keys, C.list_repr, node);
     // ensures listfieldsunchanged(node);
     ensures q1s != null ==> C.bst_root[q1s] == old(C.bst_root)[q1s];
-    ensures RefSetsEqual(Br_list, EmptyRefSet);
+    ensures RefSetsEqual(Br_bst, EmptyRefSet);
     ensures RefSetsEqual(Br_list, EmptyRefSet);
     // Framing conditions
     ensures Frame_all(
@@ -344,6 +251,10 @@ procedure BSTDeleteInside(q1s: Ref, q1t: Ref, root: Ref, x: Ref)
             && C.k[cur] < C.min[C.r[cur]]
             && C.max[C.r[cur]] <= C.max[cur]
         );
+        invariant C.p[cur] == null && C.r[cur] != null ==> (
+            !(C.bst_repr[C.r[cur]])[node]
+            && !(C.bst_keys[C.r[cur]])[C.k[node]]
+        );
         invariant (C.bst_repr[root])[cur];
         invariant C.bst_root[cur] == root;
         invariant C.p[cur] != null ==> C.k[cur] != C.k[node];
@@ -376,6 +287,16 @@ procedure BSTDeleteInside(q1s: Ref, q1t: Ref, root: Ref, x: Ref)
                 ret
             );
         invariant q1s != null ==> C.bst_root[q1s] == old(C.bst_root)[q1s];
+        invariant Frame_all(
+            C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
+            C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+            C.next, C.prev, C.list_keys, C.list_repr,
+            old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max), old(C.bst_size),
+            old(C.bst_keys), old(C.bst_repr), old(C.bst_depth), old(C.bst_root),
+            old(C.next), old(C.prev), old(C.list_keys), old(C.list_repr),
+            old(C.bst_repr)[old(C.bst_root)[x]],
+            old(alloc)
+        );
     {
         // Do we have a valid termination measure?
         call t := Get_bst_depth(cur);
@@ -433,7 +354,20 @@ procedure BSTDeleteInside(q1s: Ref, q1t: Ref, root: Ref, x: Ref)
         assert t < z;
     }
 
-    ret := ret;
-    ret := ret;
-    assume false;
+    call cur_l := Get_l(cur);
+    call cur_r := Get_r(cur);
+    call IfNotBr_ThenLC(cur_l);
+    call IfNotBr_ThenLC(cur_r);
+
+    call DeleteFromRootRepr(cur, node);
+    call cur_l_bst_size := GetBSTSizeOrZero(cur_l);
+    call cur_r_bst_size := GetBSTSizeOrZero(cur_r);
+    call Set_bst_size(cur, cur_l_bst_size + 1 + cur_r_bst_size);
+    if (cur_r != null) {
+        call cur_r_bst_keys := Get_bst_keys(cur_r);
+    }
+    call Set_bst_keys(cur, if cur_r == null then EmptyKeySet else cur_r_bst_keys);
+    call AssertLCAndRemove(cur);
+
+    call IfNotBr_ThenLC(ret);
 }
