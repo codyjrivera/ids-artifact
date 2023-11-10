@@ -582,7 +582,10 @@ function {:inline} Valid_Queue(
     && LC(k, l, r, p, min, max, bst_size,
             bst_keys, bst_repr, bst_depth, bst_root,
             next, prev, list_keys, list_repr, q1t)
-    && (q1s != null <==> (l[q1t] == null && r[q1t] == null))
+    && (q1s == null <==> (l[q1t] == null && r[q1t] == null))
+    && (q1s == null ==>
+            bst_repr[q1t] == EmptyRefSet[q1t := true]
+            && bst_keys[q1t] == EmptyKeySet)
     && (q1s != null ==>
             LC(k, l, r, p, min, max, bst_size,
                 bst_keys, bst_repr, bst_depth, bst_root,

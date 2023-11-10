@@ -67,9 +67,7 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
                 && C.max[ret] <= old(C.max)[x]
                 && RefSetsEqual(C.bst_repr[ret], (old(C.bst_repr)[x])[x := false])
                 && C.bst_root[ret] == old(C.bst_root)[x]
-                && C.p[ret] == old(C.p)[x]
-                // && listfieldsunchanged(ret)
-                );
+                && C.p[ret] == old(C.p)[x]);
     ensures old(C.l)[old(C.p)[x]] == x ==> C.l[old(C.p)[x]] == ret;
     ensures old(C.l)[old(C.p)[x]] != x ==> C.l[old(C.p)[x]] == old(C.l)[old(C.p)[x]];
     ensures old(C.r)[old(C.p)[x]] == x ==> C.r[old(C.p)[x]] == ret;
@@ -83,7 +81,6 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     ensures old(C.max)[old(C.p)[x]] == C.max[old(C.p)[x]];
     ensures old(C.bst_depth)[old(C.p)[x]] == C.bst_depth[old(C.p)[x]];
     ensures old(C.bst_root)[old(C.p)[x]] == C.bst_root[old(C.p)[x]];
-    // ensures listfieldsunchanged(old(x.p));
     ensures root == x && C.k[root] == old(C.k)[x];
     ensures LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
@@ -91,7 +88,6 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, root);
-    // ensures listfieldsunchanged(root);
     ensures q1s != null ==> C.bst_root[q1s] == old(C.bst_root)[q1s];
     ensures old(C.p)[x] == null ==> RefSetsEqual(Br_bst, old(Br_bst));
     ensures old(C.p)[x] != null ==> RefSetsEqual(Br_bst, old(Br_bst)[old(C.p)[x] := true]);
@@ -141,9 +137,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
                 && C.max[ret] <= old(C.max)[x]
                 && RefSetsEqual(C.bst_repr[ret], (old(C.bst_repr)[x])[x := false])
                 && C.bst_root[ret] == old(C.bst_root)[x]
-                && C.p[ret] == old(C.p)[x]
-                // && listfieldsunchanged(ret)
-                );
+                && C.p[ret] == old(C.p)[x]);
     ensures old(C.l)[old(C.p)[x]] == x ==> C.l[old(C.p)[x]] == ret;
     ensures old(C.l)[old(C.p)[x]] != x ==> C.l[old(C.p)[x]] == old(C.l)[old(C.p)[x]];
     ensures old(C.r)[old(C.p)[x]] == x ==> C.r[old(C.p)[x]] == ret;
@@ -157,7 +151,6 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     ensures old(C.max)[old(C.p)[x]] == C.max[old(C.p)[x]];
     ensures old(C.bst_depth)[old(C.p)[x]] == C.bst_depth[old(C.p)[x]];
     ensures old(C.bst_root)[old(C.p)[x]] == C.bst_root[old(C.p)[x]];
-    // ensures listfieldsunchanged(old(x.p));
     ensures root == x && C.k[root] == old(C.k)[x];
     ensures LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
@@ -165,7 +158,6 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, root);
-    // ensures listfieldsunchanged(root);
     ensures q1s != null ==> C.bst_root[q1s] == old(C.bst_root)[q1s];
     ensures old(C.p)[x] == null ==> RefSetsEqual(Br_bst, old(Br_bst));
     ensures old(C.p)[x] != null ==> RefSetsEqual(Br_bst, old(Br_bst)[old(C.p)[x] := true]);
