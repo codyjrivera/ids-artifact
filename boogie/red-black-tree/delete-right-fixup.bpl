@@ -4,7 +4,7 @@
 // 
 // Artifact by Cody Rivera, 2023. 
 //
-// Verification of Red-Black Tree Delete, left fixup procedure.
+// Verification of Red-Black Tree Delete, right fixup procedure.
 
 function {:inline} GetBlackHeight(black_height: [Ref]int, x: Ref) returns (int)
 {
@@ -16,7 +16,7 @@ function {:inline} MaxInt(x: int, y: int) returns (int)
     if x > y then x else y
 }
 
-procedure RBTDeleteLeftFixupContract(x: Ref) 
+procedure RBTDeleteRightFixupContract(x: Ref) 
     returns (ret: Ref, fixed: bool);
     requires x != null;
     requires RefSetsDisjoint(Br, (C.repr[x])[x := false]);
@@ -24,10 +24,10 @@ procedure RBTDeleteLeftFixupContract(x: Ref)
                 C.min, C.max, C.keys,
                 C.repr, C.black, C.black_height, 
                 x);
-    requires (C.l[x] == null && C.r[x] != null && C.black_height[C.r[x]] == 1)
-            || (C.l[x] != null && C.r[x] != null && C.black_height[C.l[x]] + 1 == C.black_height[C.r[x]]);
-    requires (C.l[x] == null || C.black[C.l[x]]);
-    requires (C.black[x] || (C.r[x] == null || C.black[C.r[x]]));
+    requires (C.r[x] == null && C.l[x] != null && C.black_height[C.l[x]] == 1)
+            || (C.r[x] != null && C.l[x] != null && C.black_height[C.l[x]] == C.black_height[C.r[x]] + 1);
+    requires (C.r[x] == null || C.black[C.r[x]]);
+    requires (C.black[x] || (C.l[x] == null || C.black[C.l[x]]));
     modifies Br, C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys,
                 C.repr, C.black, C.black_height;
@@ -64,7 +64,7 @@ procedure RBTDeleteLeftFixupContract(x: Ref)
         old(C.repr)[x], old(alloc)
     );
 
-procedure RBTDeleteLeftFixup(x: Ref) 
+procedure RBTDeleteRightFixup(x: Ref) 
     returns (ret: Ref, fixed: bool)
     requires x != null;
     requires RefSetsDisjoint(Br, (C.repr[x])[x := false]);
@@ -72,10 +72,10 @@ procedure RBTDeleteLeftFixup(x: Ref)
                 C.min, C.max, C.keys,
                 C.repr, C.black, C.black_height, 
                 x);
-    requires (C.l[x] == null && C.r[x] != null && C.black_height[C.r[x]] == 1)
-            || (C.l[x] != null && C.r[x] != null && C.black_height[C.l[x]] + 1 == C.black_height[C.r[x]]);
-    requires (C.l[x] == null || C.black[C.l[x]]);
-    requires (C.black[x] || (C.r[x] == null || C.black[C.r[x]]));
+    requires (C.r[x] == null && C.l[x] != null && C.black_height[C.l[x]] == 1)
+            || (C.r[x] != null && C.l[x] != null && C.black_height[C.l[x]] == C.black_height[C.r[x]] + 1);
+    requires (C.r[x] == null || C.black[C.r[x]]);
+    requires (C.black[x] || (C.l[x] == null || C.black[C.l[x]]));
     modifies Br, C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys,
                 C.repr, C.black, C.black_height;
@@ -116,31 +116,31 @@ procedure RBTDeleteLeftFixup(x: Ref)
     var xl: Ref;
     var xr: Ref;
     var p: Ref;
-    var xrl: Ref;
-    var xrr: Ref;
-    var xrll: Ref;
-    var xrlr: Ref;
+    var xlr: Ref;
+    var xll: Ref;
+    var xlrl: Ref;
+    var xlrr: Ref;
     var oldxblack: bool;
     var bh: int;
-    var oldl: Ref;
+    var oldr: Ref;
     
     // Intermediate Expresssions
-    var xr_r: Ref; var xr_black: bool;
+    var xl_r: Ref; var xl_black: bool;
     var x_l: Ref; var x_r: Ref;
     var x_k: int; var x_black: bool;
     var x_black_height: int; var x_l_min: int;
     var x_l_keys: KeySet; var x_l_repr: RefSet;
     var x_r_max: int; var x_r_keys: KeySet;
-    var x_r_repr: RefSet; var xr_l: Ref;
-    var xr_l_min: int;
-    var xr_l_keys: KeySet; var xr_l_repr: RefSet;
-    var xr_r_max: int; var xr_r_keys: KeySet;
-    var xr_r_repr: RefSet; var xr_black_height: int;
-    var xr_k: int; var xrr_black: bool; var xrl_black: bool;
-    var xrr_black_height: int;
-    var xrl_l: Ref; var xrl_r: Ref; var xrl_k: int;
-    var xrl_l_min: int; var xrl_l_keys: KeySet; var xrl_l_repr: RefSet;
-    var xrl_r_max: int; var xrl_r_keys: KeySet; var xrl_r_repr: RefSet;
+    var x_r_repr: RefSet; var xl_l: Ref;
+    var xl_l_min: int;
+    var xl_l_keys: KeySet; var xl_l_repr: RefSet;
+    var xl_r_max: int; var xl_r_keys: KeySet;
+    var xl_r_repr: RefSet; var xl_black_height: int;
+    var xl_k: int; var xll_black: bool; var xlr_black: bool;
+    var xll_black_height: int;
+    var xlr_l: Ref; var xlr_r: Ref; var xlr_k: int;
+    var xlr_l_min: int; var xlr_l_keys: KeySet; var xlr_l_repr: RefSet;
+    var xlr_r_max: int; var xlr_r_keys: KeySet; var xlr_r_repr: RefSet;
 
 
     call InAllocParam(x);
@@ -151,22 +151,22 @@ procedure RBTDeleteLeftFixup(x: Ref)
     call IfNotBr_ThenLC(xl);
     call IfNotBr_ThenLC(xr);
 
-    if (xr != null) {
-        call xr_black := Get_black(xr);
+    if (xl != null) {
+        call xl_black := Get_black(xl);
     }
-    if (xr != null && !xr_black) {
-        call xrl := Get_l(xr);
-        call xr_r := Get_r(xr);
-        call IfNotBr_ThenLC(xrl);
-        call IfNotBr_ThenLC(xr_r);
+    if (xl != null && !xl_black) {
+        call xlr := Get_r(xl);
+        call xl_l := Get_l(xl);
+        call IfNotBr_ThenLC(xlr);
+        call IfNotBr_ThenLC(xl_l);
 
-        call Set_r(x, xrl);
-        if (xrl != null) {
-            call Set_p(xrl, x);
+        call Set_l(x, xlr);
+        if (xlr != null) {
+            call Set_p(xlr, x);
         }
-        call Set_l(xr, x);
-        call Set_p(x, xr);
-        call AssertLCAndRemove(xrl);
+        call Set_r(xl, x);
+        call Set_p(x, xl);
+        call AssertLCAndRemove(xlr);
 
         call x_l := Get_l(x);
         call x_r := Get_r(x);
@@ -202,79 +202,79 @@ procedure RBTDeleteLeftFixup(x: Ref)
         }
         call Set_black(x, false);
 
-        call p, fixed := RBTDeleteLeftFixupContract(x);
+        call p, fixed := RBTDeleteRightFixupContract(x);
 
         call IfNotBr_ThenLC(x);
 
-        call oldl := Get_l(xr);
-        call Set_l(xr, p);
-        call Set_p(p, xr);
-        call Set_p(xr, null);
+        call oldr := Get_r(xl);
+        call Set_r(xl, p);
+        call Set_p(p, xl);
+        call Set_p(xl, null);
         
-        call xr_l := Get_l(xr);
-        call xr_r := Get_r(xr);
-        call xr_k := Get_k(xr);
-        if (xr_l != null) {
-            call xr_l_min := Get_min(xr_l);
-            call xr_l_keys := Get_keys(xr_l);
-            call xr_l_repr := Get_repr(xr_l);
+        call xl_l := Get_l(xl);
+        call xl_r := Get_r(xl);
+        call xl_k := Get_k(xl);
+        if (xl_l != null) {
+            call xl_l_min := Get_min(xl_l);
+            call xl_l_keys := Get_keys(xl_l);
+            call xl_l_repr := Get_repr(xl_l);
         }
-        if (xr_r != null) {
-            call xr_r_max := Get_max(xr_r);
-            call xr_r_keys := Get_keys(xr_r);
-            call xr_r_repr := Get_repr(xr_r);
+        if (xl_r != null) {
+            call xl_r_max := Get_max(xl_r);
+            call xl_r_keys := Get_keys(xl_r);
+            call xl_r_repr := Get_repr(xl_r);
         }
-        call Set_min(xr, if xr_l == null then xr_k else xr_l_min);
-        call Set_max(xr, if xr_r == null then xr_k else xr_r_max);
-        call Set_keys(xr, 
+        call Set_min(xl, if xl_l == null then xl_k else xl_l_min);
+        call Set_max(xl, if xl_r == null then xl_k else xl_r_max);
+        call Set_keys(xl, 
             KeySetUnionF(
-                (if xr_l == null then EmptyKeySet else xr_l_keys)[xr_k := true],
-                if xr_r == null then EmptyKeySet else xr_r_keys
+                (if xl_l == null then EmptyKeySet else xl_l_keys)[xl_k := true],
+                if xl_r == null then EmptyKeySet else xl_r_keys
             )
         );
-        call Set_repr(xr, 
+        call Set_repr(xl, 
             RefSetUnionF(
-                (if xr_l == null then EmptyRefSet else xr_l_repr)[xr := true],
-                if xr_r == null then EmptyRefSet else xr_r_repr
+                (if xl_l == null then EmptyRefSet else xl_l_repr)[xl := true],
+                if xl_r == null then EmptyRefSet else xl_r_repr
             )
         ); 
-        call Set_black(xr, true);
-        call xr_black_height := Get_black_height(xr);
-        call Set_black_height(xr, xr_black_height + 1);
+        call Set_black(xl, true);
+        call xl_black_height := Get_black_height(xl);
+        call Set_black_height(xl, xl_black_height + 1);
 
         call AssertLCAndRemove(p);
-        call AssertLCAndRemove(xr);
-        call AssertLCAndRemove(oldl);
+        call AssertLCAndRemove(xl);
+        call AssertLCAndRemove(oldr);
         
-        ret := xr;
+        ret := xl;
     } else {
-        call xrl := Get_l(xr);
-        call xrr := Get_r(xr);
+        call xll := Get_l(xl);
+        call xlr := Get_r(xl);
 
-        call IfNotBr_ThenLC(xrl);
-        call IfNotBr_ThenLC(xrr);
+        call IfNotBr_ThenLC(xll);
+        call IfNotBr_ThenLC(xlr);
         
-        if (xrr != null) {
-            call xrr_black := Get_black(xrr);
+        if (xlr != null) {
+            call xlr_black := Get_black(xlr);
         }
-        if (xrl != null) {
-            call xrl_black := Get_black(xrl);
+        if (xll != null) {
+            call xll_black := Get_black(xll);
         }
-        if (xrr != null && !xrr_black) {
+        if (xll != null && !xll_black) {
             fixed := true;
-            call Set_r(x, xrl);
-            if (xrl != null) {
-                call Set_p(xrl, x);
+            call Set_l(x, xlr);
+            if (xlr != null) {
+                call Set_p(xlr, x);
             }
-            call Set_l(xr, x);
-            call Set_p(x, xr);
-            call Set_p(xr, null);
+            call Set_r(xl, x);
+            call Set_p(x, xl);
+            call Set_p(xl, null);
 
             call oldxblack := Get_black(x);
             
-            call xrr_black_height := Get_black_height(xrr);
-            call Set_black_height(xrr, xrr_black_height + 1);
-            call Set_black(xrr, true);
+            call xll_black_height := Get_black_height(xll);
+            call Set_black_height(xll, xll_black_height + 1);
+            call Set_black(xll, true);
             
             call x_l := Get_l(x);
             call x_r := Get_r(x);
@@ -309,57 +309,57 @@ procedure RBTDeleteLeftFixup(x: Ref)
             bh := MaxInt(GetBlackHeight(C.black_height, x_l), GetBlackHeight(C.black_height, x_r));
             call Set_black_height(x, bh + 1);
 
-            call xr_l := Get_l(xr);
-            call xr_r := Get_r(xr);
-            call xr_k := Get_k(xr);
-            if (xr_l != null) {
-                call xr_l_min := Get_min(xr_l);
-                call xr_l_keys := Get_keys(xr_l);
-                call xr_l_repr := Get_repr(xr_l);
+            call xl_l := Get_l(xl);
+            call xl_r := Get_r(xl);
+            call xl_k := Get_k(xl);
+            if (xl_l != null) {
+                call xl_l_min := Get_min(xl_l);
+                call xl_l_keys := Get_keys(xl_l);
+                call xl_l_repr := Get_repr(xl_l);
             }
-            if (xr_r != null) {
-                call xr_r_max := Get_max(xr_r);
-                call xr_r_keys := Get_keys(xr_r);
-                call xr_r_repr := Get_repr(xr_r);
+            if (xl_r != null) {
+                call xl_r_max := Get_max(xl_r);
+                call xl_r_keys := Get_keys(xl_r);
+                call xl_r_repr := Get_repr(xl_r);
             }
-            call Set_min(xr, if xr_l == null then xr_k else xr_l_min);
-            call Set_max(xr, if xr_r == null then xr_k else xr_r_max);
-            call Set_keys(xr, 
+            call Set_min(xl, if xl_l == null then xl_k else xl_l_min);
+            call Set_max(xl, if xl_r == null then xl_k else xl_r_max);
+            call Set_keys(xl, 
                 KeySetUnionF(
-                    (if xr_l == null then EmptyKeySet else xr_l_keys)[xr_k := true],
-                    if xr_r == null then EmptyKeySet else xr_r_keys
+                    (if xl_l == null then EmptyKeySet else xl_l_keys)[xl_k := true],
+                    if xl_r == null then EmptyKeySet else xl_r_keys
                 )
             );
-            call Set_repr(xr, 
+            call Set_repr(xl, 
                 RefSetUnionF(
-                    (if xr_l == null then EmptyRefSet else xr_l_repr)[xr := true],
-                    if xr_r == null then EmptyRefSet else xr_r_repr
+                    (if xl_l == null then EmptyRefSet else xl_l_repr)[xl := true],
+                    if xl_r == null then EmptyRefSet else xl_r_repr
                 )
             ); 
-            call Set_black(xr, oldxblack);
-            bh := MaxInt(GetBlackHeight(C.black_height, xr_l), GetBlackHeight(C.black_height, xr_r));
-            call xr_black := Get_black(xr);
-            if (xr_black) {
-                call Set_black_height(xr, bh + 1);
+            call Set_black(xl, oldxblack);
+            bh := MaxInt(GetBlackHeight(C.black_height, xl_l), GetBlackHeight(C.black_height, xl_r));
+            call xl_black := Get_black(xl);
+            if (xl_black) {
+                call Set_black_height(xl, bh + 1);
             } else {
-                call Set_black_height(xr, bh);
+                call Set_black_height(xl, bh);
             }
 
-            call AssertLCAndRemove(xrl);
-            call AssertLCAndRemove(xrr);
+            call AssertLCAndRemove(xlr);
+            call AssertLCAndRemove(xll);
             call AssertLCAndRemove(x);
-            call AssertLCAndRemove(xr);
+            call AssertLCAndRemove(xl);
 
-            ret := xr;
-        } else if (xrl == null || xrl_black) {
+            ret := xl;
+        } else if (xlr == null || xlr_black) {
             call x_black := Get_black(x);
             fixed := !x_black;
-            call xr_black := Get_black(xr);
-            call xr_black_height := Get_black_height(xr);
-            if (xr_black) {
-                call Set_black_height(xr, xr_black_height - 1);
+            call xl_black := Get_black(xl);
+            call xl_black_height := Get_black_height(xl);
+            if (xl_black) {
+                call Set_black_height(xl, xl_black_height - 1);
             }
-            call Set_black(xr, false);
+            call Set_black(xl, false);
             call Set_black(x, true);
             call x_l := Get_l(x);
             call x_r := Get_r(x);
@@ -367,31 +367,31 @@ procedure RBTDeleteLeftFixup(x: Ref)
             call Set_black_height(x, bh + 1);
             call Set_p(x, null);
 
-            call AssertLCAndRemove(xr);
+            call AssertLCAndRemove(xl);
             call AssertLCAndRemove(x);
 
             ret := x;
         } else {
             fixed := true;
-            call xrll := Get_l(xrl);
-            call xrlr := Get_r(xrl);
+            call xlrl := Get_l(xlr);
+            call xlrr := Get_r(xlr);
             
-            call IfNotBr_ThenLC(xrll);
-            call IfNotBr_ThenLC(xrlr);
+            call IfNotBr_ThenLC(xlrl);
+            call IfNotBr_ThenLC(xlrr);
 
-            call Set_l(xr, xrlr);
-            if (xrlr != null) {
-                call Set_p(xrlr, xr);
+            call Set_r(xl, xlrl);
+            if (xlrl != null) {
+                call Set_p(xlrl, xl);
             }
-            call Set_r(xrl, xr);
-            call Set_p(xr, xrl);
-            call Set_l(xrl, x);
-            call Set_p(x, xrl);
-            call Set_r(x, xrll);
-            if (xrll != null) {
-                call Set_p(xrll, x);
+            call Set_l(xlr, xl);
+            call Set_p(xl, xlr);
+            call Set_r(xlr, x);
+            call Set_p(x, xlr);
+            call Set_l(x, xlrr);
+            if (xlrr != null) {
+                call Set_p(xlrr, x);
             }
-            call Set_p(xrl, null);
+            call Set_p(xlr, null);
 
             call oldxblack := Get_black(x);
 
@@ -428,77 +428,77 @@ procedure RBTDeleteLeftFixup(x: Ref)
             bh := MaxInt(GetBlackHeight(C.black_height, x_l), GetBlackHeight(C.black_height, x_r));
             call Set_black_height(x, bh + 1);
 
-            call xr_l := Get_l(xr);
-            call xr_r := Get_r(xr);
-            call xr_k := Get_k(xr);
-            if (xr_l != null) {
-                call xr_l_min := Get_min(xr_l);
-                call xr_l_keys := Get_keys(xr_l);
-                call xr_l_repr := Get_repr(xr_l);
+            call xl_l := Get_l(xl);
+            call xl_r := Get_r(xl);
+            call xl_k := Get_k(xl);
+            if (xl_l != null) {
+                call xl_l_min := Get_min(xl_l);
+                call xl_l_keys := Get_keys(xl_l);
+                call xl_l_repr := Get_repr(xl_l);
             }
-            if (xr_r != null) {
-                call xr_r_max := Get_max(xr_r);
-                call xr_r_keys := Get_keys(xr_r);
-                call xr_r_repr := Get_repr(xr_r);
+            if (xl_r != null) {
+                call xl_r_max := Get_max(xl_r);
+                call xl_r_keys := Get_keys(xl_r);
+                call xl_r_repr := Get_repr(xl_r);
             }
-            call Set_min(xr, if xr_l == null then xr_k else xr_l_min);
-            call Set_max(xr, if xr_r == null then xr_k else xr_r_max);
-            call Set_keys(xr, 
+            call Set_min(xl, if xl_l == null then xl_k else xl_l_min);
+            call Set_max(xl, if xl_r == null then xl_k else xl_r_max);
+            call Set_keys(xl, 
                 KeySetUnionF(
-                    (if xr_l == null then EmptyKeySet else xr_l_keys)[xr_k := true],
-                    if xr_r == null then EmptyKeySet else xr_r_keys
+                    (if xl_l == null then EmptyKeySet else xl_l_keys)[xl_k := true],
+                    if xl_r == null then EmptyKeySet else xl_r_keys
                 )
             );
-            call Set_repr(xr, 
+            call Set_repr(xl, 
                 RefSetUnionF(
-                    (if xr_l == null then EmptyRefSet else xr_l_repr)[xr := true],
-                    if xr_r == null then EmptyRefSet else xr_r_repr
+                    (if xl_l == null then EmptyRefSet else xl_l_repr)[xl := true],
+                    if xl_r == null then EmptyRefSet else xl_r_repr
                 )
             ); 
 
-            call xrl_l := Get_l(xrl);
-            call xrl_r := Get_r(xrl);
-            call xrl_k := Get_k(xrl);
-            if (xrl_l != null) {
-                call xrl_l_min := Get_min(xrl_l);
-                call xrl_l_keys := Get_keys(xrl_l);
-                call xrl_l_repr := Get_repr(xrl_l);
+            call xlr_l := Get_l(xlr);
+            call xlr_r := Get_r(xlr);
+            call xlr_k := Get_k(xlr);
+            if (xlr_l != null) {
+                call xlr_l_min := Get_min(xlr_l);
+                call xlr_l_keys := Get_keys(xlr_l);
+                call xlr_l_repr := Get_repr(xlr_l);
             }
-            if (xrl_r != null) {
-                call xrl_r_max := Get_max(xrl_r);
-                call xrl_r_keys := Get_keys(xrl_r);
-                call xrl_r_repr := Get_repr(xrl_r);
+            if (xlr_r != null) {
+                call xlr_r_max := Get_max(xlr_r);
+                call xlr_r_keys := Get_keys(xlr_r);
+                call xlr_r_repr := Get_repr(xlr_r);
             }
-            call Set_min(xrl, if xrl_l == null then xrl_k else xrl_l_min);
-            call Set_max(xrl, if xrl_r == null then xrl_k else xrl_r_max);
-            call Set_keys(xrl, 
+            call Set_min(xlr, if xlr_l == null then xlr_k else xlr_l_min);
+            call Set_max(xlr, if xlr_r == null then xlr_k else xlr_r_max);
+            call Set_keys(xlr, 
                 KeySetUnionF(
-                    (if xrl_l == null then EmptyKeySet else xrl_l_keys)[xrl_k := true],
-                    if xrl_r == null then EmptyKeySet else xrl_r_keys
+                    (if xlr_l == null then EmptyKeySet else xlr_l_keys)[xlr_k := true],
+                    if xlr_r == null then EmptyKeySet else xlr_r_keys
                 )
             );
-            call Set_repr(xrl, 
+            call Set_repr(xlr, 
                 RefSetUnionF(
-                    (if xrl_l == null then EmptyRefSet else xrl_l_repr)[xrl := true],
-                    if xrl_r == null then EmptyRefSet else xrl_r_repr
+                    (if xlr_l == null then EmptyRefSet else xlr_l_repr)[xlr := true],
+                    if xlr_r == null then EmptyRefSet else xlr_r_repr
                 )
             ); 
-            call Set_black(xrl, oldxblack);
-            bh := MaxInt(GetBlackHeight(C.black_height, xrl_l), GetBlackHeight(C.black_height, xrl_r));
-            call xrl_black := Get_black(xrl);
-            if (xrl_black) {
-                call Set_black_height(xrl, bh + 1);
+            call Set_black(xlr, oldxblack);
+            bh := MaxInt(GetBlackHeight(C.black_height, xlr_l), GetBlackHeight(C.black_height, xlr_r));
+            call xlr_black := Get_black(xlr);
+            if (xlr_black) {
+                call Set_black_height(xlr, bh + 1);
             } else {
-                call Set_black_height(xrl, bh);
+                call Set_black_height(xlr, bh);
             }
 
-            call AssertLCAndRemove(xrll);
-            call AssertLCAndRemove(xrlr);
+            call AssertLCAndRemove(xlrl);
+            call AssertLCAndRemove(xlrr);
             call AssertLCAndRemove(x);
-            call AssertLCAndRemove(xr);
-            call AssertLCAndRemove(xrl);
+            call AssertLCAndRemove(xl);
+            call AssertLCAndRemove(xlr);
 
-            ret := xrl;
+            ret := xlr;
         }
     }
 }
