@@ -89,6 +89,10 @@
     (define-fun Frame_max ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
         ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
 (replace
+    Frame_bst_size
+    (define-fun Frame_bst_size ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
+        ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
+(replace
     Frame_bst_keys
     (define-fun Frame_bst_keys ((mod (Array T@Ref Bool)) (pre (Array T@Ref (Array Int Bool))) (post (Array T@Ref (Array Int Bool)))) (Array T@Ref (Array Int Bool))
         ((_ map (ite (Bool (Array Int Bool) (Array Int Bool)) (Array Int Bool))) mod post pre)))

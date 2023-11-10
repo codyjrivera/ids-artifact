@@ -13,22 +13,22 @@ procedure BSTFixDepthContract(q1s: Ref, q1t: Ref, x: Ref);
         Br_bst
     );
     requires RefSetsEqual(Br_list, EmptyRefSet);
-    requires LC_Trans_NoDepth(C.k, C.l, C.r, C.p, C.min, C.max,
+    requires LC_Trans_NoDepth(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, x);
     requires C.p[x] != null;
     modifies Br_bst, Br_list, C.bst_depth;
-    ensures LC(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, x);
     ensures RefSetsEqual(Br_bst, old(Br_bst)[x := false]);
     ensures RefSetsEqual(Br_list, EmptyRefSet);
     // Framing conditions
     ensures Frame_all(
-        C.k, C.l, C.r, C.p, C.min, C.max,
+        C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
         C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
         C.next, C.prev, C.list_keys, C.list_repr,
-        old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max),
+        old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max), old(C.bst_size),
         old(C.bst_keys), old(C.bst_repr), old(C.bst_depth), old(C.bst_root),
         old(C.next), old(C.prev), old(C.list_keys), old(C.list_repr),
         RefSetIntersectF(old(C.bst_repr)[x], old(C.bst_repr)[old(C.bst_root)[x]]), old(alloc)
@@ -42,7 +42,7 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
         Br_bst
     );
     requires RefSetsEqual(Br_list, EmptyRefSet);
-    requires LC(C.k, C.l, C.r, C.p, C.min, C.max,
+    requires LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, x);
     requires C.p[x] != null;
@@ -50,7 +50,7 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     requires !(C.l[C.p[x]] == x && C.r[C.p[x]] == x);
     requires C.next[x] == null && C.prev[x] == null;
     requires q1s != null ==> x != q1s;
-    modifies Br_bst, Br_list, C.l, C.r, C.p, C.min, C.max,
+    modifies Br_bst, Br_list, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root;
     ensures root != null;
     ensures ret == null || ret == old(C.l)[x] || ret == old(C.r)[x];
@@ -59,7 +59,7 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
              && !RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]))
                 ==> ret != null);
     ensures (ret != null ==>
-                LC(C.k, C.l, C.r, C.p, C.min, C.max,
+                LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                     C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                     C.next, C.prev, C.list_keys, C.list_repr, ret)
                 && KeySetsEqual(C.bst_keys[ret], (old(C.bst_keys)[x])[C.k[x] := false])
@@ -76,6 +76,7 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     ensures old(C.r)[old(C.p)[x]] != x ==> C.r[old(C.p)[x]] == old(C.r)[old(C.p)[x]];
     ensures old(C.k)[old(C.p)[x]] == C.k[old(C.p)[x]];
     ensures old(C.p)[old(C.p)[x]] == C.p[old(C.p)[x]];
+    ensures old(C.bst_size)[old(C.p)[x]] == C.bst_size[old(C.p)[x]];
     ensures KeySetsEqual(old(C.bst_keys)[old(C.p)[x]], C.bst_keys[old(C.p)[x]]);
     ensures RefSetsEqual(old(C.bst_repr)[old(C.p)[x]], C.bst_repr[old(C.p)[x]]);
     ensures old(C.min)[old(C.p)[x]] == C.min[old(C.p)[x]];
@@ -84,10 +85,10 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     ensures old(C.bst_root)[old(C.p)[x]] == C.bst_root[old(C.p)[x]];
     // ensures listfieldsunchanged(old(x.p));
     ensures root == x && C.k[root] == old(C.k)[x];
-    ensures LC(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, root);
-    ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, root);
     // ensures listfieldsunchanged(root);
@@ -97,10 +98,10 @@ procedure BSTRemoveRootInsideContract(q1s: Ref, q1t: Ref, x: Ref)
     ensures RefSetsEqual(Br_list, EmptyRefSet);
     // Framing conditions
     ensures Frame_all(
-        C.k, C.l, C.r, C.p, C.min, C.max,
+        C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
         C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
         C.next, C.prev, C.list_keys, C.list_repr,
-        old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max),
+        old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max), old(C.bst_size),
         old(C.bst_keys), old(C.bst_repr), old(C.bst_depth), old(C.bst_root),
         old(C.next), old(C.prev), old(C.list_keys), old(C.list_repr),
         RefSetIntersectF(old(C.bst_repr)[x], old(C.bst_repr)[old(C.bst_root)[x]])[old(C.p)[x] := true],
@@ -115,7 +116,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
         Br_bst
     );
     requires RefSetsEqual(Br_list, EmptyRefSet);
-    requires LC(C.k, C.l, C.r, C.p, C.min, C.max,
+    requires LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, x);
     requires C.p[x] != null;
@@ -123,7 +124,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     requires !(C.l[C.p[x]] == x && C.r[C.p[x]] == x);
     requires C.next[x] == null && C.prev[x] == null;
     requires q1s != null ==> x != q1s;
-    modifies Br_bst, Br_list, C.l, C.r, C.p, C.min, C.max,
+    modifies Br_bst, Br_list, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root;
     ensures root != null;
     ensures ret == null || ret == old(C.l)[x] || ret == old(C.r)[x];
@@ -132,7 +133,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
              && !RefSetsEqual(old(C.bst_repr)[x], EmptyRefSet[x := true]))
                 ==> ret != null);
     ensures (ret != null ==>
-                LC(C.k, C.l, C.r, C.p, C.min, C.max,
+                LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                     C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                     C.next, C.prev, C.list_keys, C.list_repr, ret)
                 && KeySetsEqual(C.bst_keys[ret], (old(C.bst_keys)[x])[C.k[x] := false])
@@ -149,6 +150,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     ensures old(C.r)[old(C.p)[x]] != x ==> C.r[old(C.p)[x]] == old(C.r)[old(C.p)[x]];
     ensures old(C.k)[old(C.p)[x]] == C.k[old(C.p)[x]];
     ensures old(C.p)[old(C.p)[x]] == C.p[old(C.p)[x]];
+    ensures old(C.bst_size)[old(C.p)[x]] == C.bst_size[old(C.p)[x]];
     ensures KeySetsEqual(old(C.bst_keys)[old(C.p)[x]], C.bst_keys[old(C.p)[x]]);
     ensures RefSetsEqual(old(C.bst_repr)[old(C.p)[x]], C.bst_repr[old(C.p)[x]]);
     ensures old(C.min)[old(C.p)[x]] == C.min[old(C.p)[x]];
@@ -157,10 +159,10 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     ensures old(C.bst_root)[old(C.p)[x]] == C.bst_root[old(C.p)[x]];
     // ensures listfieldsunchanged(old(x.p));
     ensures root == x && C.k[root] == old(C.k)[x];
-    ensures LC(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, root);
-    ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures BST_Isolated(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, root);
     // ensures listfieldsunchanged(root);
@@ -170,10 +172,10 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     ensures RefSetsEqual(Br_list, EmptyRefSet);
     // Framing conditions
     ensures Frame_all(
-        C.k, C.l, C.r, C.p, C.min, C.max,
+        C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
         C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
         C.next, C.prev, C.list_keys, C.list_repr,
-        old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max),
+        old(C.k), old(C.l), old(C.r), old(C.p), old(C.min), old(C.max), old(C.bst_size),
         old(C.bst_keys), old(C.bst_repr), old(C.bst_depth), old(C.bst_root),
         old(C.next), old(C.prev), old(C.list_keys), old(C.list_repr),
         RefSetIntersectF(old(C.bst_repr)[x], old(C.bst_repr)[old(C.bst_root)[x]])[old(C.p)[x] := true],
@@ -213,6 +215,10 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
     var r_l_bst_repr: RefSet;
     var r_p: Ref;
     var r_p_bst_depth: int;
+    var x_l_bst_size: int;
+    var x_r_bst_size: int;
+    var r_l_bst_size: int;
+    var r_r_bst_size: int;
 
     call InAllocParam(q1s);
     call InAllocParam(q1t);
@@ -245,6 +251,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
         call x_k := Get_k(x);
         call Set_max(x, x_k);
         call Set_bst_keys(x, EmptyKeySet);
+        call Set_bst_size(x, 1);
         call Set_bst_repr(x, EmptyRefSet[x := true]);
         call Set_bst_root(x, x);
         call Set_bst_depth(x, 0);
@@ -275,6 +282,7 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
         call x_k := Get_k(x);
         call Set_max(x, x_k);
         call Set_bst_keys(x, EmptyKeySet);
+        call Set_bst_size(x, 1);
         call Set_bst_repr(x, EmptyRefSet[x := true]);
         call Set_bst_root(x, x);
         call Set_bst_depth(x, 0);
@@ -334,7 +342,10 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
             call x_r_bst_keys := Get_bst_keys(x_r);
             call x_r_bst_repr := Get_bst_repr(x_r);
         }
+        call x_l_bst_size := GetBSTSizeOrZero(x_l);
+        call x_r_bst_size := GetBSTSizeOrZero(x_r);
         call Set_max(x, if x_r == null then x_k else x_r_max);
+        call Set_bst_size(x, x_l_bst_size + 1 + x_r_bst_size);
         call Set_bst_keys(x, KeySetUnionF(x_l_bst_keys, if x_r == null then EmptyKeySet else x_r_bst_keys)[x_k := true]);
         call Set_bst_repr(x, RefSetUnionF(x_l_bst_repr, if x_r == null then EmptyRefSet else x_r_bst_repr)[x := true]);
 
@@ -345,9 +356,11 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
             call r_r_bst_keys := Get_bst_keys(r_r);
             call r_r_bst_repr := Get_bst_repr(r_r);
         }
+        call r_r_bst_size := GetBSTSizeOrZero(r_r);
         call Set_l(r, null);
         call Set_p(r, x_p);
         call Set_min(r, r_k);
+        call Set_bst_size(r, 1 + r_r_bst_size);
         call Set_bst_keys(r, (if r_r == null then EmptyKeySet else r_r_bst_keys)[r_k := true]);
         call Set_bst_repr(r, (if r_r == null then EmptyRefSet else r_r_bst_repr)[r := true]);
 
@@ -387,9 +400,12 @@ procedure BSTRemoveRootInside(q1s: Ref, q1t: Ref, x: Ref)
             call r_r_bst_keys := Get_bst_keys(r_r);
             call r_r_bst_repr := Get_bst_repr(r_r);
         }
+        call r_l_bst_size := GetBSTSizeOrZero(r_l);
+        call r_r_bst_size := GetBSTSizeOrZero(r_r);
         call r_p := Get_p(r);
         call r_p_bst_depth := Get_bst_depth(r_p);
         call Set_min(r, if r_l == null then r_k else r_l_min);
+        call Set_bst_size(r, r_l_bst_size + 1 + r_r_bst_size);
         call Set_bst_keys(
             r,
             KeySetUnionF(

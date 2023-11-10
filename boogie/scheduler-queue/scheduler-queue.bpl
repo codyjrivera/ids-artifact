@@ -47,6 +47,7 @@ var C.r: [Ref]Ref;
 var C.p: [Ref]Ref;
 var C.min: [Ref]int;
 var C.max: [Ref]int;
+var C.bst_size: [Ref]int;
 var C.bst_keys: [Ref]KeySet;
 var C.bst_repr: [Ref]RefSet;
 var C.bst_depth: [Ref]int;
@@ -70,6 +71,7 @@ function {:inline} LC(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -88,6 +90,7 @@ function {:inline} LC(
         p,
         min,
         max,
+        bst_size,
         bst_keys,
         bst_repr,
         bst_depth,
@@ -106,6 +109,7 @@ function {:inline} LC(
         p,
         min,
         max,
+        bst_size,
         bst_keys,
         bst_repr,
         bst_depth,
@@ -125,6 +129,7 @@ function {:inline} LC_BST(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -204,6 +209,8 @@ function {:inline} LC_BST(
         && bst_depth[x] >= 0
         && (p[x] != null ==> bst_depth[p[x]] >= 0)
         && bst_root[x] != null
+        && bst_size[x] == GetBSTSize(bst_size, l[x]) + 1 + GetBSTSize(bst_size, r[x])
+        && bst_size[x] >= 1
     )
 }
 
@@ -214,6 +221,7 @@ function {:inline} LC_List(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -252,6 +260,7 @@ function {:inline} LC_Trans_NoDepth(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -270,6 +279,7 @@ function {:inline} LC_Trans_NoDepth(
         p,
         min,
         max,
+        bst_size,
         bst_keys,
         bst_repr,
         bst_depth,
@@ -288,6 +298,7 @@ function {:inline} LC_Trans_NoDepth(
         p,
         min,
         max,
+        bst_size,
         bst_keys,
         bst_repr,
         bst_depth,
@@ -307,6 +318,7 @@ function {:inline} LC_BST_Trans_NoDepth(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -386,6 +398,8 @@ function {:inline} LC_BST_Trans_NoDepth(
         && bst_depth[x] >= 0
         && (p[x] != null ==> bst_depth[p[x]] >= 0)
         && bst_root[x] != null
+        && bst_size[x] == GetBSTSize(bst_size, l[x]) + 1 + GetBSTSize(bst_size, r[x])
+        && bst_size[x] >= 1
     )
 }
 
@@ -396,6 +410,7 @@ function {:inline} LC_Trans_PlusNode(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -415,6 +430,7 @@ function {:inline} LC_Trans_PlusNode(
         p,
         min,
         max,
+        bst_size,
         bst_keys,
         bst_repr,
         bst_depth,
@@ -434,6 +450,7 @@ function {:inline} LC_Trans_PlusNode(
         p,
         min,
         max,
+        bst_size,
         bst_keys,
         bst_repr,
         bst_depth,
@@ -453,6 +470,7 @@ function {:inline} LC_BST_Trans_PlusNode(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -533,6 +551,8 @@ function {:inline} LC_BST_Trans_PlusNode(
             && bst_depth[x] >= 0
             && (p[x] != null ==> bst_depth[p[x]] >= 0)
             && bst_root[x] != null
+            //&& bst_size[x] == GetBSTSize(bst_size, l[x]) + 2 + GetBSTSize(bst_size, r[x])
+            && bst_size[x] >= 1
         )
 }
 
@@ -544,6 +564,7 @@ function {:inline} Valid_Queue(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -558,12 +579,12 @@ function {:inline} Valid_Queue(
 {
     q1t != null
     && p[q1t] == null
-    && LC(k, l, r, p, min, max,
+    && LC(k, l, r, p, min, max, bst_size,
             bst_keys, bst_repr, bst_depth, bst_root,
             next, prev, list_keys, list_repr, q1t)
     && (q1s != null <==> (l[q1t] == null && r[q1t] == null))
     && (q1s != null ==>
-            LC(k, l, r, p, min, max,
+            LC(k, l, r, p, min, max, bst_size,
                 bst_keys, bst_repr, bst_depth, bst_root,
                 next, prev, list_keys, list_repr, q1s)
             && prev[q1s] == null
@@ -580,21 +601,21 @@ procedure Get_k(x: Ref) returns (k: int);
 procedure Get_l(x: Ref) returns (l: Ref);
     requires x != null;
     ensures l == C.l[x];
-    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, l, alloc);
 
 procedure Get_r(x: Ref) returns (r: Ref);
     requires x != null;
     ensures r == C.r[x];
-    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, r, alloc);
 
 procedure Get_p(x: Ref) returns (p: Ref);
     requires x != null;
     ensures p == C.p[x];
-    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, p, alloc);
 
@@ -605,6 +626,10 @@ procedure Get_min(x: Ref) returns (min: int);
 procedure Get_max(x: Ref) returns (max: int);
     requires x != null;
     ensures max == C.max[x];
+
+procedure Get_bst_size(x: Ref) returns (bst_size: int);
+    requires x != null;
+    ensures bst_size == C.bst_size[x];
 
 procedure Get_bst_keys(x: Ref) returns (bst_keys: KeySet);
     requires x != null;
@@ -622,21 +647,21 @@ procedure Get_bst_depth(x: Ref) returns (bst_depth: int);
 procedure Get_bst_root(x: Ref) returns (bst_root: Ref);
     requires x != null;
     ensures bst_root == C.bst_root[x];
-    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, bst_root, alloc);
 
 procedure Get_next(x: Ref) returns (next: Ref);
     requires x != null;
     ensures next == C.next[x];
-    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, next, alloc);
 
 procedure Get_prev(x: Ref) returns (prev: Ref);
     requires x != null;
     ensures prev == C.prev[x];
-    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures InAlloc(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, prev, alloc);
 
@@ -705,6 +730,13 @@ procedure Set_max(x: Ref, max: int);
     requires x != null;
     modifies Br_bst, C.max;
     ensures C.max == old(C.max)[x := max];
+    ensures C.p[x] != null ==> Br_bst == (old(Br_bst)[x := true])[C.p[x] := true];
+    ensures C.p[x] == null ==> Br_bst == old(Br_bst)[x := true];
+
+procedure Set_bst_size(x: Ref, bst_size: int);
+    requires x != null;
+    modifies Br_bst, C.bst_size;
+    ensures C.bst_size == old(C.bst_size)[x := bst_size];
     ensures C.p[x] != null ==> Br_bst == (old(Br_bst)[x := true])[C.p[x] := true];
     ensures C.p[x] == null ==> Br_bst == old(Br_bst)[x := true];
 
@@ -792,24 +824,24 @@ procedure Set_list_repr(x: Ref, list_repr: RefSet);
 // Broken set manipulation
 procedure IfNotBr_ThenLC(x: Ref);
     ensures (x != null && !Br_list[x] && !Br_bst[x]) ==> 
-            LC(C.k, C.l, C.r, C.p, C.min, C.max,
+            LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, x);
 
 procedure IfNotBrList_ThenListLC(x: Ref);
     ensures (x != null && !Br_list[x]) ==> 
-            LC_List(C.k, C.l, C.r, C.p, C.min, C.max,
+            LC_List(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                 C.next, C.prev, C.list_keys, C.list_repr, x);
 
 procedure AssertLCAndRemove(x: Ref);
     modifies Br_list, Br_bst;
-    ensures (x != null && LC(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures (x != null && LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                                 C.next, C.prev, C.list_keys, C.list_repr, x)) 
                 ==> (Br_list == old(Br_list)[x := false]
                     && Br_bst == old(Br_bst)[x := false]);
-    ensures (x == null || !LC(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures (x == null || !LC(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                             C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                             C.next, C.prev, C.list_keys, C.list_repr, x))
                 ==> (Br_list == old(Br_list)
@@ -822,6 +854,7 @@ function Frame_r(mod_set: RefSet, old_r: [Ref]Ref, r: [Ref]Ref) returns ([Ref]Re
 function Frame_p(mod_set: RefSet, old_p: [Ref]Ref, p: [Ref]Ref) returns ([Ref]Ref);
 function Frame_min(mod_set: RefSet, old_min: [Ref]int, min: [Ref]int) returns ([Ref]int);
 function Frame_max(mod_set: RefSet, old_max: [Ref]int, max: [Ref]int) returns ([Ref]int);
+function Frame_bst_size(mod_set: RefSet, old_bst_size: [Ref]int, bst_size: [Ref]int) returns ([Ref]int);
 function Frame_bst_keys(mod_set: RefSet, old_bst_keys: [Ref]KeySet, bst_keys: [Ref]KeySet) returns ([Ref]KeySet);
 function Frame_bst_repr(mod_set: RefSet, old_bst_repr: [Ref]RefSet, bst_repr: [Ref]RefSet) returns ([Ref]RefSet);
 function Frame_bst_depth(mod_set: RefSet, old_bst_depth: [Ref]int, bst_depth: [Ref]int) returns ([Ref]int);
@@ -838,6 +871,7 @@ function {:inline} Frame_all(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -852,6 +886,7 @@ function {:inline} Frame_all(
     oldp: [Ref]Ref,
     oldmin: [Ref]int,
     oldmax: [Ref]int,
+    oldbst_size: [Ref]int,
     oldbst_keys: [Ref]KeySet,
     oldbst_repr: [Ref]RefSet,
     oldbst_depth: [Ref]int,
@@ -870,6 +905,7 @@ function {:inline} Frame_all(
     && p == Frame_p(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldp, p) 
     && min == Frame_min(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldmin, min) 
     && max == Frame_max(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldmax, max) 
+    && bst_size == Frame_bst_size(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_size, bst_size)
     && bst_keys == Frame_bst_keys(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_keys, bst_keys)
     && bst_repr == Frame_bst_repr(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_repr, bst_repr)
     && bst_depth == Frame_bst_depth(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldbst_depth, bst_depth)
@@ -888,6 +924,7 @@ function {:inline} InAlloc(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -914,7 +951,7 @@ function {:inline} InAlloc(
 }
 
 procedure InAllocParam(x: Ref);
-    ensures x != null ==> InAlloc(C.k, C.l, C.r, C.p, C.min, C.max,
+    ensures x != null ==> InAlloc(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
                                 C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
                                 C.next, C.prev, C.list_keys, C.list_repr, 
                                 x, alloc);
@@ -933,6 +970,7 @@ function {:inline} BST_Isolated(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -949,13 +987,14 @@ function {:inline} BST_Isolated(
   )
 }
 
-function {:inline} BST_FieldsUnchanged(
+function {:inline} Unchanged(
     k: [Ref]int, 
     l: [Ref]Ref,
     r: [Ref]Ref,
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -970,6 +1009,110 @@ function {:inline} BST_FieldsUnchanged(
     oldp: [Ref]Ref,
     oldmin: [Ref]int,
     oldmax: [Ref]int,
+    oldbst_size: [Ref]int,
+    oldbst_keys: [Ref]KeySet,
+    oldbst_repr: [Ref]RefSet,
+    oldbst_depth: [Ref]int,
+    oldbst_root: [Ref]Ref,
+    oldnext: [Ref]Ref,
+    oldprev: [Ref]Ref,
+    oldlist_keys: [Ref]KeySet,
+    oldlist_repr: [Ref]RefSet,
+    x: Ref
+) returns (bool)
+{
+    (x != null ==> k[x] == oldk[x])
+    && BST_FieldsUnchanged(
+        k,
+        l,
+        r,
+        p,
+        min,
+        max,
+        bst_size,
+        bst_keys,
+        bst_repr,
+        bst_depth,
+        bst_root,
+        next,
+        prev,
+        list_keys,
+        list_repr,
+        oldk,
+        oldl,
+        oldr,
+        oldp,
+        oldmin,
+        oldmax,
+        oldbst_size,
+        oldbst_keys,
+        oldbst_repr,
+        oldbst_depth,
+        oldbst_root,
+        oldnext,
+        oldprev,
+        oldlist_keys,
+        oldlist_repr,
+        x
+    )
+    && List_FieldsUnchanged(
+        k,
+        l,
+        r,
+        p,
+        min,
+        max,
+        bst_size,
+        bst_keys,
+        bst_repr,
+        bst_depth,
+        bst_root,
+        next,
+        prev,
+        list_keys,
+        list_repr,
+        oldk,
+        oldl,
+        oldr,
+        oldp,
+        oldmin,
+        oldmax,
+        oldbst_size,
+        oldbst_keys,
+        oldbst_repr,
+        oldbst_depth,
+        oldbst_root,
+        oldnext,
+        oldprev,
+        oldlist_keys,
+        oldlist_repr,
+        x
+    )
+}
+
+function {:inline} BST_FieldsUnchanged(
+    k: [Ref]int, 
+    l: [Ref]Ref,
+    r: [Ref]Ref,
+    p: [Ref]Ref,
+    min: [Ref]int,
+    max: [Ref]int,
+    bst_size: [Ref]int,
+    bst_keys: [Ref]KeySet,
+    bst_repr: [Ref]RefSet,
+    bst_depth: [Ref]int,
+    bst_root: [Ref]Ref,
+    next: [Ref]Ref,
+    prev: [Ref]Ref,
+    list_keys: [Ref]KeySet,
+    list_repr: [Ref]RefSet,
+    oldk: [Ref]int, 
+    oldl: [Ref]Ref,
+    oldr: [Ref]Ref,
+    oldp: [Ref]Ref,
+    oldmin: [Ref]int,
+    oldmax: [Ref]int,
+    oldbst_size: [Ref]int,
     oldbst_keys: [Ref]KeySet,
     oldbst_repr: [Ref]RefSet,
     oldbst_depth: [Ref]int,
@@ -987,6 +1130,7 @@ function {:inline} BST_FieldsUnchanged(
     && p[x] == oldp[x]
     && min[x] == oldmin[x]
     && max[x] == oldmax[x]
+    && bst_size[x] == oldbst_size[x]
     && bst_keys[x] == oldbst_keys[x]
     && bst_repr[x] == oldbst_repr[x]
     && bst_depth[x] == oldbst_depth[x]
@@ -1001,6 +1145,7 @@ function {:inline} List_FieldsUnchanged(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -1015,6 +1160,7 @@ function {:inline} List_FieldsUnchanged(
     oldp: [Ref]Ref,
     oldmin: [Ref]int,
     oldmax: [Ref]int,
+    oldbst_size: [Ref]int,
     oldbst_keys: [Ref]KeySet,
     oldbst_repr: [Ref]RefSet,
     oldbst_depth: [Ref]int,
@@ -1041,6 +1187,7 @@ function {:inline} FieldsUnchangedMinus_bst_depth(
     p: [Ref]Ref,
     min: [Ref]int,
     max: [Ref]int,
+    bst_size: [Ref]int,
     bst_keys: [Ref]KeySet,
     bst_repr: [Ref]RefSet,
     bst_depth: [Ref]int,
@@ -1055,6 +1202,7 @@ function {:inline} FieldsUnchangedMinus_bst_depth(
     oldp: [Ref]Ref,
     oldmin: [Ref]int,
     oldmax: [Ref]int,
+    oldbst_size: [Ref]int,
     oldbst_keys: [Ref]KeySet,
     oldbst_repr: [Ref]RefSet,
     oldbst_depth: [Ref]int,
@@ -1072,6 +1220,7 @@ function {:inline} FieldsUnchangedMinus_bst_depth(
     && p[x] == oldp[x]
     && min[x] == oldmin[x]
     && max[x] == oldmax[x]
+    && bst_size[x] == oldbst_size[x]
     && bst_keys[x] == oldbst_keys[x]
     && bst_repr[x] == oldbst_repr[x]
     //&& bst_depth[x] == oldbst_depth[x]
@@ -1082,3 +1231,12 @@ function {:inline} FieldsUnchangedMinus_bst_depth(
     && list_repr[x] == oldlist_repr[x]
   )
 }
+
+function {:inline} GetBSTSize(bst_size: [Ref]int, x: Ref) returns (int)
+{
+    if x == null then 0 else bst_size[x]
+}
+
+procedure GetBSTSizeOrZero(x: Ref) returns (bst_size: int);
+    ensures bst_size == GetBSTSize(C.bst_size, x);
+
