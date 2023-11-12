@@ -177,87 +177,6 @@ procedure RBTDeleteContract(x: Ref, k: int)
         old(C.repr)[x], old(alloc)
     );
 
-// Local conditions
-function {:inline} LC_Debug(
-    k: [Ref]int, 
-    l: [Ref]Ref,
-    r: [Ref]Ref,
-    p: [Ref]Ref,
-    min: [Ref]int,
-    max: [Ref]int,
-    keys: [Ref]KeySet,
-    repr: [Ref]RefSet,
-    black: [Ref]bool,
-    black_height: [Ref]int,
-    x: Ref
-) returns (bool)
-{
-    (x != null ==> (
-        (repr[x])[x]
-        && min[x] <= k[x] 
-        && k[x] <= max[x]
-        && (p[x] != null ==>
-                !(repr[x])[p[x]]
-                && (l[p[x]] == x || r[p[x]] == x))
-        && (l[x] != null ==> 
-                (repr[x])[l[x]]
-                && !(repr[l[x]])[x]
-                && p[l[x]] == x
-                && max[l[x]] < k[x])
-        && (r[x] != null ==> 
-                (repr[x])[r[x]]
-                && !(repr[r[x]])[x]
-                && p[r[x]] == x
-                && min[r[x]] > k[x])
-        && (l[x] == null && r[x] == null ==>
-                RefSetsEqual(repr[x], EmptyRefSet[x := true])
-                && KeySetsEqual(keys[x], EmptyKeySet[k[x] := true])
-                && min[x] == k[x] 
-                && k[x] == max[x]
-                )
-        && (l[x] != null && r[x] == null ==>
-                RefSetsEqual(repr[x], (repr[l[x]])[x := true])
-                && KeySetsEqual(keys[x], (keys[l[x]])[k[x] := true])
-                && !(keys[l[x]])[k[x]]
-                && min[x] == min[l[x]] && max[x] == k[x]
-                )
-        && (l[x] == null && r[x] != null ==>
-                RefSetsEqual(repr[x], (repr[r[x]])[x := true])
-                && KeySetsEqual(keys[x], (keys[r[x]])[k[x] := true])
-                && !(keys[r[x]])[k[x]]
-                && min[x] == k[x] && max[x] == max[r[x]]
-                )
-        && (l[x] != null && r[x] != null ==>
-                RefSetsEqual(repr[x], RefSetUnionF((repr[l[x]])[x := true], repr[r[x]]))
-                && RefSetsDisjoint(repr[l[x]], repr[r[x]])
-                && KeySetsEqual(keys[x], KeySetUnionF((keys[l[x]])[k[x] := true], keys[r[x]]))
-                && KeySetsDisjoint(keys[l[x]], keys[r[x]])
-                && !(keys[l[x]])[k[x]] && !(keys[r[x]])[k[x]]
-                && min[x] == min[l[x]] && max[x] == max[r[x]]
-                )
-        // Special RBT properties
-        && (l[x] == null && r[x] == null ==>
-                black_height[x] == (if black[x] then 1 else 0))
-        && (l[x] != null && r[x] == null ==>
-                black_height[x] == (if black[x] then 1 else 0)
-                && black_height[l[x]] == 0
-                && (black[x] || black[l[x]]))
-        && (l[x] == null && r[x] != null ==>
-                black_height[x] == (if black[x] then 1 else 0)
-                && black_height[r[x]] == 0
-                && (black[x] || black[r[x]]))
-        && (l[x] != null && r[x] != null ==>
-                (black_height[l[x]] > black_height[r[x]] ==>
-                    black_height[x] == (if black[x] then black_height[l[x]] + 1 else black_height[l[x]]))
-                && (black_height[l[x]] <= black_height[r[x]] ==>
-                        black_height[x] == (if black[x] then black_height[r[x]] + 1 else black_height[r[x]]))
-                && black_height[l[x]] == black_height[r[x]]
-                && (black[x] || (black[l[x]] && black[r[x]]))
-                )
-        && black_height[x] >= 0
-    ))
-}
-
 procedure RBTDelete(x: Ref, k: int) 
     returns (ret: Ref, del: Ref, fixed: bool)
     requires x != null;
@@ -332,6 +251,8 @@ procedure RBTDelete(x: Ref, k: int)
     var n: Ref;
     var minnode: Ref;
     var delnode: Ref;
+    var oldl: Ref;
+    var oldr: Ref;
 
     // Subexpressions
     var x_k: int; var x_black: bool;
@@ -499,8 +420,131 @@ procedure RBTDelete(x: Ref, k: int)
             return;
         }
 
-        assume false;
+        call Set_p(x, null);
+        call oldl := Get_l(x);
+        call Set_l(x, n);
+        if (n != null) {
+            call Set_p(n, x);
+        }
+        call AssertLCAndRemove(oldl);
+
+        call x_l := Get_l(x);
+        call x_r := Get_r(x);
+        call x_k := Get_k(x);
+        call x_black := Get_black(x);
+        call x_black_height := Get_black_height(x);
+        if (x_l != null) {
+            call x_l_min := Get_min(x_l);
+            call x_l_keys := Get_keys(x_l);
+            call x_l_repr := Get_repr(x_l);
+        }
+        if (x_r != null) {
+            call x_r_max := Get_max(x_r);
+            call x_r_keys := Get_keys(x_r);
+            call x_r_repr := Get_repr(x_r);
+        }
+        call Set_min(x, if x_l == null then x_k else x_l_min);
+        call Set_max(x, if x_r == null then x_k else x_r_max);
+        call Set_keys(x, 
+            KeySetUnionF(
+                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                if x_r == null then EmptyKeySet else x_r_keys
+            )
+        );
+        call Set_repr(x, 
+            RefSetUnionF(
+                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                if x_r == null then EmptyRefSet else x_r_repr
+            )
+        );
+
+        call AssertLCAndRemove(n);
+
+        if (fixed) {
+            call AssertLCAndRemove(x);
+
+            ret := x; del := delnode;
+            fixed := true;
+        } else {
+            call ret, fixed := RBTDeleteLeftFixupContract(x);
+            del := delnode;
+        }
     } else {
-        assume false;
+        call x_l := Get_l(x);
+        call x_r := Get_r(x);
+        call IfNotBr_ThenLC(x_l);
+        call IfNotBr_ThenLC(x_r);
+
+        if (x_r == null) {
+            ret := x;
+            del := null;
+            fixed := true;
+            return;
+        }
+
+        call n, delnode, fixed := RBTDeleteContract(x_r, k);
+
+        call x_r := Get_r(x);
+        if (x_r != null) {
+            call IfNotBr_ThenLC(x_r);
+        }
+
+        if (delnode == null) {
+            call IfNotBr_ThenLC(x);
+            ret := x;
+            del := null;
+            fixed := true;
+            return;
+        }
+
+        call Set_p(x, null);
+        call oldr := Get_r(x);
+        call Set_r(x, n);
+        if (n != null) {
+            call Set_p(n, x);
+        }
+        call AssertLCAndRemove(oldr);
+
+        call x_l := Get_l(x);
+        call x_r := Get_r(x);
+        call x_k := Get_k(x);
+        call x_black := Get_black(x);
+        call x_black_height := Get_black_height(x);
+        if (x_l != null) {
+            call x_l_min := Get_min(x_l);
+            call x_l_keys := Get_keys(x_l);
+            call x_l_repr := Get_repr(x_l);
+        }
+        if (x_r != null) {
+            call x_r_max := Get_max(x_r);
+            call x_r_keys := Get_keys(x_r);
+            call x_r_repr := Get_repr(x_r);
+        }
+        call Set_min(x, if x_l == null then x_k else x_l_min);
+        call Set_max(x, if x_r == null then x_k else x_r_max);
+        call Set_keys(x, 
+            KeySetUnionF(
+                (if x_l == null then EmptyKeySet else x_l_keys)[x_k := true],
+                if x_r == null then EmptyKeySet else x_r_keys
+            )
+        );
+        call Set_repr(x, 
+            RefSetUnionF(
+                (if x_l == null then EmptyRefSet else x_l_repr)[x := true],
+                if x_r == null then EmptyRefSet else x_r_repr
+            )
+        );
+
+        call AssertLCAndRemove(n);
+
+        if (fixed) {
+            call AssertLCAndRemove(x);
+
+            ret := x; del := delnode;
+            fixed := true;
+        } else {
+            call ret, fixed := RBTDeleteRightFixupContract(x);
+            del := delnode;
+        }
     }
 }
