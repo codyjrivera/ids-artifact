@@ -4,7 +4,7 @@
 // 
 // Artifact by Cody Rivera, 2023. 
 //
-// Definition of Treaps.
+// Definition of Binary Search Trees.
 
 // Datatype aliases
 type Ref;
@@ -40,7 +40,6 @@ function RefSetsDisjoint(s1: RefSet, s2: RefSet) returns (bool);
 
 // Fields
 var C.k: [Ref]int;
-var C.prio: [Ref]int;
 var C.l: [Ref]Ref;
 var C.r: [Ref]Ref;
 var C.p: [Ref]Ref;
@@ -55,7 +54,6 @@ var alloc: RefSet;
 // Local conditions
 function {:inline} LC(
     k: [Ref]int,
-    prio: [Ref]int,
     l: [Ref]Ref,
     r: [Ref]Ref,
     p: [Ref]Ref,
@@ -77,14 +75,12 @@ function {:inline} LC(
                 (repr[x])[l[x]]
                 && !(repr[l[x]])[x]
                 && p[l[x]] == x
-                && max[l[x]] < k[x]
-                && prio[l[x]] <= prio[x])
+                && max[l[x]] < k[x])
         && (r[x] != null ==> 
                 (repr[x])[r[x]]
                 && !(repr[r[x]])[x]
                 && p[r[x]] == x
-                && min[r[x]] > k[x]
-                && prio[r[x]] <= prio[x])
+                && min[r[x]] > k[x])
         && (l[x] == null && r[x] == null ==>
                 RefSetsEqual(repr[x], EmptyRefSet[x := true])
                 && KeySetsEqual(keys[x], EmptyKeySet[k[x] := true])
@@ -119,28 +115,24 @@ procedure Get_k(x: Ref) returns (k: int);
     requires x != null;
     ensures k == C.k[x];
 
-procedure Get_prio(x: Ref) returns (prio: int);
-    requires x != null;
-    ensures prio == C.prio[x];
-
 procedure Get_l(x: Ref) returns (l: Ref);
     requires x != null;
     ensures l == C.l[x];
-    ensures InAlloc(C.k, C.prio, C.l, C.r, C.p, 
+    ensures InAlloc(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys, C.repr, 
                 l, alloc);
 
 procedure Get_r(x: Ref) returns (r: Ref);
     requires x != null;
     ensures r == C.r[x];
-    ensures InAlloc(C.k, C.prio, C.l, C.r, C.p, 
+    ensures InAlloc(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys, C.repr, 
                 r, alloc);
 
 procedure Get_p(x: Ref) returns (p: Ref);
     requires x != null;
     ensures p == C.p[x];
-    ensures InAlloc(C.k, C.prio, C.l, C.r, C.p, 
+    ensures InAlloc(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys, C.repr, 
                 p, alloc);
 
@@ -162,13 +154,12 @@ procedure Get_repr(x: Ref) returns (repr: RefSet);
     ensures RefSetSubset(repr, alloc);
 
 // Manipulation macros
-procedure Create(k: int, prio: int) returns (node: Ref);
-    modifies Br, alloc, C.k, C.prio, C.l, C.r, C.p;
+procedure Create(k: int) returns (node: Ref);
+    modifies Br, alloc, C.k, C.l, C.r, C.p;
     ensures node != null;
     ensures !old(alloc)[node];
     ensures alloc == old(alloc)[node := true];
     ensures C.k == old(C.k)[node := k];
-    ensures C.prio == old(C.prio)[node := prio];
     ensures C.l == old(C.l)[node := null];
     ensures C.r == old(C.r)[node := null];
     ensures C.p == old(C.p)[node := null];
@@ -178,13 +169,6 @@ procedure Set_k(x: Ref, k: int);
     requires x != null;
     modifies Br, C.k;
     ensures C.k == old(C.k)[x := k];
-    ensures C.p[x] != null ==> Br == (old(Br)[x := true])[C.p[x] := true];
-    ensures C.p[x] == null ==> Br == old(Br)[x := true];
-
-procedure Set_prio(x: Ref, prio: int);
-    requires x != null;
-    modifies Br, C.prio;
-    ensures C.prio == old(C.prio)[x := prio];
     ensures C.p[x] != null ==> Br == (old(Br)[x := true])[C.p[x] := true];
     ensures C.p[x] == null ==> Br == old(Br)[x := true];
 
@@ -239,24 +223,23 @@ procedure Set_repr(x: Ref, repr: RefSet);
 
 // Broken set manipulation
 procedure IfNotBr_ThenLC(x: Ref);
-    ensures x != null && !Br[x] ==> LC(C.k, C.prio, C.l, C.r, C.p, 
+    ensures x != null && !Br[x] ==> LC(C.k, C.l, C.r, C.p, 
                                         C.min, C.max, C.keys, C.repr,
                                         x);
 
 procedure AssertLCAndRemove(x: Ref);
     modifies Br;
-    ensures (x != null && LC(C.k, C.prio, C.l, C.r, C.p, 
+    ensures (x != null && LC(C.k, C.l, C.r, C.p, 
                             C.min, C.max, C.keys, C.repr,
                             x)) 
                 ==> Br == old(Br)[x := false];
-    ensures (x == null || !LC(C.k, C.prio, C.l, C.r, C.p, 
+    ensures (x == null || !LC(C.k, C.l, C.r, C.p, 
                             C.min, C.max, C.keys, C.repr, 
                             x))
                 ==> Br == old(Br);
 
 // Framing
 function Frame_k(mod_set: RefSet, old_k: [Ref]int, k: [Ref]int) returns ([Ref]int);
-function Frame_prio(mod_set: RefSet, old_prio: [Ref]int, prio: [Ref]int) returns ([Ref]int);
 function Frame_l(mod_set: RefSet, old_l: [Ref]Ref, l: [Ref]Ref) returns ([Ref]Ref);
 function Frame_r(mod_set: RefSet, old_r: [Ref]Ref, r: [Ref]Ref) returns ([Ref]Ref);
 function Frame_p(mod_set: RefSet, old_p: [Ref]Ref, p: [Ref]Ref) returns ([Ref]Ref);
@@ -267,7 +250,6 @@ function Frame_repr(mod_set: RefSet, old_repr: [Ref]RefSet, repr: [Ref]RefSet) r
 
 function {:inline} Frame_all(
     k: [Ref]int,
-    prio: [Ref]int, 
     l: [Ref]Ref,
     r: [Ref]Ref,
     p: [Ref]Ref,
@@ -276,7 +258,6 @@ function {:inline} Frame_all(
     keys: [Ref]KeySet,
     repr: [Ref]RefSet,
     oldk: [Ref]int,
-    oldprio: [Ref]int, 
     oldl: [Ref]Ref,
     oldr: [Ref]Ref,
     oldp: [Ref]Ref,
@@ -289,7 +270,6 @@ function {:inline} Frame_all(
 ) returns (bool) 
 {
     k == Frame_k(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldk, k) 
-    && prio == Frame_prio(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldprio, prio)
     && l == Frame_l(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldl, l) 
     && r == Frame_r(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldr, r) 
     && p == Frame_p(RefSetUnionF(mod_set, RefSetComF(old_alloc)), oldp, p) 
@@ -302,7 +282,6 @@ function {:inline} Frame_all(
 // Alloc set reasoning
 function {:inline} InAlloc(
     k: [Ref]int,
-    prio: [Ref]int,
     l: [Ref]Ref,
     r: [Ref]Ref,
     p: [Ref]Ref,
@@ -324,7 +303,7 @@ function {:inline} InAlloc(
 }
 
 procedure InAllocParam(x: Ref);
-    ensures x != null ==> InAlloc(C.k, C.prio, C.l, C.r, C.p,
+    ensures x != null ==> InAlloc(C.k, C.l, C.r, C.p,
                                 C.min, C.max, C.keys, C.repr,
                                 x, alloc);
 
@@ -337,7 +316,6 @@ function {:inline} Fresh(expr: RefSet, newalloc: RefSet, oldalloc: RefSet) retur
 // Auxiliary functions
 function {:inline} Isolated(
     k: [Ref]int,
-    prio: [Ref]int, 
     l: [Ref]Ref,
     r: [Ref]Ref,
     p: [Ref]Ref,

@@ -4,7 +4,7 @@
 ;; 
 ;; Artifact by Cody Rivera, 2023. 
 ;;
-;; SMT2-LIB transplant file for treaps.
+;; SMT2-LIB transplant file for binary search trees.
 
 ;; Set library implementation
 ; Remove old declarations of set operations.
@@ -67,10 +67,6 @@
 (replace
     Frame_k
     (define-fun Frame_k ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
-        ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
-(replace
-    Frame_prio
-    (define-fun Frame_prio ((mod (Array T@Ref Bool)) (pre (Array T@Ref Int)) (post (Array T@Ref Int))) (Array T@Ref Int)
         ((_ map (ite (Bool Int Int) (Int))) mod post pre)))
 (replace
     Frame_l
