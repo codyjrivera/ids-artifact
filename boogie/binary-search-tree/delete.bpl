@@ -4,21 +4,16 @@
 // 
 // Artifact by Cody Rivera, 2023. 
 //
-// Verification of Treap Delete.
+// Verification of BST Delete.
 
-function {:inline} MaxInt(x: int, y: int) returns (int)
-{
-    if x > y then x else y
-}
-
-procedure TreapRemoveRootContract(x: Ref)
+procedure BSTRemoveRootContract(x: Ref)
     returns (ret: Ref, root: Ref);
     requires x != null;
     requires RefSetsDisjoint(C.repr[x], Br);
-    requires LC(C.k, C.prio, C.l, C.r, C.p, 
+    requires LC(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys, C.repr,
                 x);
-    modifies C.k, C.prio, C.l, C.r, C.p,
+    modifies C.k, C.l, C.r, C.p,
         C.min, C.max, C.keys,
         C.repr, Br;
     ensures root != null;
@@ -28,46 +23,40 @@ procedure TreapRemoveRootContract(x: Ref)
              && !RefSetsEqual(old(C.repr)[x], EmptyRefSet[x := true]))
                 ==> ret != null);
     ensures (ret != null ==>
-                LC(C.k, C.prio, C.l, C.r, C.p, 
+                LC(C.k, C.l, C.r, C.p, 
                     C.min, C.max, C.keys, C.repr,
                     ret)
                 && C.p[ret] == null
                 && KeySetsEqual(C.keys[ret], (old(C.keys)[x])[C.k[x] := false])
                 && C.min[ret] >= old(C.min)[x]
                 && C.max[ret] <= old(C.max)[x]
-                && RefSetSubset(C.repr[ret], old(C.repr)[x])
-                && (old(C.l)[x] != null && old(C.r)[x] == null ==>
-                        C.prio[ret] == old(C.prio)[old(C.l)[x]])
-                && (old(C.l)[x] == null && old(C.r)[x] != null ==>
-                        C.prio[ret] == old(C.prio)[old(C.r)[x]])
-                && (old(C.l)[x] != null && old(C.r)[x] != null ==>
-                        C.prio[ret] <= MaxInt(old(C.prio)[old(C.l)[x]], old(C.prio)[old(C.r)[x]])));
+                && RefSetSubset(C.repr[ret], old(C.repr)[x]));
     ensures root == x && C.k[root] == old(C.k)[x];
-    ensures LC(C.k, C.prio, C.l, C.r, C.p, 
+    ensures LC(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys, C.repr,
                 root);
-    ensures Isolated(C.k, C.prio, C.l, C.r, C.p, 
+    ensures Isolated(C.k, C.l, C.r, C.p, 
                     C.min, C.max, C.keys, C.repr,
                     root);
     ensures old(C.p)[x] == null ==> RefSetsEqual(Br, old(Br));
     ensures old(C.p)[x] != null ==> RefSetsEqual(Br, old(Br)[old(C.p)[x] := true]);
     // Framing conditions.
     ensures Frame_all(
-        C.k, C.prio, C.l, C.r, C.p,
+        C.k, C.l, C.r, C.p,
         C.min, C.max, C.keys, C.repr,
-        old(C.k), old(C.prio), old(C.l), old(C.r), old(C.p), 
+        old(C.k), old(C.l), old(C.r), old(C.p), 
         old(C.min), old(C.max), old(C.keys), old(C.repr),
         old(C.repr)[x], old(alloc)
     );
 
-procedure TreapDeleteContract(x: Ref, k: int) 
+procedure BSTDeleteContract(x: Ref, k: int) 
     returns (ret: Ref, del: Ref);
     requires x != null;
     requires RefSetsEqual(Br, EmptyRefSet);
-    requires LC(C.k, C.prio, C.l, C.r, C.p, 
+    requires LC(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys, C.repr,
                 x);
-    modifies Br, C.k, C.prio, C.l, C.r, C.p,
+    modifies Br, C.k, C.l, C.r, C.p,
                 C.min, C.max, C.keys, C.repr;
     ensures ret == null || ret == x || ret == old(C.l)[x] || ret == old(C.r)[x];
     ensures C.p[x] == null;
@@ -75,7 +64,7 @@ procedure TreapDeleteContract(x: Ref, k: int)
                 KeySetsEqual(old(C.keys)[x], EmptyKeySet[k := true])
                 && del != null);
     ensures (ret != null ==>
-                LC(C.k, C.prio, C.l, C.r, C.p, 
+                LC(C.k, C.l, C.r, C.p, 
                     C.min, C.max, C.keys, C.repr,
                     ret)
                 && C.p[ret] == null
@@ -84,20 +73,18 @@ procedure TreapDeleteContract(x: Ref, k: int)
                         && KeySetsEqual(C.keys[ret], (old(C.keys)[x])[k := false])
                         && C.min[ret] >= old(C.min)[x]
                         && C.max[ret] <= old(C.max)[x]
-                        && RefSetSubset(C.repr[ret], old(C.repr)[x])
-                        && C.prio[ret] <= old(C.prio)[x])
+                        && RefSetSubset(C.repr[ret], old(C.repr)[x]))
                 && (del == null ==>
                         KeySetsEqual(C.keys[ret], old(C.keys)[x])
                         && C.min[ret] == old(C.min)[x]
                         && C.max[ret] == old(C.max)[x]
-                        && RefSetsEqual(C.repr[ret], old(C.repr)[x])
-                        && C.prio[ret] == old(C.prio)[x]));
+                        && RefSetsEqual(C.repr[ret], old(C.repr)[x])));
     ensures del != null ==> C.k[del] == k && (old(C.keys)[x])[k];
     ensures del != null ==> (
-        LC(C.k, C.prio, C.l, C.r, C.p, 
+        LC(C.k, C.l, C.r, C.p, 
             C.min, C.max, C.keys, C.repr,
             del)
-        && Isolated(C.k, C.prio, C.l, C.r, C.p,
+        && Isolated(C.k, C.l, C.r, C.p,
             C.min, C.max, C.keys, C.repr,
             del)
     );
@@ -105,21 +92,21 @@ procedure TreapDeleteContract(x: Ref, k: int)
     ensures old(C.p)[x] != null ==> RefSetsEqual(Br, EmptyRefSet[old(C.p)[x] := true]);
     // Framing conditions.
     ensures Frame_all(
-        C.k, C.prio, C.l, C.r, C.p,
+        C.k, C.l, C.r, C.p,
         C.min, C.max, C.keys, C.repr,
-        old(C.k), old(C.prio), old(C.l), old(C.r), old(C.p), 
+        old(C.k), old(C.l), old(C.r), old(C.p), 
         old(C.min), old(C.max), old(C.keys), old(C.repr),
         old(C.repr)[x], old(alloc)
     );
 
-procedure TreapDelete(x: Ref, k: int) 
+procedure BSTDelete(x: Ref, k: int) 
     returns (ret: Ref, del: Ref)
     requires x != null;
     requires RefSetsEqual(Br, EmptyRefSet);
-    requires LC(C.k, C.prio, C.l, C.r, C.p, 
+    requires LC(C.k, C.l, C.r, C.p, 
                 C.min, C.max, C.keys, C.repr,
                 x);
-    modifies Br, C.k, C.prio, C.l, C.r, C.p,
+    modifies Br, C.k, C.l, C.r, C.p,
                 C.min, C.max, C.keys, C.repr;
     ensures ret == null || ret == x || ret == old(C.l)[x] || ret == old(C.r)[x];
     ensures C.p[x] == null;
@@ -127,7 +114,7 @@ procedure TreapDelete(x: Ref, k: int)
                 KeySetsEqual(old(C.keys)[x], EmptyKeySet[k := true])
                 && del != null);
     ensures (ret != null ==>
-                LC(C.k, C.prio, C.l, C.r, C.p, 
+                LC(C.k, C.l, C.r, C.p, 
                     C.min, C.max, C.keys, C.repr,
                     ret)
                 && C.p[ret] == null
@@ -136,20 +123,18 @@ procedure TreapDelete(x: Ref, k: int)
                         && KeySetsEqual(C.keys[ret], (old(C.keys)[x])[k := false])
                         && C.min[ret] >= old(C.min)[x]
                         && C.max[ret] <= old(C.max)[x]
-                        && RefSetSubset(C.repr[ret], old(C.repr)[x])
-                        && C.prio[ret] <= old(C.prio)[x])
+                        && RefSetSubset(C.repr[ret], old(C.repr)[x]))
                 && (del == null ==>
                         KeySetsEqual(C.keys[ret], old(C.keys)[x])
                         && C.min[ret] == old(C.min)[x]
                         && C.max[ret] == old(C.max)[x]
-                        && RefSetsEqual(C.repr[ret], old(C.repr)[x])
-                        && C.prio[ret] == old(C.prio)[x]));
+                        && RefSetsEqual(C.repr[ret], old(C.repr)[x])));
     ensures del != null ==> C.k[del] == k && (old(C.keys)[x])[k];
     ensures del != null ==> (
-        LC(C.k, C.prio, C.l, C.r, C.p, 
+        LC(C.k, C.l, C.r, C.p, 
             C.min, C.max, C.keys, C.repr,
             del)
-        && Isolated(C.k, C.prio, C.l, C.r, C.p,
+        && Isolated(C.k, C.l, C.r, C.p,
             C.min, C.max, C.keys, C.repr,
             del)
     );
@@ -157,9 +142,9 @@ procedure TreapDelete(x: Ref, k: int)
     ensures old(C.p)[x] != null ==> RefSetsEqual(Br, EmptyRefSet[old(C.p)[x] := true]);
     // Framing conditions.
     ensures Frame_all(
-        C.k, C.prio, C.l, C.r, C.p,
+        C.k, C.l, C.r, C.p,
         C.min, C.max, C.keys, C.repr,
-        old(C.k), old(C.prio), old(C.l), old(C.r), old(C.p), 
+        old(C.k), old(C.l), old(C.r), old(C.p), 
         old(C.min), old(C.max), old(C.keys), old(C.repr),
         old(C.repr)[x], old(alloc)
     );
@@ -183,12 +168,12 @@ procedure TreapDelete(x: Ref, k: int)
     old_x_l := x_l;
     old_x_r := x_r;
     if (x_k == k) {
-        call ret, del := TreapRemoveRootContract(x);
+        call ret, del := BSTRemoveRootContract(x);
     } else if (k < x_k && x_l != null) {
         call IfNotBr_ThenLC(x_l);
         call IfNotBr_ThenLC(x_r);
 
-        call l, del := TreapDeleteContract(x_l, k);
+        call l, del := BSTDeleteContract(x_l, k);
         call x_l := Get_l(x);
         call IfNotBr_ThenLC(x_l);
 
@@ -233,7 +218,7 @@ procedure TreapDelete(x: Ref, k: int)
         call IfNotBr_ThenLC(x_l);
         call IfNotBr_ThenLC(x_r);
 
-        call r, del := TreapDeleteContract(x_r, k);
+        call r, del := BSTDeleteContract(x_r, k);
         call x_r := Get_r(x);
         call IfNotBr_ThenLC(x_r);
 
