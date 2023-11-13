@@ -31,7 +31,8 @@ procedure AVLBalance(x: Ref) returns (ret: Ref)
                 C.min, C.max, C.keys, C.repr,
                 ret);
     ensures C.p[ret] == null;
-    ensures C.keys[ret] == old(C.keys)[x];
+    ensures KeySetsEqual(C.keys[ret], old(C.keys)[x]);
+    ensures RefSetsEqual(C.repr[ret], old(C.repr)[x]);
     ensures C.min[ret] == old(C.min)[x];
     ensures C.max[ret] == old(C.max)[x];
     ensures (C.height[ret] == old(C.height)[x] || C.height[ret] == old(C.height)[x] - 1);
