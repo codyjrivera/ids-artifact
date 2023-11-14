@@ -12,57 +12,6 @@
 //          ==>
 // -> [x: last] -> [new node] -> [x.next] ->
 
-function {:inline} LC_Debug(
-    k: [Ref]int, 
-    next: [Ref]Ref,
-    prev: [Ref]Ref,
-    last: [Ref]Ref,
-    len: [Ref]int,
-    rlen: [Ref]int,
-    keys: [Ref]KeySet,
-    repr: [Ref]RefSet,
-    x: Ref
-) returns (bool)
-{
-    x != null ==> (
-        next[prev[x]] == x
-        && prev[next[x]] == x
-        && (x == last[x] ==>
-                len[x] == 0
-                && rlen[x] == 0
-                && last[x] == last[next[x]]
-                && (next[x] == x ==>
-                        KeySetsEqual(keys[x], EmptyKeySet)
-                        && RefSetsEqual(repr[x], EmptyRefSet[x := true]))
-                && (next[x] != x ==>
-                        KeySetsEqual(keys[x], keys[next[x]])
-                        && RefSetsEqual(repr[x], (repr[next[x]])[x := true])
-                        && !(repr[next[x]])[x]))
-        && (x != last[x] ==>
-                len[x] == len[next[x]] + 1
-                && rlen[x] == rlen[prev[x]] + 1
-                && (next[x] == last[x] ==>
-                        KeySetsEqual(keys[x], EmptyKeySet[k[x] := true])
-                        && RefSetsEqual(repr[x], EmptyRefSet[x := true]))
-                && (next[x] != last[x] ==>
-                        KeySetsEqual(keys[x], (keys[next[x]])[k[x] := true])
-                        && RefSetsEqual(repr[x], (repr[next[x]])[x := true])
-                        && !(repr[next[x]])[x]
-                        )
-                && last[x] == last[next[x]]
-                && last[last[x]] == last[x]
-                && (repr[last[x]])[x]
-                && (repr[last[x]])[prev[x]]
-                && (repr[last[x]])[next[x]]
-                )
-        && next[x] != null
-        && prev[x] != null
-        && last[x] != null
-        && len[x] >= 0
-        && rlen[x] >= 0
-    )
-}
-
 procedure CircularInsertFront(x: Ref, k: int)
     requires x != null;
     requires RefSetsEqual(Br, EmptyRefSet);
