@@ -18,7 +18,7 @@ BOOGIE_OPTS="/proverOpt:O:smt.mbqi=false /proverOpt:O:model.compact=false\
 PYTHON_3="python3"
 PROVER="z3"
 TIME_FORMAT="\t%U"
-MAX_SPLITS=16
+MAX_SPLITS=8
 
 VERBOSE=false
 
