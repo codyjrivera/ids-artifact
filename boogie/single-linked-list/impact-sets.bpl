@@ -6,6 +6,23 @@
 //
 // Impact set verification for sorted lists (with min/max).
 
+procedure Check_Create(arb: Ref, k: int)
+    modifies Br, alloc, C.k, C.next, C.prev,
+              C.keys, C.repr;
+{
+    var node: Ref;
+
+    assume LC(C.k, C.next, C.prev,
+              C.keys, C.repr,
+              arb);
+    assume arb != null;
+    call InAllocParam(arb);
+    call node := Create(k);
+    assert LC(C.k, C.next, C.prev,
+              C.keys, C.repr,
+              arb);
+}
+
 procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     modifies C.k;
 {

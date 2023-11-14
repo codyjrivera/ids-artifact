@@ -4,7 +4,27 @@
 // 
 // Artifact by Cody Rivera, 2023. 
 //
-// Impact set verification for sorted lists (with min/max).
+// Impact set verification for circular lists.
+
+procedure Check_Create(arb: Ref, k: int)
+    modifies Br, alloc, C.k, C.next, C.prev, 
+                C.last, C.len, C.rlen,
+                C.keys, C.repr;
+{
+    var node: Ref;
+
+    assume LC(C.k, C.next, C.prev, 
+                C.last, C.len, C.rlen,
+                C.keys, C.repr,
+              arb);
+    assume arb != null;
+    call InAllocParam(arb);
+    call node := Create(k);
+    assert LC(C.k, C.next, C.prev, 
+                C.last, C.len, C.rlen,
+                C.keys, C.repr,
+              arb);
+}
 
 procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     modifies C.k;

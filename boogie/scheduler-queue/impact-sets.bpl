@@ -6,6 +6,32 @@
 //
 // Impact set verification for scheduler queue.
 
+procedure Check_Create(arb1: Ref, arb2: Ref, k: int, prio: int)
+    modifies Br_bst, Br_list, alloc, C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
+                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                C.next, C.prev, C.list_keys, C.list_repr;
+{
+    var node: Ref;
+
+    assume LC_BST(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
+                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                C.next, C.prev, C.list_keys, C.list_repr, arb1);
+    assume LC_List(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
+                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                C.next, C.prev, C.list_keys, C.list_repr, arb2);
+    assume arb1 != null;
+    assume arb2 != null;
+    call InAllocParam(arb1);
+    call InAllocParam(arb2);
+    call node := Create(k);
+    assert LC_BST(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
+                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                C.next, C.prev, C.list_keys, C.list_repr, arb1);
+    assert LC_List(C.k, C.l, C.r, C.p, C.min, C.max, C.bst_size,
+                C.bst_keys, C.bst_repr, C.bst_depth, C.bst_root,
+                C.next, C.prev, C.list_keys, C.list_repr, arb2);
+}
+
 procedure Check_Set_k(x: Ref, arb1: Ref, arb2: Ref, k: int)
     modifies C.k;
 {

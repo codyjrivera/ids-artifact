@@ -6,6 +6,26 @@
 //
 // Impact set verification for BSTs with scaffolding.
 
+procedure Check_Create(arb: Ref, k: int)
+    modifies Br, alloc, C.k, C.l, C.r, C.p, 
+              C.min, C.max, C.size, C.keys,
+              C.repr, C.depth, C.root;
+{
+    var node: Ref;
+
+    assume LC(C.k, C.l, C.r, C.p, 
+              C.min, C.max, C.size, C.keys,
+              C.repr, C.depth, C.root,
+              arb);
+    assume arb != null;
+    call InAllocParam(arb);
+    call node := Create(k);
+    assert LC(C.k, C.l, C.r, C.p, 
+              C.min, C.max, C.size, C.keys,
+              C.repr, C.depth, C.root,
+              arb);
+}
+
 procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     modifies C.k;
 {
