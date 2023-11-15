@@ -143,45 +143,6 @@ function {:inline} LC(
     )
 }
 
-function {:inline} LC_List(
-    k: [Ref]int, 
-    l: [Ref]Ref,
-    r: [Ref]Ref,
-    p: [Ref]Ref,
-    min: [Ref]int,
-    max: [Ref]int,
-    size: [Ref]int,
-    keys: [Ref]KeySet,
-    repr: [Ref]RefSet,
-    depth: [Ref]int,
-    root: [Ref]Ref,
-    next: [Ref]Ref,
-    prev: [Ref]Ref,
-    list_keys: [Ref]KeySet,
-    list_repr: [Ref]RefSet,
-    x: Ref
-) returns (bool)
-{
-    x != null ==> (
-        (list_repr[x])[x]
-        && (prev[x] != null ==>
-                !(list_repr[x])[prev[x]]
-                && next[prev[x]] == x)
-        && (next[x] == null ==>
-                RefSetsEqual(list_repr[x], EmptyRefSet[x := true])
-                && KeySetsEqual(list_keys[x], EmptyKeySet[k[x] := true]))
-        && (next[x] != null ==>
-                (list_repr[x])[next[x]]
-                && RefSetsEqual(list_repr[x], (list_repr[next[x]])[x := true])
-                && !(list_repr[next[x]])[x]
-                && KeySetsEqual(list_keys[x], (list_keys[next[x]])[k[x] := true])
-                && !(list_keys[next[x]])[k[x]]
-                && prev[next[x]] == x
-                && root[x] == root[next[x]])
-        && root[x] != null
-    )
-}
-
 function {:inline} LC_Trans_NoDepth(
     k: [Ref]int, 
     l: [Ref]Ref,
