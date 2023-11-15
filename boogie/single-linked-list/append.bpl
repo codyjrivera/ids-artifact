@@ -151,8 +151,6 @@ procedure SLLAppend(x1: Ref, x2: Ref) returns (ret: Ref)
         call Set_prev(x1, null);
 
         call AssertLCAndRemove(x1);
-        assert LC(C.k, C.next, C.prev, 
-            C.keys, C.repr, x1);
         call AssertLCAndRemove(tmp);
 
         ret := x1;
