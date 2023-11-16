@@ -12,7 +12,8 @@ by Adithya Murali, Cody Rivera, and P. Madhusudan, 2023.
 2. Make sure you have Z3 installed. A quick way to install Z3 is by `pip install z3-solver`.
 3. Make sure you have Boogie installed. Check the 
    [Boogie GitHub](https://github.com/boogie-org/boogie) for more information.
-4. Modify the variables `BOOGIE_3`, `PYTHON_3`, and `PROVER` to point to the location
+4. Modify the variables `BOOGIE_3`, `PYTHON_3`, and `PROVER` in
+   `./boogie-benchmarks.sh` to point to the location
    of Boogie, Python, and Z3 respectively.
 5. To run every benchmark, type `./boogie-all.sh` (you may have to do `chmod +x ./boogie-all.sh`).
    To run a particular benchmark, type `./boogie-method.sh DATASTRUCTURE METHOD`. For example, to
@@ -24,11 +25,3 @@ timing information for each method, combining the time to process the file with 
 implant the parametrized updates into the SMT query, and the time to run the SMT file. The final number
 reported in the paper is the sum of the time reported for each method with the time for verifying the
 impact sets of each datastructure.
-
-Note about static information in Table 2: The lines of LC column counts
-the total number of lines contained in the local conditions and variations thereof for each 
-datastructure. The lines of code column counts assignments, mutations, and recursive calls involving non-ghost
-data and fields. The lines of specification column counts the number of `requires`, `modifies`, and `ensures`
-clauses in the contract for each method. The lines of annotation column counts assignments, mutations, 
-and recursive calls involving ghost data and fields, as well as loop invariants and invocations of the
-macros `IfNotBr_ThenLC` and `AssertLCAndRemove`.
