@@ -1,5 +1,5 @@
 ## Supporting artifact for "Predictable Verification using Intrinsic Definitions of Datastructures"
-by Adithya Murali, Cody Rivera, and P. Madhusudan, 2023.
+by Anonymous Authors, 2023.
 
 # Dependency Overview
 - Python 3.10.12

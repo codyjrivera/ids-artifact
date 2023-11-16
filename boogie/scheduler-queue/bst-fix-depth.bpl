@@ -1,10 +1,10 @@
 // Supporting Artifact for
-// "Predictive Verification using Intrinsic Definitions of Data Structures"
-// by Adithya Murali, Cody Rivera, and P. Madhusudan.
+// "Predictable Verification using Intrinsic Definitions of Datastructures"
+// by Anonymous Authors.
 // 
-// Artifact by Cody Rivera, 2023. 
+// Artifact by Anonymous Author, 2023. 
 //
-// Verification of depth fixing for BSTs, for overlaid data structures.
+// Verification of depth fixing for BSTs, for overlaid Datastructures.
 //
 // Since this is a ghost method, we must explicitly prove termination in
 // order for the framework to be sound.

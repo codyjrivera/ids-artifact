@@ -1,8 +1,8 @@
 // Supporting Artifact for
-// "Predictive Verification using Intrinsic Definitions of Data Structures"
-// by Adithya Murali, Cody Rivera, and P. Madhusudan.
+// "Predictable Verification using Intrinsic Definitions of Datastructures"
+// by Anonymous Authors.
 // 
-// Artifact by Cody Rivera, 2023. 
+// Artifact by Anonymous Author, 2023. 
 //
 // Impact set verification for Treaps.
 
