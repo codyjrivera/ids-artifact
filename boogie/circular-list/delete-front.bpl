@@ -103,12 +103,6 @@ procedure CircularDeleteFront(x: Ref, k: int)
         call DeleteFromLastKeys(x, next_k);
     }
 
-    assert LC(C.k, C.next, C.prev,
-                C.last, C.len, C.rlen, 
-                C.keys, C.repr, x);
-    assert LC(C.k, C.next, C.prev,
-                C.last, C.len, C.rlen, 
-                C.keys, C.repr, next);
     call AssertLCAndRemove(x);
     call AssertLCAndRemove(next);
 

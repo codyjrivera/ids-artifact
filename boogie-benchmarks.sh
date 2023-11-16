@@ -17,7 +17,7 @@ BOOGIE_OPTS="/proverOpt:O:smt.mbqi=false /proverOpt:O:model.compact=false\
  /proverOpt:O:smt.arith.nl=false"
 PYTHON_3="python3"
 PROVER="z3"
-TIME_FORMAT="\t%U"
+TIME_FORMAT="\t%U\t%S"
 MAX_SPLITS=8
 
 VERBOSE=false
@@ -165,7 +165,7 @@ boogie_method() {
     fi
 
     # Check for foralls
-    if grep -q forall tmp_transplant.smt2; then
+    if grep -q -e forall -e exists tmp_transplant.smt2; then
         echo "method $STRUCTURE::$METHOD contains a forall in its SMT script"
         return 1
     fi
@@ -186,7 +186,7 @@ boogie_method() {
         return 1
     fi
 
-    totaltime=$(cat tmp_boogie_time tmp_transplant_time tmp_prover_time | awk '{s+=$1} END {printf "%.2f", s}')
+    totaltime=$(cat tmp_boogie_time tmp_transplant_time tmp_prover_time | awk '{s+=$1+$2} END {printf "%.2f", s}')
 
     printf "%02dh%02dm%05.2fs    " $(echo -e "$totaltime/3600\n$totaltime%3600/60\n$totaltime%60"| bc)
     printf "($STRUCTURE::$METHOD)\n"
