@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Supporting Artifact for
-# "Predictable Verification using Intrinsic Definitions of Datastructures"
+# "Predictable Verification using Intrinsic Definitions of Data Structures"
 # by Anonymous Authors.
 # 
 # Artifact by Anonymous Author, 2023. 

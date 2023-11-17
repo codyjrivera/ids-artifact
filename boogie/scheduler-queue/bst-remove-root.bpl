@@ -1,10 +1,10 @@
 // Supporting Artifact for
-// "Predictable Verification using Intrinsic Definitions of Datastructures"
+// "Predictable Verification using Intrinsic Definitions of Data Structures"
 // by Anonymous Authors.
 // 
 // Artifact by Anonymous Author, 2023. 
 //
-// Verification of interior BST Remove Root, for overlaid Datastructures.
+// Verification of interior BST Remove Root, for overlaid Data Structures.
 
 procedure BSTFixDepthContract(q1s: Ref, q1t: Ref, x: Ref);
     requires x != null;

@@ -1,4 +1,4 @@
-## Supporting artifact for "Predictable Verification using Intrinsic Definitions of Datastructures"
+## Supporting artifact for "Predictable Verification using Intrinsic Definitions of Data Structures"
 by Anonymous Authors, 2023.
 
 # Dependency Overview

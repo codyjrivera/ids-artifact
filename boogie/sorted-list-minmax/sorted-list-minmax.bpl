@@ -1,5 +1,5 @@
 // Supporting Artifact for
-// "Predictable Verification using Intrinsic Definitions of Datastructures"
+// "Predictable Verification using Intrinsic Definitions of Data Structures"
 // by Anonymous Authors.
 // 
 // Artifact by Anonymous Author, 2023. 
@@ -41,13 +41,13 @@ function RefSetsDisjoint(s1: RefSet, s2: RefSet) returns (bool);
 // Fields
 var C.k: [Ref]int;
 var C.next: [Ref]Ref;
-var C.prev: [Ref]Ref;
-var C.keys: [Ref]KeySet;
-var C.repr: [Ref]RefSet;
-var C.sorted: [Ref]bool;
-var C.rev_sorted: [Ref]bool;
-var C.min: [Ref]int;
-var C.max: [Ref]int;
+var C.prev: [Ref]Ref; // ghost
+var C.keys: [Ref]KeySet; // ghost
+var C.repr: [Ref]RefSet; // ghost
+var C.sorted: [Ref]bool; // ghost
+var C.rev_sorted: [Ref]bool; // ghost
+var C.min: [Ref]int; // ghost
+var C.max: [Ref]int; // ghost
 
 var Br: RefSet;
 var alloc: RefSet;

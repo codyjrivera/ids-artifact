@@ -1,10 +1,10 @@
 // Supporting Artifact for
-// "Predictable Verification using Intrinsic Definitions of Datastructures"
+// "Predictable Verification using Intrinsic Definitions of Data Structures"
 // by Anonymous Authors.
 // 
 // Artifact by Anonymous Author, 2023. 
 //
-// Verification of depth fixing for BSTs, for overlaid Datastructures.
+// Verification of depth fixing for BSTs, for overlaid Data Structures.
 //
 // Since this is a ghost method, we must explicitly prove termination in
 // order for the framework to be sound.

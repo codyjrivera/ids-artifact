@@ -1,5 +1,5 @@
 // Supporting Artifact for
-// "Predictable Verification using Intrinsic Definitions of Datastructures"
+// "Predictable Verification using Intrinsic Definitions of Data Structures"
 // by Anonymous Authors.
 // 
 // Artifact by Anonymous Author, 2023. 
@@ -45,19 +45,19 @@ var C.k: [Ref]int;
 var C.l: [Ref]Ref;
 var C.r: [Ref]Ref;
 var C.p: [Ref]Ref;
-var C.min: [Ref]int;
-var C.max: [Ref]int;
-var C.bst_size: [Ref]int;
-var C.bst_keys: [Ref]KeySet;
-var C.bst_repr: [Ref]RefSet;
-var C.bst_depth: [Ref]int;
-var C.bst_root: [Ref]Ref;
+var C.min: [Ref]int; // ghost
+var C.max: [Ref]int; // ghost
+var C.bst_size: [Ref]int; // ghost
+var C.bst_keys: [Ref]KeySet; // ghost
+var C.bst_repr: [Ref]RefSet; // ghost
+var C.bst_depth: [Ref]int; // ghost
+var C.bst_root: [Ref]Ref; // ghost
 
 // List fields
 var C.next: [Ref]Ref;
-var C.prev: [Ref]Ref;
-var C.list_keys: [Ref]KeySet;
-var C.list_repr: [Ref]RefSet;
+var C.prev: [Ref]Ref; // ghost
+var C.list_keys: [Ref]KeySet; // ghost
+var C.list_repr: [Ref]RefSet; // ghost
 
 var Br_bst: RefSet;
 var Br_list: RefSet;
