@@ -43,13 +43,13 @@ var C.k: [Ref]int;
 var C.l: [Ref]Ref;
 var C.r: [Ref]Ref;
 var C.p: [Ref]Ref;
-var C.min: [Ref]int;
-var C.max: [Ref]int;
-var C.size: [Ref]int;
-var C.keys: [Ref]KeySet;
-var C.repr: [Ref]RefSet;
-var C.depth: [Ref]int;
-var C.root: [Ref]Ref;
+var C.min: [Ref]int; // ghost
+var C.max: [Ref]int; // ghost
+var C.size: [Ref]int; // ghost
+var C.keys: [Ref]KeySet; // ghost
+var C.repr: [Ref]RefSet; // ghost
+var C.depth: [Ref]int; // ghost
+var C.root: [Ref]Ref; // ghost
 
 var Br: RefSet;
 var alloc: RefSet;
