@@ -164,9 +164,9 @@ boogie_method() {
         cp tmp_input.smt2 tmp_transplant.smt2
     fi
 
-    # Check for foralls
-    if grep -q -e forall -e exists tmp_transplant.smt2; then
-        echo "method $STRUCTURE::$METHOD contains a forall in its SMT script"
+    # Check for quantified reasoning
+    if grep -q -e forall -e exists -e lambda tmp_transplant.smt2; then
+        echo "method $STRUCTURE::$METHOD contains quantified reasoning in its SMT script"
         return 1
     fi
 
