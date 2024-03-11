@@ -8,7 +8,8 @@
 #
 # Supporting scripts for running Dafny benchmarks.
 
-DAFNY_4="dafny"
+source ./dep-locations.sh
+
 VER_TIMEOUT=36000
 DAFNY_OPTS="--verification-time-limit $VER_TIMEOUT"
 TIME_FORMAT="\t%e" # user+sys is not accurate with Dafny, so wall clock must be used.

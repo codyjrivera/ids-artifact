@@ -8,15 +8,15 @@
 #
 # Supporting scripts for running Boogie benchmarks.
 
-BOOGIE_3="boogie"
+source ./dep-locations.sh
+
 BOOGIE_OPTS="/proverOpt:O:smt.mbqi=false /proverOpt:O:model.compact=false\
  /proverOpt:O:model.v2=true /proverOpt:O:pp.bv_literals=false\
  /proverOpt:O:smt.case_split=3 /proverOpt:O:auto_config=false\
  /proverOpt:O:type_check=true /proverOpt:O:smt.qi.eager_threshold=100\
  /proverOpt:O:smt.delay_units=true /proverOpt:O:smt.arith.solver=2\
  /proverOpt:O:smt.arith.nl=false"
-PROVER="z3"
-TIME_FORMAT="\t%U\t%S"
+TIME_FORMAT="\t%e"
 MAX_SPLITS=8
 
 VERBOSE=false
@@ -169,7 +169,7 @@ boogie_method() {
         return 1
     fi
 
-    totaltime=$(cat tmp_boogie_time tmp_prover_time | awk '{s+=$1+$2} END {printf "%.2f", s}')
+    totaltime=$(cat tmp_boogie_time tmp_prover_time | awk '{s+=$1} END {printf "%.2f", s}')
 
     printf "%02dh%02dm%05.2fs    " $(echo -e "$totaltime/3600\n$totaltime%3600/60\n$totaltime%60"| bc)
     printf "($STRUCTURE::$METHOD)\n"
