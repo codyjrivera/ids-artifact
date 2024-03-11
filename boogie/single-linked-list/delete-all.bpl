@@ -2,7 +2,7 @@
 // "Predictable Verification using Intrinsic Definitions"
 // by Anonymous Authors.
 // 
-// Artifact by Anonymous Author, 2023. 
+// Artifact by Anonymous Author, 2023-2024. 
 //
 // Verification of Singly Linked List Delete All.
 

@@ -2,7 +2,7 @@
 // "Predictable Verification using Intrinsic Definitions"
 // by Anonymous Authors.
 // 
-// Artifact by Anonymous Author, 2023. 
+// Artifact by Anonymous Author, 2023-2024. 
 //
 // Verification of Scheduler Queue Move Request.
 
@@ -69,7 +69,7 @@ method {:extern} BSTDeleteInside(ghost Br: QueueBr, q: Queue, ghost root: QueueN
 /**
  * Deletes a request from q1s and q1t at the same time. 
  *
- * by Anonymous Author, Jun 6, 2023
+ * by Anonymous Author, 2023-2024
  */
 method MoveRequest(ghost Br: QueueBr, q: Queue)
     returns (ghost Br': QueueBr, c: QueueNode?)

@@ -1,5 +1,5 @@
 ## Supporting Artifact for "Predictable Verification using Intrinsic Definitions"
-by Anonymous Authors, 2023.
+by Anonymous Authors, 2024. Version 2.0 of Artifact.
 
 This is the supporting artifact for "Predictable Verification using Intrinsic Definitions",
 by anonymous authors. It contains Boogie and Dafny implementations of a benchmark suite of 

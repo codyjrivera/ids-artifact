@@ -2,7 +2,7 @@
 // "Predictable Verification using Intrinsic Definitions"
 // by Anonymous Authors.
 // 
-// Artifact by Anonymous Author, 2023. 
+// Artifact by Anonymous Author, 2023-2024. 
 //
 // Remove the first item from a linked list, and also remove that
 // item from the overlaid BST.

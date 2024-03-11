@@ -4,7 +4,7 @@
 # "Predictable Verification using Intrinsic Definitions"
 # by Anonymous Authors.
 # 
-# Artifact by Anonymous Author, 2023. 
+# Artifact by Anonymous Author, 2023-2024. 
 #
 # Snippet for running all Boogie benchmarks.
 
