@@ -149,7 +149,7 @@ dafny_ds() {
     METHODS=${!2}
 
     echo ""
-    echo "Benchmarking data structure $STRUCTURE with Boogie:"
+    echo "Benchmarking data structure $STRUCTURE with Dafny:"
     echo "============================================================"
 
     for method in $METHODS; do
