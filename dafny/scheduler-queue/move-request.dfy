@@ -69,7 +69,7 @@ method {:extern} BSTDeleteInside(ghost Br: QueueBr, q: Queue, ghost root: QueueN
 /**
  * Deletes a request from q1s and q1t at the same time. 
  *
- * by Cody Rivera, Jun 6, 2023
+ * by Anonymous Author, Jun 6, 2023
  */
 method MoveRequest(ghost Br: QueueBr, q: Queue)
     returns (ghost Br': QueueBr, c: QueueNode?)
