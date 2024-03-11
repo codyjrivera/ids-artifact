@@ -148,24 +148,8 @@ boogie_method() {
         return 1
     fi
 
-    # Transplant
-    if [ -f "boogie/$STRUCTURE/$STRUCTURE.tp" ]; then
-        command time -o tmp_transplant_time -f "$TIME_FORMAT" $PYTHON_3 \
-            transplant.py tmp_input.smt2 "boogie/$STRUCTURE/$STRUCTURE.tp" 2>tmp_log >tmp_transplant.smt2
-        
-        if ! command time -o tmp_transplant_time -f "$TIME_FORMAT" $PYTHON_3 \
-                transplant.py tmp_input.smt2 "boogie/$STRUCTURE/$STRUCTURE.tp" \
-                2>tmp_log >tmp_transplant.smt2; then
-            echo "method $STRUCTURE::$METHOD does not transplant"
-            cat tmp_log
-            return 1
-        fi
-    else
-        cp tmp_input.smt2 tmp_transplant.smt2
-    fi
-
     # Check for quantified reasoning
-    if grep -q -e forall -e exists -e lambda tmp_transplant.smt2; then
+    if grep -q -e forall -e exists -e lambda tmp_input.smt2; then
         echo "method $STRUCTURE::$METHOD contains quantified reasoning in its SMT script"
         return 1
     fi
@@ -173,20 +157,20 @@ boogie_method() {
     # VERBOSE: Print number of asserts
     if $VERBOSE; then
         printf "There are "
-        printf "%d" `grep -o "(check-sat)" tmp_transplant.smt2 | wc -l`
+        printf "%d" `grep -o "(check-sat)" tmp_input.smt2 | wc -l`
         printf " verification conditions in $STRUCTURE::$METHOD\n"
     fi
 
     # Prove
     command time -o tmp_prover_time -f "$TIME_FORMAT" $PROVER \
-        tmp_transplant.smt2 2>&1 >tmp_log
+        tmp_input.smt2 2>&1 >tmp_log
     if grep -q ^sat$ tmp_log || grep -q ^unknown$ tmp_log; then
         echo "method $STRUCTURE::$METHOD does not verify"
         cat tmp_log
         return 1
     fi
 
-    totaltime=$(cat tmp_boogie_time tmp_transplant_time tmp_prover_time | awk '{s+=$1+$2} END {printf "%.2f", s}')
+    totaltime=$(cat tmp_boogie_time tmp_prover_time | awk '{s+=$1+$2} END {printf "%.2f", s}')
 
     printf "%02dh%02dm%05.2fs    " $(echo -e "$totaltime/3600\n$totaltime%3600/60\n$totaltime%60"| bc)
     printf "($STRUCTURE::$METHOD)\n"

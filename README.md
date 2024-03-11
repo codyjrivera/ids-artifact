@@ -21,7 +21,6 @@ by Anonymous Authors, 2023.
 
 # Artifact Support for the Paper
 The artifact serves primarily to support Table 2 in Section 5 of the paper. The script will print
-timing information for each method, combining the time to process the file with Boogie, the time to 
-implant the parametrized updates into the SMT query, and the time to run the SMT file. The final number
-reported in the paper is the sum of the time reported for each method with the time for verifying the
-impact sets of each datastructure.
+timing information for each method, combining the time to process the file with Boogie and the
+time to run the SMT file. The final number reported in the paper is the sum of the time reported
+for each method with the time for verifying the impact sets of each data structure.
