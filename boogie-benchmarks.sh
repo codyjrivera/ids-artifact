@@ -15,7 +15,6 @@ BOOGIE_OPTS="/proverOpt:O:smt.mbqi=false /proverOpt:O:model.compact=false\
  /proverOpt:O:type_check=true /proverOpt:O:smt.qi.eager_threshold=100\
  /proverOpt:O:smt.delay_units=true /proverOpt:O:smt.arith.solver=2\
  /proverOpt:O:smt.arith.nl=false"
-PYTHON_3="python3"
 PROVER="z3"
 TIME_FORMAT="\t%U\t%S"
 MAX_SPLITS=8
