@@ -1,5 +1,5 @@
 // Supporting Artifact for
-// "Predictable Verification using Intrinsic Definitions of Data Structures"
+// "Predictable Verification using Intrinsic Definitions"
 // by Anonymous Authors.
 // 
 // Artifact by Anonymous Author, 2023. 
