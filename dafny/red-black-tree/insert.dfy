@@ -46,7 +46,10 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
         Br' := leaf.Set_keys(Br', {leaf.k});
         Br' := leaf.Set_repr(Br', {leaf});
         Br' := leaf.Set_black_height(Br', 0);
-        Br' := AssertLCAndRemove(Br', leaf);
+        //assert leaf.LC();
+	//Br' := Br' - {leaf};
+        Br' := (if (leaf.LC()) then Br'-{leaf} else Br);
+	// Br' := AssertLCAndRemove(Br', leaf);
         ret := leaf;
     } else if (k < x.k) {
         if (x.l != null) {
@@ -78,9 +81,10 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
 
             Br' := x.Set_p(Br', null);
 
-            Br' := AssertLCAndRemove(Br', p);
-            //Br' := AssertLCAndRemove(Br', x);
-            Br' := AssertLCAndRemove(Br', oldl);
+	    //assert p.LC();
+            Br' := (if (p.LC()) then Br'-{p} else Br);
+            //assert oldl.LC();
+            Br' := (if (oldl != null && oldl.LC()) then Br'-{oldl} else Br);
             ret := x;
         } else {
             var xr := x.r;
@@ -104,10 +108,9 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                 Br' := xr.Set_black(Br', true);
                 Br' := xr.Set_black_height(Br', xr.black_height + 1);
 
-                Br' := AssertLCAndRemove(Br', p);
-                Br' := AssertLCAndRemove(Br', xr);
-                //Br' := AssertLCAndRemove(Br', x);
-                Br' := AssertLCAndRemove(Br', oldl);
+	        Br' := (if (p.LC()) then Br'-{p} else Br);
+	        Br' := (if (xr != null && xr.LC()) then Br'-{xr} else Br);
+	        Br' := (if (oldl != null && oldl.LC()) then Br'-{oldl} else Br);
                 ret := x;
             } else {
                 var pl := p.l;
@@ -172,11 +175,12 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                     Br' := pr.Set_black(Br', true);
                     Br' := pr.Set_black_height(Br', pr.black_height + 1);
 
-                    Br' := AssertLCAndRemove(Br', prl);
-                    Br' := AssertLCAndRemove(Br', prr);
-                    Br' := AssertLCAndRemove(Br', p);
-                    Br' := AssertLCAndRemove(Br', x);
-                    Br' := AssertLCAndRemove(Br', oldl);
+   		    Br' := (if (prl != null && prl.LC()) then Br'-{prl} else Br);
+		    Br' := (if (prr != null && prr.LC()) then Br'-{prr} else Br);
+   		    Br' := (if (p.LC()) then Br'-{p} else Br);
+   		    Br' := (if (x != null && x.LC()) then Br'-{x} else Br);
+   		    Br' := (if (oldl != null && oldl.LC()) then Br'-{oldl} else Br);
+
                     //Br' := AddToBr(Br', pr); // If we accidentally fixed pr.
 
                     ret := pr;
@@ -210,9 +214,10 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                     Br' := p.Set_black(Br', true);
                     Br' := p.Set_black_height(Br', p.black_height + 1);
 
-                    Br' := AssertLCAndRemove(Br', pr);
-                    Br' := AssertLCAndRemove(Br', x);
-                    Br' := AssertLCAndRemove(Br', oldl);
+		    Br' := (if (pr != null && pr.LC()) then Br'-{pr} else Br);
+		    Br' := (if (x != null && x.LC()) then Br'-{x} else Br);
+		    Br' := (if (oldl != null && oldl.LC()) then Br'-{oldl} else Br);
+
                     //Br' := AddToBr(Br', p); // If we accidentally fixed p.
 
                     ret := p;
@@ -229,9 +234,9 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                                             + {x} + (if x.r == null then {} else x.r.repr));
                     Br' := x.Set_p(Br', null);
 
-                    Br' := AssertLCAndRemove(Br', p);
-                    //Br' := AssertLCAndRemove(Br', x);
-                    Br' := AssertLCAndRemove(Br', oldl);
+    		    Br' := (if (p.LC()) then Br'-{p} else Br);
+    		    Br' := (if (oldl != null && oldl.LC()) then Br'-{oldl} else Br);
+
                     ret := x;
                 }
             }
@@ -266,9 +271,9 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
 
             Br' := x.Set_p(Br', null);
 
-            Br' := AssertLCAndRemove(Br', p);
-            //Br' := AssertLCAndRemove(Br', x);
-            Br' := AssertLCAndRemove(Br', oldr);
+   	    Br' := (if (p.LC()) then Br'-{p} else Br);
+   	    Br' := (if (oldr.LC()) then Br'-{oldr} else Br);
+
             ret := x;
         } else {
             var xl := x.l;
@@ -292,11 +297,11 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                 Br' := xl.Set_black(Br', true);
                 Br' := xl.Set_black_height(Br', xl.black_height + 1);
 
-                Br' := AssertLCAndRemove(Br', p);
-                Br' := AssertLCAndRemove(Br', xl);
-                //Br' := AssertLCAndRemove(Br', x);
-                Br' := AssertLCAndRemove(Br', oldr);
-                ret := x;
+		Br' := (if (p.LC()) then Br'-{p} else Br);
+		Br' := (if (xl != null && xl.LC()) then Br'-{xl} else Br);
+		Br' := (if (oldr != null && oldr.LC()) then Br'-{oldr} else Br);
+
+		ret := x;
             } else {
                 var pl := p.l;
                 var pr := p.r;
@@ -360,11 +365,13 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                     Br' := pl.Set_black(Br', true);
                     Br' := pl.Set_black_height(Br', pl.black_height + 1);
 
-                    Br' := AssertLCAndRemove(Br', pll);
-                    Br' := AssertLCAndRemove(Br', plr);
-                    Br' := AssertLCAndRemove(Br', p);
-                    Br' := AssertLCAndRemove(Br', x);
-                    Br' := AssertLCAndRemove(Br', oldr);
+
+		    Br' := (if (pll != null && pll.LC()) then Br'-{pll} else Br);
+		    Br' := (if (plr != null && plr.LC()) then Br'-{plr} else Br);
+		    Br' := (if (p.LC()) then Br'-{p} else Br);
+		    Br' := (if (x != null && x.LC()) then Br'-{x} else Br);
+		    Br' := (if (oldr != null && oldr.LC()) then Br'-{oldr} else Br);
+
                     //Br' := AddToBr(Br', pl); // If we accidentally fixed pr.
 
                     ret := pl;
@@ -398,10 +405,9 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                     Br' := p.Set_black(Br', true);
                     Br' := p.Set_black_height(Br', p.black_height + 1);
 
-                    Br' := AssertLCAndRemove(Br', pl);
-                    Br' := AssertLCAndRemove(Br', x);
-                    Br' := AssertLCAndRemove(Br', oldr);
-                    //Br' := AddToBr(Br', p); // If we accidentally fixed p.
+		    Br' := (if (pl != null && pl.LC()) then Br'-{pl} else Br);
+		    Br' := (if (x != null && x.LC()) then Br'-{x} else Br);
+		    Br' := (if (oldr != null && oldr.LC()) then Br'-{oldr} else Br);
 
                     ret := p;
                 } else {
@@ -417,9 +423,9 @@ method RBTInsert(ghost Br: set<RBTNode>, x: RBTNode?, k: int)
                                             + {x} + (if x.r == null then {} else x.r.repr));
                     Br' := x.Set_p(Br', null);
 
-                    Br' := AssertLCAndRemove(Br', p);
-                    //Br' := AssertLCAndRemove(Br', x);
-                    Br' := AssertLCAndRemove(Br', oldr);
+    		    Br' := (if (p.LC()) then Br'-{p} else Br);
+    		    Br' := (if (oldr != null && oldr.LC()) then Br'-{oldr} else Br);
+
                     ret := x;
                 }
             }
