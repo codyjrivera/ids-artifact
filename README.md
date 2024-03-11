@@ -48,7 +48,7 @@ To run the entire Boogie benchmark suite, run the script `./boogie-all.sh`. To r
 benchmark from the Boogie benchmark suite, run the script `./boogie-method.sh DATASTRUCTURE METHOD`,
 where `DATASTRUCTURE` is the desired data structure, and `METHOD` is the desired method.
 
-These benchmarks are primarily designed to support RQ1 and RQ2 in Section 5. More specifically,
+These benchmarks are primarily designed to support RQ1 and RQ2 in Section 5. More concretely,
 the resulting verification times support the "Verif. Time(s)" column in Table 2 of the paper.
 The reported verification time for a method is taken to be the sum of the time to verify the method 
 and the time to verify its data structure's impact set.
@@ -59,9 +59,10 @@ map updates.
 
 # Running the Dafny Benchmarks
 To run the entire Dafny benchmark suite, run the script `./dafny-all.sh`. This excludes two methods
-for which we have experienced very long (>2 hour) verification times: `red-black-tree::insert` and
-`scheduler-queue::bst-remove-root`. To run the benchmark suite with all methods including those two,
-run the script `dafny-all-plus-lt.sh`.
+for which we have experienced pathological (>2 hour) verification times: `red-black-tree::insert` and
+`scheduler-queue::bst-remove-root`. You may verify both of these methods individually by running
+`./dafny-method.sh red-black-tree insert` and `./dafny-method.sh scheduler-queue bst-remove-root`,
+or you can run the script `dafny-all-plus-lt.sh` to verify all methods including these.
 
 To run an individual benchmark from the Dafny benchmark suite, run the script 
 `./dafny-method.sh DATASTRUCTURE METHOD`, where `DATASTRUCTURE` is the desired data structure,
