@@ -843,20 +843,18 @@ class QueueNode {
     }
 }
 
-lemma {:axiom} IfNotBr_ThenLC(Br: QueueBr, x: QueueNode?)
-    ensures x != null && x !in Br.bst && x !in Br.list ==> x.LC()
+lemma {:axiom} IfNotBr_ThenLC(Br: QueueBr, x: QueueNode)
+    requires x !in Br.bst && x !in Br.list
+    ensures x.LC()
 
-lemma {:axiom} IfNotBrList_ThenList_LC(Br: QueueBr, x: QueueNode?)
-    ensures x != null && x !in Br.list ==> x.List_LC()
+lemma {:axiom} IfNotBrList_ThenList_LC(Br: QueueBr, x: QueueNode)
+    requires x !in Br.list
+    ensures x.List_LC()
 
 ghost method AssertLCAndRemove(Br: QueueBr, x: QueueNode?)
     returns (Br': QueueBr)
-    ensures (x != null && x.LC()) ==> Br' == QueueBr(Br.bst - {x}, Br.list - {x})
-    ensures (x == null || !x.LC()) ==> Br' == Br
+    requires x != null ==> x.LC()
+    ensures Br' == QueueBr(Br.bst - {x}, Br.list - {x})
 {
-    if x != null && x.LC() {
-        Br' := QueueBr(Br.bst - {x}, Br.list - {x});
-    } else {
-        Br' := Br;
-    }
+    Br' := QueueBr(Br.bst - {x}, Br.list - {x});
 }
