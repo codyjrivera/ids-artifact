@@ -7,8 +7,9 @@
 # Artifact by Anonymous Author, 2023-2024. 
 #
 # Snippet for running all Boogie benchmarks.
+# (using builtin support for parametrized map updates)
 
-source ./boogie-benchmarks.sh
+source ./boogie-builtin-benchmarks.sh
 
 boogie_ds "single-linked-list" SINGLE_LINKED_LIST_BENCH
 boogie_ds "sorted-list" SORTED_LIST_BENCH

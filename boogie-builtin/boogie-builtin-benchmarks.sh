@@ -4,15 +4,21 @@
 # "Predictable Verification using Intrinsic Definitions"
 # by Anonymous Authors.
 # 
-# Artifact by Anonymous Author, 2024. 
+# Artifact by Anonymous Author, 2023-2024. 
 #
-# Supporting scripts for running Dafny benchmarks.
+# Supporting scripts for running Boogie benchmarks
+# (using builtin support for parametrized map updates)
 
-source ./dep-locations.sh
+source ../dep-locations.sh
 
-VER_TIMEOUT=36000
-DAFNY_OPTS="--verification-time-limit $VER_TIMEOUT"
-TIME_FORMAT="\t%e" # user+sys is not accurate with Dafny, so wall clock must be used.
+BOOGIE_OPTS="/proverOpt:O:smt.mbqi=false /proverOpt:O:model.compact=false\
+ /proverOpt:O:model.v2=true /proverOpt:O:pp.bv_literals=false\
+ /proverOpt:O:smt.case_split=3 /proverOpt:O:auto_config=false\
+ /proverOpt:O:type_check=true /proverOpt:O:smt.qi.eager_threshold=100\
+ /proverOpt:O:smt.delay_units=true /proverOpt:O:smt.arith.solver=2\
+ /proverOpt:O:smt.arith.nl=false"
+TIME_FORMAT="\t%e"
+MAX_SPLITS=8
 
 VERBOSE=false
 
@@ -92,8 +98,6 @@ SCHEDULER_QUEUE_BENCH="
 
 # to contain items of form datastructure::method
 BLACKLIST="
-    red-black-tree::insert
-    scheduler-queue::bst-remove-root
     "
 
 list_contains() {
@@ -107,16 +111,16 @@ list_contains() {
     return 1
 }
 
-dafny_method() {
+boogie_method() {
     STRUCTURE=$1
     METHOD=$2
     RUN_ANYWAY=$3
 
-    if ! [ -f "dafny/$STRUCTURE/$STRUCTURE.dfy" ]; then
+    if ! [ -f "$STRUCTURE/$STRUCTURE.bpl" ]; then
         echo "data structure $STRUCTURE not implemented"
         return 1
     fi
-    if ! [ -f "dafny/$STRUCTURE/$METHOD.dfy" ]; then
+    if ! [ -f "$STRUCTURE/$METHOD.bpl" ]; then
         echo "method $STRUCTURE::$METHOD not implemented"
         return 1
     fi
@@ -125,16 +129,48 @@ dafny_method() {
         return 1
     fi
 
-    # Verify
-    command time -o tmp_ver_time -f "$TIME_FORMAT" $DAFNY_4 verify $DAFNY_OPTS \
-        "dafny/$STRUCTURE/$METHOD.dfy" 2>&1 >tmp_log
-    if [ "$?" -gt 0 ]; then
+    # Get max number of splits in the program, if this exists.
+    if max_splits=$(grep "SETUP:max-splits" "$STRUCTURE/$METHOD.bpl");
+    then
+        max_splits=$(echo $max_splits | awk -F '=|;' '{print $2}')
+    else
+        max_splits=$MAX_SPLITS
+    fi
+
+    # Resolve
+    cat "$STRUCTURE/$STRUCTURE.bpl" "$STRUCTURE/$METHOD.bpl" >tmp_input.bpl
+    command time -o tmp_boogie_time -f "$TIME_FORMAT" $BOOGIE_3 \
+        /proverOpt:SOLVER=noop $BOOGIE_OPTS /vcsMaxSplits:$max_splits /proverLog:tmp_input.smt2 tmp_input.bpl \
+        2>&1 >tmp_log
+    if ! [ -f "tmp_input.smt2" ]; then
+        echo "method $STRUCTURE::$METHOD does not resolve"
+        cat tmp_log
+        return 1
+    fi
+
+    # Check for quantified reasoning
+    if grep -q -e forall -e exists -e lambda tmp_input.smt2; then
+        echo "method $STRUCTURE::$METHOD contains quantified reasoning in its SMT script"
+        return 1
+    fi
+
+    # VERBOSE: Print number of asserts
+    if $VERBOSE; then
+        printf "There are "
+        printf "%d" `grep -o "(check-sat)" tmp_input.smt2 | wc -l`
+        printf " verification conditions in $STRUCTURE::$METHOD\n"
+    fi
+
+    # Prove
+    command time -o tmp_prover_time -f "$TIME_FORMAT" $PROVER \
+        tmp_input.smt2 2>&1 >tmp_log
+    if grep -q ^sat$ tmp_log || grep -q ^unknown$ tmp_log; then
         echo "method $STRUCTURE::$METHOD does not verify"
         cat tmp_log
         return 1
     fi
 
-    totaltime=$(cat tmp_ver_time | awk '{s+=$1} END {printf "%.2f", s}')
+    totaltime=$(cat tmp_boogie_time tmp_prover_time | awk '{s+=$1} END {printf "%.2f", s}')
 
     printf "%02dh%02dm%05.2fs    " $(echo -e "$totaltime/3600\n$totaltime%3600/60\n$totaltime%60"| bc)
     printf "($STRUCTURE::$METHOD)\n"
@@ -144,16 +180,16 @@ dafny_method() {
     return 0
 }
 
-dafny_ds() {
+boogie_ds() {
     STRUCTURE=$1
     METHODS=${!2}
 
     echo ""
-    echo "Benchmarking data structure $STRUCTURE with Dafny:"
+    echo "Benchmarking data structure $STRUCTURE with Boogie:"
     echo "============================================================"
 
     for method in $METHODS; do
-        dafny_method $STRUCTURE $method false
+        boogie_method $STRUCTURE $method false
     done
 
     return 0

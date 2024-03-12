@@ -8,6 +8,9 @@
 #
 # Locations of dependency executables for the artifact.
 
+# Location of Python3 executable
+PYTHON_3="python"
+
 # Location of Boogie 3.0.1+ executable
 BOOGIE_3="boogie"
 

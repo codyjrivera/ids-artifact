@@ -7,8 +7,9 @@
 # Artifact by Anonymous Author, 2023-2024. 
 #
 # Snippet for running one Boogie benchmark.
+# (using builtin support for parametrized map updates)
 
-source ./boogie-benchmarks.sh
+source ./boogie-builtin-benchmarks.sh
 
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 DATASTRUCTURE METHOD"
