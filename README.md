@@ -79,7 +79,7 @@ Section 5 of the paper. The time values on the table for a given method are the 
 of the time reported by this script for that method, and the time reported by this 
 script for the impact set verification of a particular data structure.
 
-### Support for Claim 3 (~7hr full, ~2.75hr partial)
+### Support for Claim 3 (~8hr full, ~2.75hr partial)
 We implement our suite of methods using Dafny, a widely used high-level verification
 language which does not generate decidable VCs.
 The Dafny code implemented for Claim 3 is seen in the `dafny/` directory, and is
