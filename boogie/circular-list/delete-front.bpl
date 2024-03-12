@@ -2,7 +2,7 @@
 // "Predictable Verification using Intrinsic Definitions"
 // by Anonymous Authors.
 // 
-// Artifact by Anonymous Author, 2023-2024. 
+// Artifact by Anonymous Author, 2023. 
 //
 // Verification of Circular List Delete Front.
 

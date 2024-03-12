@@ -2,7 +2,7 @@
 // "Predictable Verification using Intrinsic Definitions"
 // by Anonymous Authors.
 // 
-// Artifact by Anonymous Author, 2023-2024. 
+// Artifact by Anonymous Author, 2023. 
 //
 // Verification of removing the first item from a list, for the scheduler
 // queue (overlay of List and BST).
