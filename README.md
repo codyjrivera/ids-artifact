@@ -14,7 +14,7 @@ We give a rough outline of the artifact's structure:
    of parametrized map updates used rather than a transplant script, as suggested by a reviewer.
 - `dafny/`: Dafny implementation of the benchmark suite.
 - `paper/`: A copy of the originally-submitted paper and appendices, for convenience.
-- `dep-locations.sh`: A file where 
+- `dep-locations.sh`: A script file where the user points the script to its dependencies.
 
 ## Artifact Setup
 The artifact requires a Bash shell environment as well as the following dependencies:
