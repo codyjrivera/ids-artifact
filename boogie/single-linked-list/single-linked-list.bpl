@@ -99,6 +99,7 @@ procedure Get_repr(x: Ref) returns (repr: RefSet);
     ensures RefSetSubset(repr, alloc);
 
 // Manipulation Macros
+// NOTE: corresponds to NewObj macro in paper (Section 4.1).
 procedure Create(k: int) returns (node: Ref);
     modifies Br, alloc, C.k, C.next, C.prev;
     ensures node != null;
@@ -109,6 +110,8 @@ procedure Create(k: int) returns (node: Ref);
     ensures C.prev == old(C.prev)[node := null];
     ensures Br == old(Br)[node := true];
 
+// NOTE: Impact set is {x} + (if x.prev != null then {x.prev} else {})
+// Impact set proof in impact-sets.bpl, line 28.
 procedure Set_k(x: Ref, k: int);
     requires x != null;
     modifies Br, C.k;
@@ -116,6 +119,8 @@ procedure Set_k(x: Ref, k: int);
     ensures C.prev[x] != null ==> Br == (old(Br)[x := true])[C.prev[x] := true];
     ensures C.prev[x] == null ==> Br == old(Br)[x := true];
 
+// NOTE: Impact set is {x} + (if old(x.next) != null then {old(x.next)} else {})
+// Impact set proof in impact-sets.bpl, line 46.
 procedure Set_next(x: Ref, next: Ref);
     requires x != null;
     modifies Br, C.next;
@@ -123,6 +128,8 @@ procedure Set_next(x: Ref, next: Ref);
     ensures old(C.next)[x] != null ==> Br == (old(Br)[x := true])[old(C.next)[x] := true];
     ensures old(C.next)[x] == null ==> Br == old(Br)[x := true];
 
+// NOTE: Impact set is {x} + (if old(x.prev) != null then {old(x.prev)} else {})
+// Impact set proof in impact-sets.bpl, line 64.
 procedure Set_prev(x: Ref, prev: Ref);
     requires x != null;
     modifies Br, C.prev;
@@ -130,6 +137,8 @@ procedure Set_prev(x: Ref, prev: Ref);
     ensures old(C.prev)[x] != null ==> Br == (old(Br)[x := true])[old(C.prev)[x] := true];
     ensures old(C.prev)[x] == null ==> Br == old(Br)[x := true];
 
+// NOTE: Impact set is {x} + (if x.prev != null then {x.prev} else {})
+// Impact set proof in impact-sets.bpl, line 82.
 procedure Set_keys(x: Ref, keys: KeySet);
     requires x != null;
     modifies Br, C.keys;
@@ -137,6 +146,8 @@ procedure Set_keys(x: Ref, keys: KeySet);
     ensures C.prev[x] != null ==> Br == (old(Br)[x := true])[C.prev[x] := true];
     ensures C.prev[x] == null ==> Br == old(Br)[x := true];
 
+// NOTE: Impact set is {x} + (if x.prev != null then {x.prev} else {})
+// Impact set proof in impact-sets.bpl, line 100.
 procedure Set_repr(x: Ref, repr: RefSet);
     requires x != null;
     modifies Br, C.repr;
@@ -145,9 +156,11 @@ procedure Set_repr(x: Ref, repr: RefSet);
     ensures C.prev[x] == null ==> Br == old(Br)[x := true];
 
 // Broken Set Manipulation
+// NOTE: corresponds to InferLCOutsideBr macro in paper (Section 4.1).
 procedure IfNotBr_ThenLC(x: Ref);
     ensures x != null && !Br[x] ==> LC(C.k, C.next, C.prev, C.keys, C.repr, x);
 
+// NOTE: corresponds to AssertLCAndRemove macro in paper (Section 4.1).
 procedure AssertLCAndRemove(x: Ref);
     modifies Br;
     ensures (x != null && LC(C.k, C.next, C.prev, C.keys, C.repr, x)) 
@@ -203,6 +216,8 @@ function {:inline} InAlloc(
   )
 }
 
+// NOTE: In our framework, we may assert that any location we have access to from our
+// program variables is allocated (since we use a language with a garbage-collected heap).
 procedure InAllocParam(x: Ref);
     ensures x != null ==> InAlloc(C.k, C.next, C.prev, C.keys, C.repr, x, alloc);
 

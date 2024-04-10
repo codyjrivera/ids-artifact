@@ -23,6 +23,8 @@ procedure Check_Create(arb: Ref, k: int)
               arb);
 }
 
+// Impact set proof corresponds to mutation macro
+// in single-linked-list.bpl, line 115.
 procedure Check_Set_k(x: Ref, arb: Ref, k: int)
     modifies C.k;
 {
@@ -39,6 +41,8 @@ procedure Check_Set_k(x: Ref, arb: Ref, k: int)
               arb);
 }
 
+// Impact set proof corresponds to mutation macro
+// in single-linked-list.bpl, line 124.
 procedure Check_Set_next(x: Ref, arb: Ref, next: Ref)
     modifies C.next;
 {
@@ -55,6 +59,8 @@ procedure Check_Set_next(x: Ref, arb: Ref, next: Ref)
               arb);
 }
 
+// Impact set proof corresponds to mutation macro
+// in single-linked-list.bpl, line 133.
 procedure Check_Set_prev(x: Ref, arb: Ref, prev: Ref)
     modifies C.prev;
 {
@@ -71,6 +77,8 @@ procedure Check_Set_prev(x: Ref, arb: Ref, prev: Ref)
               arb);
 }
 
+// Impact set proof corresponds to mutation macro
+// in single-linked-list.bpl, line 142.
 procedure Check_Set_keys(x: Ref, arb: Ref, keys: KeySet)
     modifies C.keys;
 {
@@ -87,6 +95,8 @@ procedure Check_Set_keys(x: Ref, arb: Ref, keys: KeySet)
               arb);
 }
 
+// Impact set proof corresponds to mutation macro
+// in single-linked-list.bpl, line 151.
 procedure Check_Set_repr(x: Ref, arb: Ref, repr: RefSet)
     modifies C.repr;
 {

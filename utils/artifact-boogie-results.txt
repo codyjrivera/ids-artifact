@@ -1,0 +1,84 @@
+
+Benchmarking data structure single-linked-list with Boogie:
+============================================================
+00h00m01.00s    (single-linked-list::impact-sets)
+00h00m01.30s    (single-linked-list::append)
+00h00m01.22s    (single-linked-list::copy-all)
+00h00m01.30s    (single-linked-list::delete-all)
+00h00m01.04s    (single-linked-list::find)
+00h00m01.23s    (single-linked-list::insert-back)
+00h00m01.14s    (single-linked-list::insert-front)
+00h00m01.28s    (single-linked-list::insert)
+00h00m01.38s    (single-linked-list::reverse)
+
+Benchmarking data structure sorted-list with Boogie:
+============================================================
+00h00m01.04s    (sorted-list::impact-sets)
+00h00m01.41s    (sorted-list::delete-all)
+00h00m01.05s    (sorted-list::find)
+00h00m01.36s    (sorted-list::insert)
+00h00m01.54s    (sorted-list::merge)
+00h00m01.53s    (sorted-list::reverse)
+
+Benchmarking data structure sorted-list-minmax with Boogie:
+============================================================
+00h00m01.05s    (sorted-list-minmax::impact-sets)
+00h00m01.65s    (sorted-list-minmax::concatenate)
+00h00m01.15s    (sorted-list-minmax::find-last)
+
+Benchmarking data structure circular-list with Boogie:
+============================================================
+00h00m01.19s    (circular-list::impact-sets)
+00h00m01.87s    (circular-list::insert-front)
+00h00m01.90s    (circular-list::insert-back)
+00h00m01.88s    (circular-list::delete-front)
+00h00m01.93s    (circular-list::delete-back)
+
+Benchmarking data structure binary-search-tree with Boogie:
+============================================================
+00h00m01.12s    (binary-search-tree::impact-sets)
+00h00m01.22s    (binary-search-tree::find)
+00h00m02.31s    (binary-search-tree::insert)
+00h00m02.52s    (binary-search-tree::delete)
+00h00m03.99s    (binary-search-tree::remove-root)
+
+Benchmarking data structure treap with Boogie:
+============================================================
+00h00m01.16s    (treap::impact-sets)
+00h00m01.26s    (treap::find)
+00h00m09.74s    (treap::insert)
+00h00m02.75s    (treap::delete)
+00h00m05.09s    (treap::remove-root)
+
+Benchmarking data structure avl-tree with Boogie:
+============================================================
+00h00m01.22s    (avl-tree::impact-sets)
+00h00m05.13s    (avl-tree::insert)
+00h00m04.93s    (avl-tree::delete)
+00h00m01.29s    (avl-tree::find-min)
+00h00m04.88s    (avl-tree::balance)
+
+Benchmarking data structure red-black-tree with Boogie:
+============================================================
+00h00m01.27s    (red-black-tree::impact-sets)
+00h01m23.19s    (red-black-tree::insert)
+00h00m06.36s    (red-black-tree::delete)
+00h00m01.34s    (red-black-tree::find-min)
+00h00m07.86s    (red-black-tree::delete-left-fixup)
+00h00m07.77s    (red-black-tree::delete-right-fixup)
+
+Benchmarking data structure bst-scaffolding with Boogie:
+============================================================
+00h00m01.36s    (bst-scaffolding::impact-sets)
+00h00m04.53s    (bst-scaffolding::delete-inside)
+00h00m11.09s    (bst-scaffolding::remove-root)
+00h00m01.87s    (bst-scaffolding::fix-depth)
+
+Benchmarking data structure scheduler-queue with Boogie:
+============================================================
+00h00m02.15s    (scheduler-queue::impact-sets)
+00h00m02.40s    (scheduler-queue::move-request)
+00h00m01.70s    (scheduler-queue::list-remove-first)
+00h00m05.13s    (scheduler-queue::bst-delete-inside)
+00h00m16.41s    (scheduler-queue::bst-remove-root)
+00h00m02.14s    (scheduler-queue::bst-fix-depth)

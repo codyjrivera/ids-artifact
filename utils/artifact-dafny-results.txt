@@ -1,0 +1,84 @@
+
+Benchmarking data structure single-linked-list with Dafny:
+============================================================
+00h00m02.84s    (single-linked-list::impact-sets)
+00h00m03.92s    (single-linked-list::append)
+00h00m03.03s    (single-linked-list::copy-all)
+00h00m03.80s    (single-linked-list::delete-all)
+00h00m02.72s    (single-linked-list::find)
+00h00m03.72s    (single-linked-list::insert-back)
+00h00m02.88s    (single-linked-list::insert-front)
+00h00m03.92s    (single-linked-list::insert)
+00h00m04.59s    (single-linked-list::reverse)
+
+Benchmarking data structure sorted-list with Dafny:
+============================================================
+00h00m02.85s    (sorted-list::impact-sets)
+00h00m04.13s    (sorted-list::delete-all)
+00h00m02.74s    (sorted-list::find)
+00h00m05.41s    (sorted-list::insert)
+00h00m06.18s    (sorted-list::merge)
+00h00m05.51s    (sorted-list::reverse)
+
+Benchmarking data structure sorted-list-minmax with Dafny:
+============================================================
+00h00m03.02s    (sorted-list-minmax::impact-sets)
+00h00m07.92s    (sorted-list-minmax::concatenate)
+00h00m02.86s    (sorted-list-minmax::find-last)
+
+Benchmarking data structure circular-list with Dafny:
+============================================================
+00h00m03.19s    (circular-list::impact-sets)
+00h00m09.83s    (circular-list::insert-front)
+00h00m33.20s    (circular-list::insert-back)
+00h00m11.61s    (circular-list::delete-front)
+00h00m30.43s    (circular-list::delete-back)
+
+Benchmarking data structure binary-search-tree with Dafny:
+============================================================
+00h00m03.11s    (binary-search-tree::impact-sets)
+00h00m02.89s    (binary-search-tree::find)
+00h00m15.63s    (binary-search-tree::insert)
+00h00m26.76s    (binary-search-tree::delete)
+00h03m32.86s    (binary-search-tree::remove-root)
+
+Benchmarking data structure treap with Dafny:
+============================================================
+00h00m03.16s    (treap::impact-sets)
+00h00m02.94s    (treap::find)
+00h12m09.42s    (treap::insert)
+00h00m31.50s    (treap::delete)
+00h11m31.76s    (treap::remove-root)
+
+Benchmarking data structure avl-tree with Dafny:
+============================================================
+00h00m03.34s    (avl-tree::impact-sets)
+00h01m00.42s    (avl-tree::insert)
+00h03m08.36s    (avl-tree::delete)
+00h00m02.93s    (avl-tree::find-min)
+00h48m26.74s    (avl-tree::balance)
+
+Benchmarking data structure red-black-tree with Dafny:
+============================================================
+00h00m03.48s    (red-black-tree::impact-sets)
+02h13m00.15s    (red-black-tree::insert)
+00h01m42.75s    (red-black-tree::delete)
+00h00m02.99s    (red-black-tree::find-min)
+00h22m05.21s    (red-black-tree::delete-left-fixup)
+00h19m08.44s    (red-black-tree::delete-right-fixup)
+
+Benchmarking data structure bst-scaffolding with Dafny:
+============================================================
+00h00m03.61s    (bst-scaffolding::impact-sets)
+00h01m04.28s    (bst-scaffolding::delete-inside)
+00h25m06.94s    (bst-scaffolding::remove-root)
+00h00m04.21s    (bst-scaffolding::fix-depth)
+
+Benchmarking data structure scheduler-queue with Dafny:
+============================================================
+00h00m04.69s    (scheduler-queue::impact-sets)
+00h00m04.59s    (scheduler-queue::move-request)
+00h00m07.64s    (scheduler-queue::list-remove-first)
+00h01m10.41s    (scheduler-queue::bst-delete-inside)
+02h59m54.40s    (scheduler-queue::bst-remove-root)
+00h00m04.88s    (scheduler-queue::bst-fix-depth)
