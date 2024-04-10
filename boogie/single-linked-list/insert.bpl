@@ -28,7 +28,8 @@
 // We additionally associate each Set_{field} macro with its impact
 // set proof Check_Set_{field}, ensuring that the broken set is updated
 // correctly. The Set_{field} macros are in single-linked-list.bpl, while
-// the Check_Set_{field} proofs are in impact-sets.bpl.
+// the Check_Set_{field} proofs are in impact-sets.bpl. One can see that
+// the macros and the proofs correspond with each other.
 
 procedure SLLInsertContract(x: Ref, k: int) returns (ret: Ref);
     requires RefSetsEqual(Br, EmptyRefSet);
