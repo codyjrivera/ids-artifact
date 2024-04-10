@@ -41,6 +41,7 @@ user's `PATH`.
 The artifact requires a Bash shell as well as the following dependencies:
 - Python 3 (3.10.12 recommended)
     - sexpdata (1.0.1 recommended)
+    - matplotlib (3.8.4 recommended)
 - Boogie 3.0.1 or later (3.1.2 recommended)
 - Z3 (4.13.0 recommended)
 - Dafny 4.1.0 or later (4.4.0 recommended)
