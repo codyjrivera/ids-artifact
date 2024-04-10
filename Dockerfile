@@ -19,8 +19,9 @@ RUN apt-get update
 RUN apt-get -y upgrade
 RUN apt-get install -y time bc wget unzip python3 python3-pip python-is-python3
 
-# Install sexpdata.
+# Install sexpdata and matplotlib.
 RUN pip install sexpdata
+RUN pip install matplotlib
 
 # Install Boogie (3.1.3).
 RUN apt-get install -y dotnet6

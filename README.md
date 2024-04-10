@@ -30,7 +30,8 @@ a container.
 2. In the root directory of this artifact, run `docker build -t ids-artifact .` to
    build the container.
 3. To obtain an interactive shell for the container `ids-artifact`, run 
-   `docker run -it ids-artifact /bin/bash`.
+   `docker run -it --mount type=bind,src="$(pwd)",target=/outpwd ids-artifact /bin/bash`.
+   (the `--mount` option allows you to copy files to the host machine).
 
 Note that `dep-locations.sh` should not have to be modified in this case: the 
 `Dockerfile` should have installed all dependencies and placed them in the
@@ -150,6 +151,7 @@ two steps (assuming you are in the top-level directory):
 2. Run `python3 ./gen-scrq3.py DAFNY-RESULTS BOOGIE-RESULTS`, where `DAFNY-RESULTS` is the 
    output from running `./dafny-all.sh`, `BOOGIE-RESULTS` is the output from running
    `./boogie-all.sh`, and `DAFNY-RESULTS` is the output from running `./dafny-all.sh`.
+3. Run `cp scatter.png /outpwd` to copy the generated scatter plot to the host machine.
    
 A sample `DAFNY-RESULTS` is in `utils/artifact-dafny-results.txt`, while a sample
 `BOOGIE-RESULTS` is in `utils/artifact-boogie-results.txt`. Note that the script will

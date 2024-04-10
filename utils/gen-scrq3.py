@@ -94,4 +94,4 @@ plt.plot(xx,xx,c='darkgray')
 #plt.plot(100*xx,xx)
 plt.text(xx[-4],xx[-4], ' y=x', fontsize=15)
 
-plt.show()
+plt.savefig('scatter.png')
