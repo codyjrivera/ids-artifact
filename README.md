@@ -132,6 +132,7 @@ Section 5 of the paper. The time values on the table for a given method are the 
 of the time reported by this script for that method, and the time reported by this 
 script for the impact set verification of a particular data structure.
 
+#### Generating data for Table 2
 A script under the `utils/` directory, `gen-tab2.py`, generates the final time values
 for the `Verif. Time (s)` column in Table 2 by performing the above
 calculation. To generate these values, complete the following two steps (assuming you 
@@ -165,6 +166,7 @@ This experiment, in conjunction with the experiments to support Claim 2, support
 scatter plot seen near RQ3 in Section 5.3 of the paper, plotting verification times
 for Boogie vs. Dafny.
 
+#### Generating the scatter plot for RQ3
 A script under the `utils/` directory, `gen-scrq3.py`, generates the scatter plot
 comparing Dafny and Boogie for RQ3. To generate this plot, complete the following 
 two steps (assuming you are in the top-level directory):
