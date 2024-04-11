@@ -106,12 +106,8 @@ of them (bst-scaffolding::fix-depth, scheduler-queue::fix-depth) are excluded fr
 Table 2 in Section 5 since they contain only ghost code.
 
 We elaborate on the condition that programs be well-behaved (Section 3.4), which is 
-required to use FWYB soundly, for one data structure, `single-linked-list`, and one 
-method within that data structure, `insert`. We show that the `insert` method is 
-well-behaved since it is constructed using carefully-designed macros. Furthermore, we show 
-that the impact sets associated with each mutation macro (as described in Section 4.1) 
-are correct, by corresponding each mutation
-macro with its impact set proof. This is done by extra annotations in the files
+required to use FWYB soundly, for one benchmark: `single-linked-list::insert`.
+This is done by extra comments in the files
 `single-linked-list.bpl`, `impact-sets.bpl`, and `insert.bpl` 
 (in the directory `boogie/single-linked-list`).
 
