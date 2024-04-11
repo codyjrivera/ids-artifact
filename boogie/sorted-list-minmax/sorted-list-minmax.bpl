@@ -1,8 +1,8 @@
 // Supporting Artifact for
 // "Predictable Verification using Intrinsic Definitions"
-// by Anonymous Authors.
+// by Adithya Murali, Cody Rivera, and P. Madhusudan.
 // 
-// Artifact by Anonymous Author, 2023. 
+// Artifact by Cody Rivera, 2023-2024. 
 //
 // Definition of Sorted Lists, with min+max maps.
 
@@ -13,30 +13,131 @@ const null: Ref;
 type KeySet = [int]bool;
 type RefSet = [Ref]bool;
 
+// Builtin parametric map updates
+function {:builtin "MapConst"} MapConst_int_int(int) : [int]int;
+function {:builtin "MapConst"} MapConst_int_bool(bool) : [int]bool;
+function {:builtin "MapConst"} MapConst_Ref_int(int) : [Ref]int;
+function {:builtin "MapConst"} MapConst_Ref_bool(bool) : [Ref]bool;
+function {:builtin "MapAnd"} MapAnd_int_bool([int]bool, [int]bool) : [int]bool;
+function {:builtin "MapOr"} MapOr_int_bool([int]bool, [int]bool) : [int]bool;
+function {:builtin "MapNot"} MapNot_int_bool([int]bool) : [int]bool;
+function {:builtin "MapAnd"} MapAnd_Ref_bool([Ref]bool, [Ref]bool) : [Ref]bool;
+function {:builtin "MapOr"} MapOr_Ref_bool([Ref]bool, [Ref]bool) : [Ref]bool;
+function {:builtin "MapNot"} MapNot_Ref_bool([Ref]bool) : [Ref]bool;
+function {:builtin "MapIte"} MapIte_Ref_int([Ref]bool, [Ref]int, [Ref]int) : [Ref]int;
+function {:builtin "MapIte"} MapIte_Ref_Ref([Ref]bool, [Ref]Ref, [Ref]Ref) : [Ref]Ref;
+function {:builtin "MapIte"} MapIte_Ref_bool([Ref]bool, [Ref]bool, [Ref]bool) : [Ref]bool;
+function {:builtin "MapIte"} MapIte_Ref_KeySet([Ref]bool, [Ref]KeySet, [Ref]KeySet) : [Ref]KeySet;
+function {:builtin "MapIte"} MapIte_Ref_RefSet([Ref]bool, [Ref]RefSet, [Ref]RefSet) : [Ref]RefSet;
+
 // Set library
 const EmptyKeySet: KeySet;
-function KeySetMember(x: int, s2: KeySet) returns (bool);
-function KeySetAddF(s: KeySet, x: int) returns (KeySet);
-function KeySetRemoveF(s: KeySet, x: int) returns (KeySet);
-function KeySetIntersectF(s1: KeySet, s2: KeySet) returns (KeySet);
-function KeySetUnionF(s1: KeySet, s2: KeySet) returns (KeySet);
-function KeySetComF(s: KeySet) returns (KeySet);
-function KeySetDiffF(s1: KeySet, s2: KeySet) returns (KeySet);
-function KeySetSubset(s1: KeySet, s2: KeySet) returns (bool);
-function KeySetsEqual(s1: KeySet, s2: KeySet) returns (bool);
-function KeySetsDisjoint(s1: KeySet, s2: KeySet) returns (bool);
+axiom EmptyKeySet == MapConst_int_bool(false);
+
+function {:inline} KeySetsEqual(s1: KeySet, s2: KeySet) returns (bool)
+{
+    s1 == s2 // WARNING: (==) symbol doesn't guarantee extensionality of equality.
+             // (though it does in current versions of Boogie).
+}
+
+function {:inline} KeySetMember(x: int, s2: KeySet) returns (bool)
+{
+    s2[x]
+}
+
+function {:inline} KeySetAddF(s: KeySet, x: int) returns (KeySet)
+{
+    s[x := true]
+}
+
+function {:inline} KeySetRemoveF(s: KeySet, x: int) returns (KeySet)
+{
+    s[x := false]
+}
+
+function {:inline} KeySetIntersectF(s1: KeySet, s2: KeySet) returns (KeySet)
+{
+    MapAnd_int_bool(s1, s2)
+}
+
+function {:inline} KeySetUnionF(s1: KeySet, s2: KeySet) returns (KeySet)
+{
+    MapOr_int_bool(s1, s2)
+}
+
+function {:inline} KeySetComF(s: KeySet) returns (KeySet)
+{
+    MapNot_int_bool(s)
+}
+
+function {:inline} KeySetDiffF(s1: KeySet, s2: KeySet) returns (KeySet)
+{
+    KeySetIntersectF(s1, KeySetComF(s2))
+}
+
+function {:inline} KeySetSubset(s1: KeySet, s2: KeySet) returns (bool)
+{
+    KeySetsEqual(EmptyKeySet, KeySetDiffF(s1, s2))
+}
+
+function {:inline} KeySetsDisjoint(s1: KeySet, s2: KeySet) returns (bool)
+{
+    KeySetsEqual(EmptyKeySet, KeySetIntersectF(s1, s2))
+}
 
 const EmptyRefSet: RefSet;
-function RefSetMember(x: Ref, s2: RefSet) returns (bool);
-function RefSetAddF(s: RefSet, x: Ref) returns (RefSet);
-function RefSetRemoveF(s: RefSet, x: Ref) returns (RefSet);
-function RefSetIntersectF(s1: RefSet, s2: RefSet) returns (RefSet);
-function RefSetUnionF(s1: RefSet, s2: RefSet) returns (RefSet);
-function RefSetComF(s: RefSet) returns (RefSet);
-function RefSetDiffF(s1: RefSet, s2: RefSet) returns (RefSet);
-function RefSetSubset(s1: RefSet, s2: RefSet) returns (bool);
-function RefSetsEqual(s1: RefSet, s2: RefSet) returns (bool);
-function RefSetsDisjoint(s1: RefSet, s2: RefSet) returns (bool);
+axiom EmptyRefSet == MapConst_Ref_bool(false);
+
+function {:inline} RefSetsEqual(s1: RefSet, s2: RefSet) returns (bool)
+{
+    s1 == s2 // WARNING: (==) symbol doesn't guarantee extensionality of equality.
+             // (though it does in current versions of Boogie).
+}
+
+function {:inline} RefSetMember(x: Ref, s2: RefSet) returns (bool)
+{
+    s2[x]
+}
+
+function {:inline} RefSetAddF(s: RefSet, x: Ref) returns (RefSet)
+{
+    s[x := true]
+}
+
+function {:inline} RefSetRemoveF(s: RefSet, x: Ref) returns (RefSet)
+{
+    s[x := false]
+}
+
+function {:inline} RefSetIntersectF(s1: RefSet, s2: RefSet) returns (RefSet)
+{
+    MapAnd_Ref_bool(s1, s2)
+}
+
+function {:inline} RefSetUnionF(s1: RefSet, s2: RefSet) returns (RefSet)
+{
+    MapOr_Ref_bool(s1, s2)
+}
+
+function {:inline} RefSetComF(s: RefSet) returns (RefSet)
+{
+    MapNot_Ref_bool(s)
+}
+
+function {:inline} RefSetDiffF(s1: RefSet, s2: RefSet) returns (RefSet)
+{
+    RefSetIntersectF(s1, RefSetComF(s2))
+}
+
+function {:inline} RefSetSubset(s1: RefSet, s2: RefSet) returns (bool)
+{
+    RefSetsEqual(EmptyRefSet, RefSetDiffF(s1, s2))
+}
+
+function {:inline} RefSetsDisjoint(s1: RefSet, s2: RefSet) returns (bool)
+{
+    RefSetsEqual(EmptyRefSet, RefSetIntersectF(s1, s2))
+}
 
 // Fields
 var C.k: [Ref]int;
@@ -230,15 +331,50 @@ procedure AssertLCAndRemove(x: Ref);
                 ==> Br == old(Br);
 
 // Framing
-function Frame_k(mod_set: RefSet, old_k: [Ref]int, k: [Ref]int) returns ([Ref]int);
-function Frame_next(mod_set: RefSet, old_next: [Ref]Ref, next: [Ref]Ref) returns ([Ref]Ref);
-function Frame_prev(mod_set: RefSet, old_prev: [Ref]Ref, prev: [Ref]Ref) returns ([Ref]Ref);
-function Frame_keys(mod_set: RefSet, old_keys: [Ref]KeySet, keys: [Ref]KeySet) returns ([Ref]KeySet);
-function Frame_repr(mod_set: RefSet, old_repr: [Ref]RefSet, repr: [Ref]RefSet) returns ([Ref]RefSet);
-function Frame_sorted(mod_set: RefSet, old_sorted: [Ref]bool, sorted: [Ref]bool) returns ([Ref]bool);
-function Frame_rev_sorted(mod_set: RefSet, old_rev_sorted: [Ref]bool, rev_sorted: [Ref]bool) returns ([Ref]bool);
-function Frame_min(mod_set: RefSet, old_min: [Ref]int, min: [Ref]int) returns ([Ref]int);
-function Frame_max(mod_set: RefSet, old_max: [Ref]int, max: [Ref]int) returns ([Ref]int);
+function {:inline} Frame_k(mod_set: RefSet, old_k: [Ref]int, k: [Ref]int) returns ([Ref]int)
+{
+    MapIte_Ref_int(mod_set, k, old_k)
+}
+
+function {:inline} Frame_next(mod_set: RefSet, old_next: [Ref]Ref, next: [Ref]Ref) returns ([Ref]Ref)
+{
+    MapIte_Ref_Ref(mod_set, next, old_next)
+}
+
+function {:inline} Frame_prev(mod_set: RefSet, old_prev: [Ref]Ref, prev: [Ref]Ref) returns ([Ref]Ref)
+{
+    MapIte_Ref_Ref(mod_set, prev, old_prev)
+}
+
+function {:inline} Frame_keys(mod_set: RefSet, old_keys: [Ref]KeySet, keys: [Ref]KeySet) returns ([Ref]KeySet)
+{
+    MapIte_Ref_KeySet(mod_set, keys, old_keys)
+}
+
+function {:inline} Frame_repr(mod_set: RefSet, old_repr: [Ref]RefSet, repr: [Ref]RefSet) returns ([Ref]RefSet)
+{
+    MapIte_Ref_RefSet(mod_set, repr, old_repr)
+}
+
+function {:inline} Frame_sorted(mod_set: RefSet, old_sorted: [Ref]bool, sorted: [Ref]bool) returns ([Ref]bool)
+{
+    MapIte_Ref_bool(mod_set, sorted, old_sorted)
+}
+
+function {:inline} Frame_rev_sorted(mod_set: RefSet, old_rev_sorted: [Ref]bool, rev_sorted: [Ref]bool) returns ([Ref]bool)
+{
+    MapIte_Ref_bool(mod_set, rev_sorted, old_rev_sorted)
+}
+
+function {:inline} Frame_min(mod_set: RefSet, old_min: [Ref]int, min: [Ref]int) returns ([Ref]int)
+{
+    MapIte_Ref_int(mod_set, min, old_min)
+}
+
+function {:inline} Frame_max(mod_set: RefSet, old_max: [Ref]int, max: [Ref]int) returns ([Ref]int)
+{
+    MapIte_Ref_int(mod_set, max, old_max)
+}
 
 function {:inline} Frame_all(
     k: [Ref]int, 

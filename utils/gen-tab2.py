@@ -1,8 +1,8 @@
 # Supporting Artifact for
 # "Predictable Verification using Intrinsic Definitions"
-# by Anonymous Authors.
+# by Adithya Murali, Cody Rivera, and P. Madhusudan.
 # 
-# Artifact by Anonymous Author, 2024. 
+# By Adithya Murali and Cody Rivera, 2024. 
 #
 # Script for generating numbers to be used in Table 2.
 # Usage: python3 ./gen-tab2.py RESULTS

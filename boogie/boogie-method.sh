@@ -2,11 +2,12 @@
 
 # Supporting Artifact for
 # "Predictable Verification using Intrinsic Definitions"
-# by Anonymous Authors.
+# by Adithya Murali, Cody Rivera, and P. Madhusudan.
 # 
-# Artifact by Anonymous Author, 2023. 
+# Artifact by Cody Rivera, 2023-2024. 
 #
 # Snippet for running one Boogie benchmark.
+# (using builtin support for parametrized map updates)
 
 source ./boogie-benchmarks.sh
 

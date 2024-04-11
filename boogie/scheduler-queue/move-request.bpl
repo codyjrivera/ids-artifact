@@ -1,8 +1,8 @@
 // Supporting Artifact for
 // "Predictable Verification using Intrinsic Definitions"
-// by Anonymous Authors.
+// by Adithya Murali, Cody Rivera, and P. Madhusudan.
 // 
-// Artifact by Anonymous Author, 2023. 
+// Artifact by Cody Rivera, 2023-2024. 
 //
 // Remove the first item from a linked list, and also remove that
 // item from the overlaid BST.

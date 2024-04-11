@@ -1,30 +1,51 @@
 # Supporting Artifact for "Predictable Verification using Intrinsic Definitions"
-by Anonymous Authors, 2024. Version 3.0 of Artifact.
+by Adithya Murali, Cody Rivera, and P. Madhusudan, 2024. Version 4.0 of Artifact.
 
-This is the supporting artifact for "Predictable Verification using Intrinsic Definitions",
-by anonymous authors. It contains Boogie and Dafny implementations of a benchmark suite of 
+This is the supporting artifact for "Predictable Verification using Intrinsic Definitions"
+in PLDI 2024. It contains Boogie and Dafny implementations of a benchmark suite of 
 42 data structure manipulating methods over 10 data structures, written in the Fix-What-
 You-Break (FWYB) verification paradigm proposed in the paper. It also contains scripts to
 verify the benchmarks and record verification times.
 
+This artifact reflects the camera-ready version of the paper: a version of the artifact
+(v3.0) submitted for artifact evaluation that corresponds to an earlier version of the paper
+may be seen [here](https://zenodo.org/records/10956223).
+
 ## Artifact Outline
-We give a rough outline of the artifact's structure:
+We give an outline of the artifact's structure:
 - `boogie/`: Boogie implementation of the benchmark suite.
-- `boogie-builtin/`: Boogie implementation of the benchmark suite, with builtin implementation
-   of parametrized map updates used rather than a transplant script, as suggested by a reviewer.
+- `boogie-original/`: Boogie implementation of the benchmark suite, with parametrized
+  map updates implemented using a transplant script operating on the generated SMT
+  query, rather than using Boogie's native support.
 - `dafny/`: Dafny implementation of the benchmark suite.
-- `paper/`: A copy of the originally-submitted paper and appendices, for convenience.
 - `utils/`: Scripts to generate table data/plots in the paper.
 - `dep-locations.sh`: A script file where the user points the script to its dependencies.
+- `Dockerfile`: Describes how to build a Docker image for this artifact.
+- `LICENSE.txt`: The MIT License, under which this artifact is licensed.
+- `README.md`: This file.
+
+- `ids-docker.zip`: Pre-built Docker image for the artifact, available as a
+  separate file to download.
 
 ## Artifact Setup
-There are two ways to set up this artifact. The first way is to use Docker, and the
-second way is to set up the evaluation environment manually.
+There are three ways to set up this artifact. The first way is to use a prebuilt
+Docker image, the second way is to build a new Docker image, and 
+the third way is manual setup.
 
-### Docker Setup
-The provided `Dockerfile` supplies an Ubuntu 22.04 environment as well as
-the recommended versions of the dependencies. Below are instructions for setting up
-a container.
+### Use an Existing Docker Image
+The provided image - `ids-docker.zip` - supplies an Ubuntu 22.04 environment as well as
+the recommended versions of the dependencies. Below are the instructions to use
+this image:
+1. Install Docker Engine. See [here](https://docs.docker.com/engine/install/) for
+   instructions. Another requirement is `unzip`.
+2. Run `unzip ids-docker.zip` to extract the image, `ids-artifact.tar`.
+3. Run `docker load ids-artifact.tar` to load the extracted image into Docker.
+3. To obtain an interactive shell for the container `ids-artifact`, run 
+   `docker run -it --mount type=bind,src="$(pwd)",target=/outpwd ids-artifact /bin/bash`.
+   (the `--mount` option allows you to copy files to the host machine).
+
+### Build a New Docker Image
+Below are instructions for building a new Docker image.
 1. Install Docker Engine. See [here](https://docs.docker.com/engine/install/) for
    instructions.
 2. In the root directory of this artifact, run `docker build -t ids-artifact .` to
@@ -96,9 +117,8 @@ macro with its impact set proof. This is done by extra annotations in the files
 
 ### Support for Claim 2 (~5min)
 We have written a script that will verify each of the methods in the `boogie/` 
-directory using Boogie as well as a custom script to generate decidable verification 
-conditions, sending those verification conditions to an SMT solver. The script will 
-also report verification times for all the methods it verifies.
+directory using Boogie. The script will cross-check that the generated VCs
+are decidable, and it will also report verification times.
 
 Here is a procedure for running the benchmarks. It assumes you
 are in the top-level directory of this artifact.
@@ -159,10 +179,19 @@ A sample `DAFNY-RESULTS` is in `utils/artifact-dafny-results.txt`, while a sampl
 work even with omissions in the Dafny results (e.g., omitting `red-black-tree::insert` and
 `scheduler-queue::bst-remove-root` as is done by default).
 
-## Boogie Benchmarks with Builtin Support for Parametrized Updates
-In response to a reviewer who pointed out that the transplant script was unnecessary 
-since Boogie had builtin support for parametrized updates, we quickly adapted our benchmark
-suite to use this support. The suite is located in `boogie-builtin/`. Like the other 
-benchmark suites above, one can verify all methods with `./boogie-builtin-all.sh` and 
-`./boogie-builitin-method.sh DATASTRUCTURE METHOD`. Verifying all benchmarks takes
-~5min, similarly to `boogie/`.
+## Boogie Benchmarks using a Transplant Script to implement Parametrized Updates
+In our original benchmark suite, we implemented parametrized map updates
+using a custom script that modifies the SMT queries Boogie generates.
+However, a reviewer pointed out that Boogie has native support for such updates,
+and the present version of the paper and artifact takes advantage of this.
+
+We include the original implementation of the benchmark suite in
+`boogie-original/`. Like the other benchmark suites above, one can verify all 
+methods with `./boogie-all.sh` and `./boogie-method.sh DATASTRUCTURE METHOD`.
+Verifying all benchmarks takes ~5min, similarly to `boogie/`.
+
+## License
+Copyright (c) 2024 Cody Rivera.
+
+This artifact is licensed under the MIT licence. Please see `LICENSE.txt` 
+for more details.

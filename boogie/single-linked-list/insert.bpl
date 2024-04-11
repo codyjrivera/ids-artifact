@@ -1,35 +1,10 @@
 // Supporting Artifact for
 // "Predictable Verification using Intrinsic Definitions"
-// by Anonymous Authors.
+// by Adithya Murali, Cody Rivera, and P. Madhusudan.
 // 
-// Artifact by Anonymous Author, 2023. 
+// Artifact by Cody Rivera, 2023-2024. 
 //
 // Verification of Single Linked List Insert (as if it were sorted).
-
-// NOTE: We know that we can soundly apply the fix-what-you-break
-// (FWYB) framework if a given program is well-behaved. To ensure this,
-// we construct programs such that the only way that they mutate the heap,
-// assign to the broken set Br, or allocate memory is through a set of
-// carefully-designed macros shown below. It is easy to see that the
-// body of the procedure SLLInsert meets this condition.
-//
-// Here are the macros used in this file, which appear in Section 4.1:
-// - Create (defined in single-linked-list.bpl, Line 103)
-// - Set_{field} (defined in single-linked-list.bpl, Lines 113-156)
-// - IfNotBr_ThenLC (defined in single-linked-list.bpl, Line 160)
-// - AssertLCAndRemove (defined in single-linked-list.bpl, Line 164)
-//
-// We also use the macro InAllocParam, which asserts that an object,
-// and all of the objects it refers to, are allocated. We can use this
-// macro soundly since we model a garbage collected language, and any
-// object we can access must be allocated. The macro appears in 
-// single-linked-list.bpl, Line 221.
-//
-// We additionally associate each Set_{field} macro with its impact
-// set proof Check_Set_{field}, ensuring that the broken set is updated
-// correctly. The Set_{field} macros are in single-linked-list.bpl, while
-// the Check_Set_{field} proofs are in impact-sets.bpl. One can see that
-// the macros and the proofs correspond with each other.
 
 procedure SLLInsertContract(x: Ref, k: int) returns (ret: Ref);
     requires RefSetsEqual(Br, EmptyRefSet);

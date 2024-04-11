@@ -2,9 +2,9 @@
 
 # Supporting Artifact for
 # "Predictable Verification using Intrinsic Definitions"
-# by Anonymous Authors.
+# by Adithya Murali, Cody Rivera, and P. Madhusudan.
 # 
-# Artifact by Anonymous Author, 2024. 
+# Artifact by Cody Rivera, 2024. 
 #
 # Snippet for running all Dafny benchmarks.
 

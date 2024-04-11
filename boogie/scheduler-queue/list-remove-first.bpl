@@ -1,8 +1,8 @@
 // Supporting Artifact for
 // "Predictable Verification using Intrinsic Definitions"
-// by Anonymous Authors.
+// by Adithya Murali, Cody Rivera, and P. Madhusudan.
 // 
-// Artifact by Anonymous Author, 2023. 
+// Artifact by Cody Rivera, 2023-2024. 
 //
 // Verification of removing the first item from a list, for the scheduler
 // queue (overlay of List and BST).
