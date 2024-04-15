@@ -33,7 +33,10 @@ Docker image, the second way is to build a new Docker image, and
 the third way is manual setup.
 
 ### Use an Existing Docker Image
-The provided image - `ids-docker.zip` - supplies an Ubuntu 22.04 environment as well as
+The provided image - `ids-docker.zip` - (available 
+[here](https://zenodo.org/records/10963124) for those accessing the repository
+elsewhere)
+supplies an Ubuntu 22.04 environment as well as
 the recommended versions of the dependencies. Below are the instructions to use
 this image:
 1. Install Docker Engine. See [here](https://docs.docker.com/engine/install/) for
