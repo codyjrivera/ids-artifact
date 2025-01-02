@@ -42,7 +42,7 @@ this image:
 1. Install Docker Engine. See [here](https://docs.docker.com/engine/install/) for
    instructions. Another requirement is `unzip`.
 2. Run `unzip ids-docker.zip` to extract the image, `ids-artifact.tar`.
-3. Run `docker load ids-artifact.tar` to load the extracted image into Docker.
+3. Run `docker load -i ids-artifact.tar` to load the extracted image into Docker.
 3. To obtain an interactive shell for the container `ids-artifact`, run 
    `docker run -it --mount type=bind,src="$(pwd)",target=/outpwd ids-artifact /bin/bash`.
    (the `--mount` option allows you to copy files to the host machine).
